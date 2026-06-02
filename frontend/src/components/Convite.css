@@ -1,0 +1,142 @@
+.convite-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 40px;
+  align-items: center;
+}
+
+/* ── Ticket ── */
+.convite-ticket {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  aspect-ratio: 2/3;
+  position: relative;
+}
+
+.ticket-top {
+  flex: 1;
+  overflow: hidden;
+  opacity: 0.15;
+}
+
+.ticket-lines {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 8px;
+}
+
+.ticket-line {
+  height: 1px;
+  background: var(--gold);
+  transform: rotate(-45deg) scaleX(3);
+  transform-origin: left;
+}
+
+.ticket-center {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.ticket-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.ticket-xv {
+  font-family: var(--font-display);
+  font-size: 52px;
+  color: var(--red-light);
+  line-height: 1;
+}
+
+.ticket-date {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--gold-dim);
+  margin-top: 8px;
+}
+
+.ticket-bottom {
+  padding: 14px;
+  text-align: center;
+}
+
+.ticket-detail {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+}
+
+/* ── Info ── */
+.convite-from {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.convite-from span {
+  font-size: 15px;
+}
+
+.convite-name {
+  font-family: var(--font-title);
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 700;
+  color: var(--red-light);
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+
+.convite-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.convite-detail-row {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.detail-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--cream);
+}
+
+@media (max-width: 640px) {
+  .convite-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .convite-ticket {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+}

@@ -1,0 +1,170 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at top, #2a0a0a 0%, #0e0a08 60%);
+  overflow: hidden;
+  text-align: center;
+  padding: 80px 24px 60px;
+}
+
+/* ── Cortinas ── */
+.curtain {
+  position: absolute;
+  top: 0;
+  width: 22%;
+  height: 100%;
+  background:
+    linear-gradient(
+      to bottom,
+      #6b0a0a 0%,
+      #8b1a1a 20%,
+      #6b0a0a 40%,
+      #8b1a1a 60%,
+      #6b0a0a 80%,
+      #4a0808 100%
+    );
+  z-index: 1;
+}
+
+.curtain-left  { left: 0;  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%); }
+.curtain-right { right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%); }
+
+/* Dobras nas cortinas */
+.curtain::before,
+.curtain::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+}
+.curtain-left::before  { left: 25%; }
+.curtain-left::after   { left: 55%; }
+.curtain-right::before { right: 25%; }
+.curtain-right::after  { right: 55%; }
+
+/* ── Luzes ── */
+.stage-lights {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 28px;
+  padding-top: 8px;
+  z-index: 2;
+}
+
+.light-bulb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px 2px rgba(201,168,76,0.6), 0 0 20px rgba(201,168,76,0.2);
+  animation: flicker 3s ease-in-out infinite;
+}
+
+.light-bulb:nth-child(even) { animation-delay: 0.4s; }
+.light-bulb:nth-child(3n)   { animation-delay: 0.8s; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92%       { opacity: 1; }
+  94%       { opacity: 0.4; }
+  96%       { opacity: 1; }
+  98%       { opacity: 0.6; }
+}
+
+/* ── Conteúdo ── */
+.hero-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.45em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.hero-name {
+  font-family: var(--font-title);
+  font-size: clamp(52px, 11vw, 108px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.0;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 40px rgba(201,168,76,0.15);
+}
+
+.hero-xv-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 340px;
+  margin: 8px 0;
+}
+
+.hero-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+
+.hero-xv-wrapper .hero-line:last-child {
+  background: linear-gradient(to left, transparent, var(--gold));
+}
+
+.hero-xv {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--red-light);
+  letter-spacing: 0.2em;
+}
+
+.hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-date-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--cream);
+  font-style: italic;
+  letter-spacing: 0.08em;
+}
+
+.hero-location {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+
+.hero-roman {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--gold-dim);
+  letter-spacing: 0.3em;
+  margin-top: 16px;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 600px) {
+  .curtain { width: 18%; }
+}

@@ -1,9 +1,121 @@
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/cinzel/400.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource/cormorant-garamond/300.css';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/600.css';
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: sans-serif;
+:root {
+  --bg-dark:      #0e0a08;
+  --bg-section:   #141010;
+  --bg-card:      #1c1614;
+  --red:          #8b1a1a;
+  --red-light:    #c0392b;
+  --gold:         #c9a84c;
+  --gold-dim:     #7a6030;
+  --cream:        #f0e6cc;
+  --ivory:        #faf6ee;
+  --text-muted:   #8a7a60;
+  --border:       rgba(201,168,76,0.25);
+
+  --font-title:   'Playfair Display', serif;
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', serif;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Seção padrão ── */
+.section {
+  padding: 72px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Cabeçalho de Ato ── */
+.ato-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.ato-number {
+  background: var(--red);
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  padding: 6px 10px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.ato-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.35em;
+  color: var(--cream);
+  text-transform: uppercase;
+}
+
+.ato-subtitle {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  padding-left: 50px;
+  font-style: italic;
+}
+
+/* ── Divisor dourado ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider span {
+  color: var(--gold);
+  font-size: 10px;
+}
+
+/* ── Separador de seções ── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  margin: 0;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); }
