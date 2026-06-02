@@ -1,0 +1,95 @@
+.traje-wrapper {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.traje-paleta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.traje-color-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.traje-swatch {
+  width: 100%;
+  aspect-ratio: 1 / 1.4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.traje-swatch-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  letter-spacing: 0.25em;
+}
+
+.traje-color-name {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.traje-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.traje-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.traje-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.traje-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--cream);
+}
+
+.traje-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.traje-note {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .traje-wrapper {
+    grid-template-columns: 1fr;
+  }
+}

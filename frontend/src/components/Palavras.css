@@ -1,0 +1,85 @@
+.palavras-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.palavras-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.palavras-btn {
+  background: var(--red);
+  color: var(--cream);
+  border: none;
+  padding: 14px 28px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.palavras-btn:hover {
+  background: var(--red-light);
+}
+
+.palavras-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.palavras-feed::-webkit-scrollbar { width: 3px; }
+.palavras-feed::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+.palavras-empty {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.palavras-card {
+  border-left: 2px solid var(--red);
+  padding: 12px 16px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.palavras-author {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.palavras-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .palavras-wrapper {
+    grid-template-columns: 1fr;
+  }
+}

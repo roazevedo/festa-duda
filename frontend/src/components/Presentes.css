@@ -1,0 +1,187 @@
+.gifts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2px;
+}
+
+.gift-card {
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gift-card:hover {
+  border-color: var(--border);
+}
+
+.gift-card-inner {
+  padding: 20px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.gift-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--cream);
+  text-transform: uppercase;
+}
+
+.gift-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-muted);
+  font-style: italic;
+  flex: 1;
+}
+
+.gift-value {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--gold);
+  margin-top: 8px;
+}
+
+.gift-action {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.gift-card:hover .gift-action {
+  color: var(--gold);
+}
+
+/* ── Modal ── */
+.gift-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+}
+
+.gift-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 36px 32px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-title {
+  font-family: var(--font-title);
+  font-size: 24px;
+  color: var(--cream);
+}
+
+.modal-value {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--gold);
+}
+
+.modal-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+}
+
+.modal-tab {
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-tab.active {
+  background: var(--red);
+  color: var(--cream);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.modal-btn-primary {
+  display: block;
+  background: var(--red);
+  color: var(--cream);
+  text-align: center;
+  text-decoration: none;
+  padding: 14px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  transition: background 0.2s;
+}
+
+.modal-btn-primary:hover { background: var(--red-light); }
+
+.modal-secure {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pix-key {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  user-select: all;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 4px;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--cream); }

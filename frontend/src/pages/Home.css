@@ -1,0 +1,27 @@
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--bg-dark);
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-name {
+  font-family: var(--font-title);
+  font-size: 28px;
+  color: var(--cream);
+  font-style: italic;
+}
+
+.footer-roman {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--gold-dim);
+}
