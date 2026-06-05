@@ -3,123 +3,81 @@ import AtoHeader from './AtoHeader'
 import './Presentes.css'
 
 const GIFTS = [
-  { id: 1, name: 'Jantar Especial',   desc: 'Uma noite inesquecível',       value: 250, mpLink: '#' },
-  { id: 2, name: 'Spa & Beleza',      desc: 'Dia de cuidado e relaxamento', value: 160, mpLink: '#' },
-  { id: 3, name: 'Curso / Workshop',  desc: 'Investindo no futuro',         value: 180, mpLink: '#' },
-  { id: 4, name: 'Viagem dos Sonhos', desc: 'Contribua para a aventura',    value: 500, mpLink: '#' },
-  { id: 5, name: 'Joia Especial',     desc: 'Uma lembrança eterna',         value: 350, mpLink: '#' },
-  { id: 6, name: 'Experiência Única', desc: 'Surpresa a combinar',          value: 200, mpLink: '#' },
-  { id: 7, name: 'Acessório de Moda', desc: 'Para compor o look perfeito',  value: 180, mpLink: '#' },
-  { id: 8, name: 'Presente Livre',    desc: 'Qualquer valor é bem-vindo',   value: 100, mpLink: '#' },
+  { id: 1,  name: 'Maquiagem profissional', desc: 'Make completa para a noite de gala',       value: 250, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 2,  name: 'Manicure & pedicure',    desc: 'Cuidados finais antes do grande dia',      value: 150, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 3,  name: 'Coroa de princesa',      desc: 'A peça central do ritual dos quinze',      value: 400, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 4,  name: 'Bouquet de rosas',       desc: 'Arranjo do cerimonial das quinze velas',   value: 180, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 5,  name: 'Sapato de salto',        desc: 'O par perfeito para o primeiro baile',     value: 350, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 6,  name: 'Decoração da mesa',      desc: 'Velas, flores e detalhes dourados',        value: 300, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 7,  name: 'Hospedagem dos avós',    desc: 'Para que toda a família esteja por perto', value: 500, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 8,  name: 'Hora extra fotógrafo',   desc: 'Cada momento eternizado',                  value: 280, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 9,  name: 'Joia personalizada',     desc: 'Pingente com as iniciais ME',              value: 600, pix: 'pix@mariaeduarda15.com', mp: '#' },
+  { id: 10, name: 'Diária na viagem',       desc: 'Contribuição para a viagem de presente',   value: 220, pix: 'pix@mariaeduarda15.com', mp: '#' },
 ]
 
-const PIX_KEY = 'pix@mariaeduarda15.com'
-
-function GiftModal({ gift, onClose }) {
-  const [tab, setTab] = useState('mp')
-
-  const formattedValue = gift.value.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-  })
-
+function PixModal({ gift, onClose }) {
   return (
-    <div className="gift-modal-overlay" onClick={onClose}>
-      <div className="gift-modal" onClick={(e) => e.stopPropagation()}>
-
-        <h3 className="modal-title">{gift.name}</h3>
-        <p className="modal-value">R$ {formattedValue}</p>
-
-        <div className="modal-tabs">
-          <button
-            className={'modal-tab' + (tab === 'mp' ? ' active' : '')}
-            onClick={() => setTab('mp')}
-          >
-            Cartao / Pix
-          </button>
-          <button
-            className={'modal-tab' + (tab === 'pix' ? ' active' : '')}
-            onClick={() => setTab('pix')}
-          >
-            Pix direto
-          </button>
-        </div>
-
-        {tab === 'mp' && (
-          <div className="modal-content">
-            <p className="modal-text">
-              Pague com cartao de credito, debito ou Pix com seguranca pelo Mercado Pago.
-            </p>
-            <a
-              href={gift.mpLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="modal-btn-primary"
-            >
-              Pagar R$ {formattedValue}
-            </a>
-            <p className="modal-secure">pagamento seguro via mercado pago</p>
-          </div>
-        )}
-
-        {tab === 'pix' && (
-          <div className="modal-content">
-            <p className="modal-text">Chave Pix:</p>
-            <div className="pix-key">{PIX_KEY}</div>
-            <p className="modal-text">
-              Valor sugerido: R$ {formattedValue}.
-              Informe seu nome na mensagem do Pix.
-            </p>
-          </div>
-        )}
-
-        <button className="modal-close" onClick={onClose}>
-          fechar
-        </button>
-
+    <div className="pix-overlay" onClick={onClose}>
+      <div className="pix-modal" onClick={e => e.stopPropagation()}>
+        <p className="pix-modal-label">Chave Pix</p>
+        <div className="pix-key">{gift.pix}</div>
+        <p className="pix-modal-info">
+          Valor sugerido: <strong>R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+          <br />Informe seu nome na mensagem.
+        </p>
+        <button className="pix-close" onClick={onClose}>fechar</button>
       </div>
     </div>
   )
 }
 
 export default function Presentes() {
-  const [selected, setSelected] = useState(null)
+  const [pixGift, setPixGift] = useState(null)
 
   return (
     <section className="section">
       <AtoHeader
         number="IV"
         title="Os Presentes"
-        subtitle="cada gesto de carinho transforma esta noite"
+        subtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />
 
-      <div className="gifts-grid">
-        {GIFTS.map((gift) => (
-          <div
-            key={gift.id}
-            className="gift-card"
-            onClick={() => setSelected(gift)}
-          >
-            <div className="gift-card-inner">
-              <p className="gift-name">{gift.name}</p>
+      <div className="gifts-table">
+        {GIFTS.map((gift, i) => (
+          <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
+            <div className="gift-info">
+              <div className="gift-top">
+                <span className="gift-num">{String(gift.id).padStart(2, '0')}</span>
+                <span className="gift-name">{gift.name.toUpperCase()}</span>
+              </div>
               <p className="gift-desc">{gift.desc}</p>
               <p className="gift-value">
                 R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="gift-action">
-              <span>presentear</span>
+            <div className="gift-btns">
+              <button
+                className="gift-btn"
+                onClick={() => setPixGift(gift)}
+              >
+                PIX
+              </button>
+              <a
+                href={gift.mp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gift-btn"
+              >
+                CARTÃO
+              </a>
             </div>
           </div>
         ))}
       </div>
 
-      {selected && (
-        <GiftModal
-          gift={selected}
-          onClose={() => setSelected(null)}
-        />
+      {pixGift && (
+        <PixModal gift={pixGift} onClose={() => setPixGift(null)} />
       )}
-
     </section>
   )
 }

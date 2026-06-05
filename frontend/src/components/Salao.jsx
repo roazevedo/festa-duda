@@ -1,16 +1,16 @@
 import AtoHeader from './AtoHeader'
 import './Salao.css'
 
-export default function Salao() {
-  const address = 'Nome do Salao, Rua do Salao, 123 - Bairro, Rio de Janeiro'
-  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address)
+const ADDRESS = 'Salao Elite, Rua Vitor Meireles, 485, Riachuelo, Rio de Janeiro'
+const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ADDRESS)
 
+export default function Salao() {
   return (
     <section className="section">
       <AtoHeader
         number="VIII"
         title="O Salao"
-        subtitle="onde a magia acontecera"
+        subtitle="Elite · Rua Vitor Meireles, 485 · Riachuelo"
       />
 
       <div className="salao-wrapper">
@@ -20,39 +20,43 @@ export default function Salao() {
             <div className="salao-pin">
               <div className="salao-pin-dot" />
             </div>
-            <p className="salao-map-label">Mapa do local</p>
-            <p className="salao-map-sub">Clique em "Como chegar" para abrir o Google Maps</p>
+            <p className="salao-map-label">Salao Elite</p>
+            <p className="salao-map-sub">Rua Vitor Meireles, 485 · Riachuelo</p>
           </div>
         </div>
 
         <div className="salao-info">
           <div className="salao-detail">
-            <span className="salao-detail-label">Local</span>
-            <span className="salao-detail-value">Nome do Salao</span>
+            <span className="salao-detail-label">local</span>
+            <span className="salao-detail-value">Salao Elite</span>
           </div>
           <div className="salao-detail">
-            <span className="salao-detail-label">Endereco</span>
+            <span className="salao-detail-label">endereco</span>
             <span className="salao-detail-value">
-              Rua do Salao, 123<br />
-              Bairro — Rio de Janeiro, RJ
+              Rua Vitor Meireles, 485<br />
+              Riachuelo · Rio de Janeiro, RJ
             </span>
           </div>
           <div className="salao-detail">
-            <span className="salao-detail-label">Data</span>
-            <span className="salao-detail-value">Sabado, 29 de agosto de 2026</span>
+            <span className="salao-detail-label">data</span>
+            <span className="salao-detail-value">sabado, 29 de agosto de 2026</span>
           </div>
           <div className="salao-detail">
-            <span className="salao-detail-label">Hora</span>
-            <span className="salao-detail-value">20h00</span>
+            <span className="salao-detail-label">hora</span>
+            <span className="salao-detail-value">21 horas</span>
+          </div>
+          <div className="salao-detail">
+            <span className="salao-detail-label">estrutura</span>
+            <span className="salao-detail-value">estacionamento proprio · valet · acessibilidade total</span>
           </div>
 
           <a
-            href={mapsUrl}
+            href={MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="salao-btn"
           >
-            Como chegar
+            abrir no maps
           </a>
         </div>
 

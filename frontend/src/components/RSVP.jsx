@@ -13,7 +13,7 @@ export default function RSVP() {
   })
 
   const handleChange = (e) => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = (e) => {
@@ -26,113 +26,108 @@ export default function RSVP() {
     setSubmitted(true)
   }
 
-  const confirmed = list.filter(r => r.attending === 'yes')
+  const confirmed = list.filter((r) => r.attending === 'yes')
 
   return (
     <section className="section">
       <AtoHeader
         number="III"
-        title="Sua Confirmação"
-        subtitle="confirme sua presença e faça parte desta noite"
+        title="Sua Confirmacao"
+        subtitle="reservaremos sua poltrona ate quinze de agosto"
       />
 
       <div className="rsvp-wrapper">
-        {/* Formulário */}
+
         <div className="rsvp-form-side">
           {!submitted ? (
             <form className="rsvp-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label className="form-label">Nome completo</label>
+                <label className="form-label">seu nome</label>
                 <input
                   className="form-input"
                   type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  placeholder="Como prefere ser chamado(a)"
+                  placeholder="como consta no convite"
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Acompanhantes</label>
-                  <select
-                    className="form-input"
-                    name="guests"
-                    value={form.guests}
-                    onChange={handleChange}
-                  >
-                    {[0,1,2,3,4].map(n => (
-                      <option key={n} value={n}>
-                        {n} pessoa{n !== 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Confirmação</label>
-                  <select
-                    className="form-input"
-                    name="attending"
-                    value={form.attending}
-                    onChange={handleChange}
-                  >
-                    <option value="yes">✓ Estarei lá</option>
-                    <option value="no">✗ Não poderei ir</option>
-                    <option value="maybe">? Talvez</option>
-                  </select>
-                </div>
+              <div className="form-group">
+                <label className="form-label">presenca</label>
+                <select
+                  className="form-input"
+                  name="attending"
+                  value={form.attending}
+                  onChange={handleChange}
+                >
+                  <option value="yes">Estarei na plateia</option>
+                  <option value="no">Nao poderei comparecer</option>
+                </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Restrição alimentar</label>
+                <label className="form-label">acompanhantes</label>
+                <select
+                  className="form-input"
+                  name="guests"
+                  value={form.guests}
+                  onChange={handleChange}
+                >
+                  {[0,1,2].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">restricao alimentar</label>
                 <input
                   className="form-input"
                   type="text"
                   name="restriction"
                   value={form.restriction}
                   onChange={handleChange}
-                  placeholder="Vegetariano, alergia, etc. (opcional)"
+                  placeholder="opcional"
                 />
               </div>
 
               <button className="rsvp-btn" type="submit">
-                Confirmar Presença
+                Confirmar minha poltrona
               </button>
             </form>
           ) : (
             <div className="rsvp-success">
               <p className="success-icon">🥂</p>
-              <h3 className="success-title">Até lá!</h3>
+              <h3 className="success-title">Ate la!</h3>
               <p className="success-text">
-                Sua presença foi confirmada com sucesso.
+                Sua poltrona esta reservada.
               </p>
               <button
                 className="rsvp-btn-outline"
                 onClick={() => setSubmitted(false)}
               >
-                Adicionar outra confirmação
+                Adicionar outra confirmacao
               </button>
             </div>
           )}
         </div>
 
-        {/* Lado direito — quote + confirmados */}
         <div className="rsvp-info-side">
           <blockquote className="rsvp-quote">
-            "Cada momento celebrado com quem se ama se torna
-            um lugar eterno. E você está convidado a fazer
-            parte desta história."
+            "Cada nome confirmado e uma cadeira no salao e um lugar a mesa.
+            A casa pede gentileza na resposta para que tudo esteja em seu
+            lugar quando as luzes se acenderem."
+            <cite>— a familia</cite>
           </blockquote>
 
           {confirmed.length > 0 && (
             <div className="rsvp-confirmed">
               <p className="confirmed-title">
-                {confirmed.length} confirmado{confirmed.length !== 1 ? 's' : ''}
+                {confirmed.length} na plateia
               </p>
               <div className="confirmed-list">
-                {confirmed.slice(0, 8).map(r => (
+                {confirmed.slice(0, 8).map((r) => (
                   <span key={r.id} className="confirmed-name">
                     {r.name}
                   </span>
@@ -146,6 +141,7 @@ export default function RSVP() {
             </div>
           )}
         </div>
+
       </div>
     </section>
   )

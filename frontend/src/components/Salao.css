@@ -1,7 +1,7 @@
 .salao-wrapper {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 48px;
+  gap: clamp(24px, 4vw, 56px);
   align-items: start;
 }
 
@@ -19,43 +19,43 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .salao-pin {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50% 50% 50% 0;
   background: var(--red);
   transform: rotate(-45deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 12px rgba(139, 26, 26, 0.5);
+  box-shadow: 0 0 16px rgba(139,26,26,0.5);
 }
 
 .salao-pin-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--cream);
 }
 
 .salao-map-label {
   font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  color: var(--text-muted);
+  font-size: var(--text-sm);
+  letter-spacing: var(--letter-wide);
+  color: var(--cream);
   text-transform: uppercase;
 }
 
 .salao-map-sub {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--text-base);
   color: var(--text-muted);
   font-style: italic;
   text-align: center;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .salao-info {
@@ -67,24 +67,24 @@
 .salao-detail {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 16px;
+  padding-bottom: 18px;
 }
 
 .salao-detail-label {
   font-family: var(--font-display);
-  font-size: 9px;
-  letter-spacing: 0.4em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-widest);
   color: var(--gold-dim);
   text-transform: uppercase;
 }
 
 .salao-detail-value {
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-base);
   color: var(--cream);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .salao-btn {
@@ -93,21 +93,17 @@
   color: var(--cream);
   text-align: center;
   text-decoration: none;
-  padding: 14px;
+  padding: 16px;
   font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.35em;
+  font-size: var(--text-sm);
+  letter-spacing: var(--letter-wide);
   text-transform: uppercase;
   transition: background 0.2s;
   margin-top: 4px;
 }
 
-.salao-btn:hover {
-  background: var(--red-light);
-}
+.salao-btn:hover { background: var(--red-light); }
 
 @media (max-width: 640px) {
-  .salao-wrapper {
-    grid-template-columns: 1fr;
-  }
+  .salao-wrapper { grid-template-columns: 1fr; }
 }

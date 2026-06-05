@@ -1,0 +1,74 @@
+.admin-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(10, 6, 2, 0.96);
+  border-bottom: 1px solid var(--gold-dim);
+  backdrop-filter: blur(8px);
+}
+
+.admin-bar-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 32px);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-bar-icon {
+  font-size: 12px;
+  color: var(--gold);
+}
+
+.admin-bar-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.admin-bar-sep {
+  color: var(--gold-dim);
+  font-size: 12px;
+}
+
+.admin-bar-email {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.admin-bar-logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.admin-bar-logout:hover {
+  border-color: var(--red);
+  color: var(--red-light);
+}
+
+/* Empurra o conteúdo da página para baixo quando a barra aparece */
+.admin-bar-spacer {
+  height: 40px;
+}

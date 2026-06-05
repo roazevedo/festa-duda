@@ -1,8 +1,8 @@
 .convite-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 40px;
-  align-items: center;
+  grid-template-columns: 1fr 1.5fr;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
 }
 
 /* ── Ticket ── */
@@ -11,124 +11,157 @@
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  aspect-ratio: 2/3;
-  position: relative;
 }
 
 .ticket-top {
-  flex: 1;
+  position: relative;
+  min-height: 160px;
   overflow: hidden;
-  opacity: 0.15;
+  border-bottom: 1px solid var(--border);
 }
 
 .ticket-lines {
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   padding: 8px;
+  opacity: 0.12;
 }
 
 .ticket-line {
   height: 1px;
   background: var(--gold);
-  transform: rotate(-45deg) scaleX(3);
+  transform: rotate(-38deg) scaleX(3);
   transform-origin: left;
 }
 
-.ticket-center {
-  padding: 20px;
+.ticket-portrait {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
   text-align: center;
-  border-top: 1px solid var(--border);
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 11px);
+  letter-spacing: 0.25em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.ticket-center {
+  padding: clamp(16px, 2.5vw, 24px);
+  text-align: center;
   border-bottom: 1px solid var(--border);
 }
 
 .ticket-label {
   font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.3em;
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.35em;
   color: var(--text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .ticket-xv {
   font-family: var(--font-display);
-  font-size: 52px;
+  font-size: clamp(44px, 7vw, 72px);
   color: var(--red-light);
   line-height: 1;
+  font-weight: 700;
 }
 
 .ticket-date {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.25em;
   color: var(--gold-dim);
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .ticket-bottom {
-  padding: 14px;
+  padding: clamp(12px, 2vw, 18px);
   text-align: center;
 }
 
 .ticket-detail {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.35em;
   color: var(--text-muted);
 }
 
 /* ── Info ── */
-.convite-from {
+.convite-grace {
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   font-style: italic;
-  line-height: 1.6;
-  margin-bottom: 16px;
+  margin-bottom: 2px;
 }
 
-.convite-from span {
-  font-size: 15px;
+.convite-parents {
+  font-family: var(--font-title);
+  font-size: clamp(20px, 3vw, 30px);
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.convite-honor {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 16px;
 }
 
 .convite-name {
   font-family: var(--font-title);
-  font-size: clamp(36px, 6vw, 58px);
+  font-size: clamp(36px, 6vw, 68px);
   font-weight: 700;
   color: var(--red-light);
-  line-height: 1.05;
+  line-height: 1.0;
   margin-bottom: 24px;
 }
 
+/* ── Details table ── */
 .convite-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   border-top: 1px solid var(--border);
   padding-top: 20px;
 }
 
-.convite-detail-row {
+.convite-row {
   display: grid;
-  grid-template-columns: 60px 1fr;
+  grid-template-columns: 100px 1fr;   /* coluna label fixa, valor ocupa o resto */
   gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
   align-items: baseline;
 }
 
-.detail-label {
+.convite-row:last-child {
+  border-bottom: none;
+}
+
+.convite-label {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.3em;
   color: var(--gold-dim);
   text-transform: uppercase;
+  flex-shrink: 0;    /* nunca comprime o label */
 }
 
-.detail-value {
+.convite-value {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--text-base);
   color: var(--cream);
+  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
@@ -136,7 +169,7 @@
     grid-template-columns: 1fr;
   }
   .convite-ticket {
-    max-width: 240px;
+    max-width: 280px;
     margin: 0 auto;
   }
 }

@@ -1,0 +1,123 @@
+.login-page {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 40% 30%, #2a0808 0%, #0e0a08 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: clamp(32px, 5vw, 56px) clamp(28px, 4vw, 48px);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.login-eyebrow {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.login-title {
+  font-family: var(--font-title);
+  font-size: clamp(28px, 5vw, 40px);
+  color: var(--cream);
+  font-style: italic;
+}
+
+.login-sub {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.login-input {
+  background: var(--bg-dark);
+  border: none;
+  border-bottom: 1px solid var(--gold-dim);
+  color: var(--cream);
+  padding: 10px 4px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.login-input:focus { border-bottom-color: var(--gold); }
+
+.login-error {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--red-light);
+  font-style: italic;
+}
+
+.login-btn {
+  background: var(--red);
+  color: var(--cream);
+  border: none;
+  padding: 14px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.login-btn:hover:not(:disabled) { background: var(--red-light); }
+.login-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.login-back {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: color 0.2s;
+}
+
+.login-back:hover { color: var(--cream); }

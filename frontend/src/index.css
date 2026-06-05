@@ -28,33 +28,58 @@
   --font-title:   'Playfair Display', serif;
   --font-display: 'Cinzel', serif;
   --font-body:    'Cormorant Garamond', serif;
+
+  /* ── Escala tipográfica fluida ──────────────────────────────────────
+     clamp(mínimo, valor-fluido, máximo)
+     mínimo   = tamanho em telas pequenas (320px)
+     fluido   = cresce com a largura da tela
+     máximo   = tamanho em telas grandes (1280px+)
+  ── */
+  --text-xs:   clamp(13px, 1.6vw, 16px);   /* labels, eyebrow        */
+  --text-sm:   clamp(15px, 2vw,   18px);   /* legenda, nota          */
+  --text-base: clamp(18px, 2.4vw, 22px);   /* corpo de texto         */
+  --text-md:   clamp(20px, 2.8vw, 26px);   /* subtítulos, citações   */
+  --text-lg:   clamp(24px, 3.5vw, 32px);   /* títulos de seção       */
+  --text-xl:   clamp(32px, 5vw,   52px);   /* títulos grandes        */
+  --text-2xl:  clamp(48px, 8vw,   88px);   /* hero name              */
+  --text-3xl:  clamp(64px, 12vw,  120px);  /* hero name desktop      */
+
+  --letter-wide:  0.25em;
+  --letter-wider: 0.4em;
+  --letter-widest:0.55em;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--bg-dark);
   color: var(--cream);
   font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: var(--text-base);
+  line-height: 1.7;
   overflow-x: hidden;
 }
 
-/* ── Seção padrão ── */
+/* ── Layout ── */
 .section {
-  padding: 72px 24px;
-  max-width: 900px;
+  padding: clamp(48px, 8vw, 88px) clamp(20px, 5vw, 48px);
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-/* ── Cabeçalho de Ato ── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+}
+
+/* ── AtoHeader ── */
+.ato-header-wrapper { margin-bottom: clamp(28px, 4vw, 48px); }
+
 .ato-header {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
@@ -62,57 +87,78 @@ body {
   background: var(--red);
   color: var(--cream);
   font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  padding: 6px 10px;
-  min-width: 36px;
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wide);
+  padding: 7px 12px;
+  min-width: 42px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .ato-title {
   font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 0.35em;
+  font-size: var(--text-sm);
+  letter-spacing: var(--letter-wider);
   color: var(--cream);
   text-transform: uppercase;
 }
 
 .ato-subtitle {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-muted);
-  margin-bottom: 40px;
-  padding-left: 50px;
+  padding-left: 58px;
   font-style: italic;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-/* ── Divisor dourado ── */
-.divider {
+.ato-rule {
+  height: 1px;
+  background: linear-gradient(to right, var(--gold-dim), transparent);
+  margin-top: 14px;
+}
+
+/* ── Form inputs (compartilhado entre RSVP e Palavras) ── */
+.form-group {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 24px 0;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
+.form-label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wider);
+  color: var(--text-muted);
+  text-transform: uppercase;
 }
 
-.divider span {
-  color: var(--gold);
-  font-size: 10px;
-}
-
-/* ── Separador de seções ── */
-.section-divider {
+.form-input {
+  background: var(--bg-card);
+  border: none;
+  border-bottom: 1px solid var(--gold-dim);
+  color: var(--cream);
+  padding: 12px 4px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
   width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
-  margin: 0;
+}
+
+.form-input:focus { border-bottom-color: var(--gold); }
+
+.form-input option {
+  background: var(--bg-card);
+  color: var(--cream);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: var(--text-sm);
 }
 
 /* ── Scrollbar ── */
