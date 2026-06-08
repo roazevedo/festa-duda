@@ -1,26 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
+import { useEvent } from '../contexts/useEvent'
+import { getMessages, createMessage } from '../services/api'
 import './Palavras.css'
 
 export default function Palavras() {
-  const [form, setForm] = useState({ name: '', message: '' })
-  const [messages, setMessages] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('messages') || '[]') }
-    catch { return [] }
-  })
+  const { slug, token } = useEvent()
+
+  const [form, setForm]     = useState({ name: '', message: '' })
+  const [msgs, setMsgs]     = useState([])
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+
+  // Carrega mensagens do banco
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getMessages(slug, token)
+        setMsgs(data)
+      } catch (err) {
+        console.error('Erro ao carregar mensagens:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [slug, token])
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.name.trim() || !form.message.trim()) return
-    const entry = { ...form, id: Date.now() }
-    const updated = [entry, ...messages]
-    setMessages(updated)
-    localStorage.setItem('messages', JSON.stringify(updated))
-    setForm({ name: '', message: '' })
+    setSending(true)
+    try {
+      const newMsg = await createMessage(slug, token, {
+        name: form.name,
+        body: form.message,
+      })
+      setMsgs((prev) => [newMsg, ...prev])
+      setForm({ name: '', message: '' })
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err)
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -32,49 +58,56 @@ export default function Palavras() {
       />
 
       <div className="palavras-wrapper">
-
         <form className="palavras-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Seu nome</label>
+            <label className="form-label">seu nome</label>
             <input
               className="form-input"
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="Como quer ser lembrado(a)"
+              placeholder="como quer ser lembrado(a)"
+              required
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Sua mensagem</label>
+            <label className="form-label">sua mensagem</label>
             <textarea
               className="form-input form-textarea"
               name="message"
               value={form.message}
               onChange={handleChange}
-              placeholder="Escreva suas palavras com carinho..."
+              placeholder="escreva suas palavras com carinho..."
               rows={4}
+              required
             />
           </div>
-          <button className="palavras-btn" type="submit">
-            Enviar Recado
+          <button
+            className="palavras-btn"
+            type="submit"
+            disabled={sending}
+          >
+            {sending ? 'Enviando...' : 'Enviar Recado'}
           </button>
         </form>
 
         <div className="palavras-feed">
-          {messages.length === 0 && (
+          {loading && (
+            <p className="palavras-empty">Carregando mensagens...</p>
+          )}
+          {!loading && msgs.length === 0 && (
             <p className="palavras-empty">
               Seja o primeiro a deixar uma mensagem.
             </p>
           )}
-          {messages.map((msg) => (
+          {msgs.map((msg) => (
             <div key={msg.id} className="palavras-card">
               <p className="palavras-author">{msg.name}</p>
-              <p className="palavras-text">"{msg.message}"</p>
+              <p className="palavras-text">"{msg.body}"</p>
             </div>
           ))}
         </div>
-
       </div>
     </section>
   )

@@ -1,43 +1,47 @@
 import { useState, useEffect, useRef } from 'react'
-import { useAuth } from '../contexts/useAuth'
 import AtoHeader from './AtoHeader'
+import { useAuth } from '../contexts/useAuth'
+import { useEvent } from '../contexts/useEvent'
+import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
 import './Galeria.css'
 
-// ─────────────────────────────────────────────────────────────
-//  Configure com seus dados do Cloudinary
-//  1. Entre em cloudinary.com → Settings → Upload → Upload Presets
-//  2. Crie um preset com "Signing Mode = Unsigned"
-//  3. Cole o Cloud Name e o nome do preset abaixo
-// ─────────────────────────────────────────────────────────────
 const CLOUDINARY_CLOUD_NAME    = 'SEU_CLOUD_NAME'
 const CLOUDINARY_UPLOAD_PRESET = 'SEU_PRESET'
 
 export default function Galeria() {
-  const { user } = useAuth()
-  const isAdmin = user?.admin === true
+  const { user }        = useAuth()
+  const { slug, token } = useEvent()
+  const isAdmin         = user?.admin === true
 
-  const [photos, setPhotos]     = useState(() => {
-    try { return JSON.parse(localStorage.getItem('galeria_photos') || '[]') }
-    catch { return [] }
-  })
-  const [lightbox, setLightbox] = useState(null)
+  const [photos, setPhotos]       = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [lightbox, setLightbox]   = useState(null)
   const [uploading, setUploading] = useState(false)
   const [uploadPct, setUploadPct] = useState(0)
-  const fileInputRef = useRef(null)
+  const fileInputRef              = useRef(null)
 
-  // Salva sempre que photos mudar
+  // Carrega fotos do banco
   useEffect(() => {
-    localStorage.setItem('galeria_photos', JSON.stringify(photos))
-  }, [photos])
+    const load = async () => {
+      try {
+        const data = await getPhotos(slug, token)
+        setPhotos(data)
+      } catch (err) {
+        console.error('Erro ao carregar fotos:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [slug, token])
 
-  // Upload para o Cloudinary via API direta
+  // Upload para Cloudinary + salva no banco
   const handleFiles = async (files) => {
     if (!files || files.length === 0) return
     setUploading(true)
     setUploadPct(0)
 
     const arr = Array.from(files)
-    const uploaded = []
 
     for (let i = 0; i < arr.length; i++) {
       const file = arr[i]
@@ -47,19 +51,22 @@ export default function Galeria() {
       formData.append('folder', 'festa-duda')
 
       try {
-        const res = await fetch(
+        // 1. Envia para o Cloudinary
+        const res  = await fetch(
           `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
           { method: 'POST', body: formData }
         )
         const data = await res.json()
+
         if (data.secure_url) {
-          uploaded.push({
-            id:        data.public_id,
-            url:       data.secure_url,
-            thumb:     data.secure_url.replace('/upload/', '/upload/w_600,q_auto,f_auto/'),
-            caption:   '',
-            createdAt: Date.now(),
+          // 2. Salva a URL no banco via Rails API
+          const photo = await createPhoto(slug, token, {
+            url:           data.secure_url,
+            thumb_url:     data.secure_url.replace('/upload/', '/upload/w_600,q_auto,f_auto/'),
+            cloudinary_id: data.public_id,
+            caption:       '',
           })
+          setPhotos((prev) => [...prev, photo])
         }
       } catch (err) {
         console.error('Erro no upload:', err)
@@ -68,22 +75,31 @@ export default function Galeria() {
       setUploadPct(Math.round(((i + 1) / arr.length) * 100))
     }
 
-    setPhotos(prev => [...prev, ...uploaded])
     setUploading(false)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (photo) => {
     if (!window.confirm('Remover esta foto da galeria?')) return
-    setPhotos(prev => prev.filter(p => p.id !== id))
+    try {
+      await deletePhoto(slug, token, photo.id)
+      setPhotos((prev) => prev.filter((p) => p.id !== photo.id))
+      if (lightbox?.id === photo.id) setLightbox(null)
+    } catch (err) {
+      console.error('Erro ao deletar foto:', err)
+    }
   }
 
-  const handleCaption = (id, caption) => {
-    setPhotos(prev => prev.map(p => p.id === id ? { ...p, caption } : p))
+  const handleCaption = async (photo, caption) => {
+    try {
+      const updated = await updatePhoto(slug, token, photo.id, { caption })
+      setPhotos((prev) => prev.map((p) => p.id === photo.id ? updated : p))
+    } catch (err) {
+      console.error('Erro ao atualizar legenda:', err)
+    }
   }
 
-  // Navegar no lightbox
   const lightboxNav = (dir) => {
-    const idx = photos.findIndex(p => p.id === lightbox.id)
+    const idx  = photos.findIndex((p) => p.id === lightbox.id)
     const next = photos[idx + dir]
     if (next) setLightbox(next)
   }
@@ -96,14 +112,12 @@ export default function Galeria() {
         subtitle="cenas dos bastidores · um aperitivo do que será a noite"
       />
 
-      {/* Badge de admin — só aparece se logado como admin */}
       {isAdmin && (
         <div className="admin-badge">
           modo admin · você está logado como administrador
         </div>
       )}
 
-      {/* Área de upload — só aparece para admin */}
       {isAdmin && (
         <div className="upload-area">
           <input
@@ -112,16 +126,14 @@ export default function Galeria() {
             accept="image/*"
             multiple
             style={{ display: 'none' }}
-            onChange={e => handleFiles(e.target.files)}
+            onChange={(e) => handleFiles(e.target.files)}
           />
           <button
             className="upload-btn"
             onClick={() => fileInputRef.current.click()}
             disabled={uploading}
           >
-            {uploading
-              ? `Enviando... ${uploadPct}%`
-              : '+ Adicionar Fotos'}
+            {uploading ? `Enviando... ${uploadPct}%` : '+ Adicionar Fotos'}
           </button>
           {uploading && (
             <div className="upload-progress">
@@ -134,8 +146,11 @@ export default function Galeria() {
         </div>
       )}
 
-      {/* Galeria vazia */}
-      {photos.length === 0 && (
+      {loading && (
+        <p className="galeria-empty">Carregando fotos...</p>
+      )}
+
+      {!loading && photos.length === 0 && (
         <div className="galeria-empty">
           {isAdmin
             ? 'Nenhuma foto ainda. Use o botão acima para adicionar.'
@@ -143,7 +158,6 @@ export default function Galeria() {
         </div>
       )}
 
-      {/* Grid de fotos */}
       {photos.length > 0 && (
         <div className="galeria-grid">
           {photos.map((photo, i) => (
@@ -152,32 +166,30 @@ export default function Galeria() {
               className={'galeria-item' + (i === 0 || i === 3 ? ' galeria-tall' : '')}
             >
               <img
-                src={photo.thumb}
+                src={photo.thumb_url}
                 alt={photo.caption || 'Foto do ensaio'}
                 className="galeria-img"
                 onClick={() => setLightbox(photo)}
                 loading="lazy"
               />
 
-              {/* Controles de admin */}
               {isAdmin && (
                 <div className="galeria-admin-controls">
                   <input
                     className="galeria-caption-input"
-                    value={photo.caption}
-                    onChange={e => handleCaption(photo.id, e.target.value)}
+                    value={photo.caption || ''}
+                    onChange={(e) => handleCaption(photo, e.target.value)}
                     placeholder="Legenda (opcional)"
                   />
                   <button
                     className="galeria-delete-btn"
-                    onClick={() => handleDelete(photo.id)}
+                    onClick={() => handleDelete(photo)}
                   >
                     ✕
                   </button>
                 </div>
               )}
 
-              {/* Caption para visitantes */}
               {!isAdmin && photo.caption && (
                 <div className="galeria-overlay" onClick={() => setLightbox(photo)}>
                   <p className="galeria-caption">{photo.caption}</p>
@@ -194,10 +206,9 @@ export default function Galeria() {
           : 'as fotos da festa serão adicionadas após o evento'}
       </p>
 
-      {/* Lightbox */}
       {lightbox && (
         <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
-          <div className="lightbox-inner" onClick={e => e.stopPropagation()}>
+          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
             <img
               src={lightbox.url}
               alt={lightbox.caption || 'Foto do ensaio'}
@@ -210,7 +221,7 @@ export default function Galeria() {
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(-1)}
-                disabled={photos.findIndex(p => p.id === lightbox.id) === 0}
+                disabled={photos.findIndex((p) => p.id === lightbox.id) === 0}
               >
                 ← anterior
               </button>
@@ -223,7 +234,7 @@ export default function Galeria() {
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(1)}
-                disabled={photos.findIndex(p => p.id === lightbox.id) === photos.length - 1}
+                disabled={photos.findIndex((p) => p.id === lightbox.id) === photos.length - 1}
               >
                 próxima →
               </button>

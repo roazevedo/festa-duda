@@ -1,13 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthProvider'
 import { useAuth } from './contexts/useAuth'
-import Home from './pages/Home'
+import EventSite from './pages/EventSite'
 import Login from './pages/Login'
 
 function AppRoutes() {
   const { loading } = useAuth()
 
-  // Evita flash de conteúdo enquanto verifica o token
   if (loading) {
     return (
       <div style={{
@@ -32,8 +31,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/"      element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/login"          element={<Login />} />
+      <Route path="/:slug/:token"   element={<EventSite />} />
     </Routes>
   )
 }

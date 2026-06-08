@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  event: one
+  url: MyString
+  thumb_url: MyString
+  caption: MyString
+  cloudinary_id: MyString
+
+two:
+  event: two
+  url: MyString
+  thumb_url: MyString
+  caption: MyString
+  cloudinary_id: MyString

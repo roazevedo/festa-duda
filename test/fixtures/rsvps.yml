@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  event: one
+  name: MyString
+  guests: 1
+  attending: MyString
+  restriction: MyString
+
+two:
+  event: two
+  name: MyString
+  guests: 1
+  attending: MyString
+  restriction: MyString
