@@ -31,3 +31,8 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Build do frontend (gerado automaticamente)
+public/assets/
+public/index.html
+public/vite.svg

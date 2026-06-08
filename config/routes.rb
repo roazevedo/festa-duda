@@ -16,4 +16,9 @@ Rails.application.routes.draw do
       get "profile", to: "profile#show"
     end
   end
+
+  # Rota fallback — deixa o React Router cuidar das rotas
+  get '*path',
+    to: 'application#fallback_index_html',
+    constraints: ->(req) { !req.xhr? && req.format.html? }
 end
