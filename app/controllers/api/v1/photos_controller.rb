@@ -3,8 +3,9 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
   before_action :set_photo,          only: [ :update, :destroy ]
 
   def index
-    photos = @event.photos.order(created_at: :asc)
-    render json: photos.map { |p| photo_json(p) }
+    photos = @event.photos
+    photos = photos.where(category: params[:category]) if params[:category].present?
+    render json: photos.order(created_at: :asc).map { |p| photo_json(p) }
   end
 
   def create
@@ -40,7 +41,10 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
   end
 
   def photo_params
-    params.require(:photo).permit(:url, :thumb_url, :caption, :cloudinary_id)
+    params.require(:photo).permit(
+      :url, :thumb_url, :caption,
+      :cloudinary_id, :category
+    )
   end
 
   def photo_json(photo)
@@ -50,6 +54,7 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
       thumb_url:     photo.thumb_url,
       caption:       photo.caption,
       cloudinary_id: photo.cloudinary_id,
+      category:      photo.category,
       created_at:    photo.created_at
     }
   end

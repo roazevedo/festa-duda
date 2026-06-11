@@ -3,10 +3,8 @@ import AtoHeader from './AtoHeader'
 import { useAuth } from '../contexts/useAuth'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
+import { uploadToCloudinary } from '../services/cloudinary'
 import './Galeria.css'
-
-const CLOUDINARY_CLOUD_NAME    = 'SEU_CLOUD_NAME'
-const CLOUDINARY_UPLOAD_PRESET = 'SEU_PRESET'
 
 export default function Galeria() {
   const { user }        = useAuth()
@@ -20,14 +18,14 @@ export default function Galeria() {
   const [uploadPct, setUploadPct] = useState(0)
   const fileInputRef              = useRef(null)
 
-  // Carrega fotos do banco
+  // Carrega só fotos da categoria 'galeria'
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await getPhotos(slug, token)
+        const data = await getPhotos(slug, token, 'galeria')
         setPhotos(data)
       } catch (err) {
-        console.error('Erro ao carregar fotos:', err)
+        console.error('Erro ao carregar galeria:', err)
       } finally {
         setLoading(false)
       }
@@ -35,7 +33,6 @@ export default function Galeria() {
     load()
   }, [slug, token])
 
-  // Upload para Cloudinary + salva no banco
   const handleFiles = async (files) => {
     if (!files || files.length === 0) return
     setUploading(true)
@@ -44,32 +41,24 @@ export default function Galeria() {
     const arr = Array.from(files)
 
     for (let i = 0; i < arr.length; i++) {
-      const file = arr[i]
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
-      formData.append('folder', 'festa-duda')
-
       try {
-        // 1. Envia para o Cloudinary
-        const res  = await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-          { method: 'POST', body: formData }
+        // 1. Envia para Cloudinary
+        const cloudData = await uploadToCloudinary(
+          arr[i],
+          'festa-duda/galeria'
         )
-        const data = await res.json()
 
-        if (data.secure_url) {
-          // 2. Salva a URL no banco via Rails API
-          const photo = await createPhoto(slug, token, {
-            url:           data.secure_url,
-            thumb_url:     data.secure_url.replace('/upload/', '/upload/w_600,q_auto,f_auto/'),
-            cloudinary_id: data.public_id,
-            caption:       '',
-          })
-          setPhotos((prev) => [...prev, photo])
-        }
+        // 2. Salva no banco com categoria 'galeria'
+        const photo = await createPhoto(slug, token, {
+          ...cloudData,
+          caption:  '',
+          category: 'galeria',
+        })
+
+        setPhotos((prev) => [...prev, photo])
       } catch (err) {
         console.error('Erro no upload:', err)
+        alert('Erro ao enviar foto. Verifique as configurações do Cloudinary.')
       }
 
       setUploadPct(Math.round(((i + 1) / arr.length) * 100))
@@ -92,7 +81,9 @@ export default function Galeria() {
   const handleCaption = async (photo, caption) => {
     try {
       const updated = await updatePhoto(slug, token, photo.id, { caption })
-      setPhotos((prev) => prev.map((p) => p.id === photo.id ? updated : p))
+      setPhotos((prev) =>
+        prev.map((p) => (p.id === photo.id ? updated : p))
+      )
     } catch (err) {
       console.error('Erro ao atualizar legenda:', err)
     }
@@ -146,9 +137,7 @@ export default function Galeria() {
         </div>
       )}
 
-      {loading && (
-        <p className="galeria-empty">Carregando fotos...</p>
-      )}
+      {loading && <p className="galeria-empty">Carregando fotos...</p>}
 
       {!loading && photos.length === 0 && (
         <div className="galeria-empty">
@@ -163,7 +152,10 @@ export default function Galeria() {
           {photos.map((photo, i) => (
             <div
               key={photo.id}
-              className={'galeria-item' + (i === 0 || i === 3 ? ' galeria-tall' : '')}
+              className={
+                'galeria-item' +
+                (i === 0 || i === 3 ? ' galeria-tall' : '')
+              }
             >
               <img
                 src={photo.thumb_url}
@@ -191,7 +183,10 @@ export default function Galeria() {
               )}
 
               {!isAdmin && photo.caption && (
-                <div className="galeria-overlay" onClick={() => setLightbox(photo)}>
+                <div
+                  className="galeria-overlay"
+                  onClick={() => setLightbox(photo)}
+                >
                   <p className="galeria-caption">{photo.caption}</p>
                 </div>
               )}
@@ -206,9 +201,16 @@ export default function Galeria() {
           : 'as fotos da festa serão adicionadas após o evento'}
       </p>
 
+      {/* Lightbox */}
       {lightbox && (
-        <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
-          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="lightbox-overlay"
+          onClick={() => setLightbox(null)}
+        >
+          <div
+            className="lightbox-inner"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={lightbox.url}
               alt={lightbox.caption || 'Foto do ensaio'}
@@ -221,7 +223,9 @@ export default function Galeria() {
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(-1)}
-                disabled={photos.findIndex((p) => p.id === lightbox.id) === 0}
+                disabled={
+                  photos.findIndex((p) => p.id === lightbox.id) === 0
+                }
               >
                 ← anterior
               </button>
@@ -234,7 +238,10 @@ export default function Galeria() {
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(1)}
-                disabled={photos.findIndex((p) => p.id === lightbox.id) === photos.length - 1}
+                disabled={
+                  photos.findIndex((p) => p.id === lightbox.id) ===
+                  photos.length - 1
+                }
               >
                 próxima →
               </button>

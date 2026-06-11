@@ -39,8 +39,10 @@ export const createMessage = (slug, token, data) =>
   })
 
 // ── Photos ───────────────────────────────────────────────────
-export const getPhotos = (slug, token) =>
-  apiFetch(`/events/${slug}/${token}/photos`)
+export const getPhotos = (slug, token, category = null) => {
+  const query = category ? `?category=${category}` : ''
+  return apiFetch(`/events/${slug}/${token}/photos${query}`)
+}
 
 export const createPhoto = (slug, token, data) =>
   apiFetch(`/events/${slug}/${token}/photos`, {
