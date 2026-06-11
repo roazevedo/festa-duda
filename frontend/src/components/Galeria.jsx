@@ -16,9 +16,9 @@ export default function Galeria() {
   const [lightbox, setLightbox]   = useState(null)
   const [uploading, setUploading] = useState(false)
   const [uploadPct, setUploadPct] = useState(0)
-  const fileInputRef              = useRef(null)
+  const [uploadCount, setUploadCount] = useState({ done: 0, total: 0 })
+  const fileInputRef = useRef(null)
 
-  // Carrega só fotos da categoria 'galeria'
   useEffect(() => {
     const load = async () => {
       try {
@@ -35,36 +35,32 @@ export default function Galeria() {
 
   const handleFiles = async (files) => {
     if (!files || files.length === 0) return
-    setUploading(true)
-    setUploadPct(0)
-
     const arr = Array.from(files)
+    setUploading(true)
+    setUploadCount({ done: 0, total: arr.length })
+    setUploadPct(0)
 
     for (let i = 0; i < arr.length; i++) {
       try {
-        // 1. Envia para Cloudinary
-        const cloudData = await uploadToCloudinary(
-          arr[i],
-          'festa-duda/galeria'
-        )
-
-        // 2. Salva no banco com categoria 'galeria'
+        const cloudData = await uploadToCloudinary(arr[i], 'festa-duda/galeria')
         const photo = await createPhoto(slug, token, {
           ...cloudData,
           caption:  '',
           category: 'galeria',
         })
-
         setPhotos((prev) => [...prev, photo])
       } catch (err) {
         console.error('Erro no upload:', err)
         alert('Erro ao enviar foto. Verifique as configurações do Cloudinary.')
       }
-
-      setUploadPct(Math.round(((i + 1) / arr.length) * 100))
+      const done = i + 1
+      setUploadCount({ done, total: arr.length })
+      setUploadPct(Math.round((done / arr.length) * 100))
     }
 
     setUploading(false)
+    // Limpa o input para permitir reenvio do mesmo arquivo
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleDelete = async (photo) => {
@@ -81,9 +77,7 @@ export default function Galeria() {
   const handleCaption = async (photo, caption) => {
     try {
       const updated = await updatePhoto(slug, token, photo.id, { caption })
-      setPhotos((prev) =>
-        prev.map((p) => (p.id === photo.id ? updated : p))
-      )
+      setPhotos((prev) => prev.map((p) => (p.id === photo.id ? updated : p)))
     } catch (err) {
       console.error('Erro ao atualizar legenda:', err)
     }
@@ -103,14 +97,9 @@ export default function Galeria() {
         subtitle="cenas dos bastidores · um aperitivo do que será a noite"
       />
 
+      {/* Botão de upload — só para admin */}
       {isAdmin && (
-        <div className="admin-badge">
-          modo admin · você está logado como administrador
-        </div>
-      )}
-
-      {isAdmin && (
-        <div className="upload-area">
+        <div className="galeria-upload-bar">
           <input
             ref={fileInputRef}
             type="file"
@@ -119,19 +108,30 @@ export default function Galeria() {
             style={{ display: 'none' }}
             onChange={(e) => handleFiles(e.target.files)}
           />
-          <button
-            className="upload-btn"
-            onClick={() => fileInputRef.current.click()}
-            disabled={uploading}
-          >
-            {uploading ? `Enviando... ${uploadPct}%` : '+ Adicionar Fotos'}
-          </button>
-          {uploading && (
-            <div className="upload-progress">
-              <div className="upload-bar" style={{ width: `${uploadPct}%` }} />
+
+          {!uploading ? (
+            <button
+              className="galeria-upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <span className="galeria-upload-icon">+</span>
+              Adicionar Fotos ao Ensaio
+            </button>
+          ) : (
+            <div className="galeria-upload-progress">
+              <div className="galeria-progress-bar">
+                <div
+                  className="galeria-progress-fill"
+                  style={{ width: `${uploadPct}%` }}
+                />
+              </div>
+              <p className="galeria-progress-text">
+                Enviando {uploadCount.done} de {uploadCount.total} foto{uploadCount.total !== 1 ? 's' : ''}...
+              </p>
             </div>
           )}
-          <p className="upload-hint">
+
+          <p className="galeria-upload-hint">
             Selecione uma ou várias fotos · JPG, PNG, WEBP
           </p>
         </div>
@@ -152,19 +152,17 @@ export default function Galeria() {
           {photos.map((photo, i) => (
             <div
               key={photo.id}
-              className={
-                'galeria-item' +
-                (i === 0 || i === 3 ? ' galeria-tall' : '')
-              }
+              className={'galeria-item' + (i === 0 || i === 3 ? ' galeria-tall' : '')}
             >
               <img
                 src={photo.thumb_url}
                 alt={photo.caption || 'Foto do ensaio'}
                 className="galeria-img"
-                onClick={() => setLightbox(photo)}
+                onClick={() => !isAdmin && setLightbox(photo)}
                 loading="lazy"
               />
 
+              {/* Overlay admin com legenda e delete */}
               {isAdmin && (
                 <div className="galeria-admin-controls">
                   <input
@@ -182,6 +180,7 @@ export default function Galeria() {
                 </div>
               )}
 
+              {/* Caption para visitantes */}
               {!isAdmin && photo.caption && (
                 <div
                   className="galeria-overlay"
@@ -203,14 +202,8 @@ export default function Galeria() {
 
       {/* Lightbox */}
       {lightbox && (
-        <div
-          className="lightbox-overlay"
-          onClick={() => setLightbox(null)}
-        >
-          <div
-            className="lightbox-inner"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
+          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
             <img
               src={lightbox.url}
               alt={lightbox.caption || 'Foto do ensaio'}
@@ -223,25 +216,17 @@ export default function Galeria() {
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(-1)}
-                disabled={
-                  photos.findIndex((p) => p.id === lightbox.id) === 0
-                }
+                disabled={photos.findIndex((p) => p.id === lightbox.id) === 0}
               >
                 ← anterior
               </button>
-              <button
-                className="lightbox-close"
-                onClick={() => setLightbox(null)}
-              >
+              <button className="lightbox-close" onClick={() => setLightbox(null)}>
                 fechar
               </button>
               <button
                 className="lightbox-btn"
                 onClick={() => lightboxNav(1)}
-                disabled={
-                  photos.findIndex((p) => p.id === lightbox.id) ===
-                  photos.length - 1
-                }
+                disabled={photos.findIndex((p) => p.id === lightbox.id) === photos.length - 1}
               >
                 próxima →
               </button>

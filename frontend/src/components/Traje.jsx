@@ -7,30 +7,31 @@ import { uploadToCloudinary } from '../services/cloudinary'
 import './Traje.css'
 
 const SLOTS = [
-  { id: 'vestido_longo',  label: 'VESTIDO LONGO',  sub: 'Referência · convidadas'   },
-  { id: 'esmoquim',       label: 'ESMOQUIM',        sub: 'Referência · convidados'   },
-  { id: 'midi_de_gala',   label: 'MIDI DE GALA',    sub: 'Opção alternativa'         },
-  { id: 'terno_escuro',   label: 'TERNO ESCURO',    sub: 'Opção alternativa'         },
+  { id: 'vestido_longo', label: 'VESTIDO LONGO', sub: 'Referência · convidadas' },
+  { id: 'esmoquim',      label: 'ESMOQUIM',       sub: 'Referência · convidados' },
+  { id: 'midi_de_gala',  label: 'MIDI DE GALA',   sub: 'Opção alternativa'      },
+  { id: 'terno_escuro',  label: 'TERNO ESCURO',   sub: 'Opção alternativa'      },
 ]
 
 const COLORS = [
-  { name: 'PRETO',     sub: 'Smoking · Vestido longo',  hex: '#0e0a08', textLight: true,  avoid: false },
-  { name: 'DOURADO',   sub: 'Cetim · Lantejoula',        hex: '#c9a84c', textLight: false, avoid: false },
-  { name: 'BORGONHA',  sub: 'reservado · evitar',        hex: '#6b0a0a', textLight: true,  avoid: true  },
-  { name: 'CHAMPANHE', sub: 'Tons metálicos suaves',     hex: '#d4b896', textLight: false, avoid: false },
-  { name: 'ESMERALDA', sub: 'Veludo · Cetim profundo',   hex: '#1a4a2e', textLight: true,  avoid: false },
+  { name: 'PRETO',     sub: 'Smoking · Vestido longo', hex: '#0e0a08', textLight: true,  avoid: false },
+  { name: 'DOURADO',   sub: 'Cetim · Lantejoula',       hex: '#c9a84c', textLight: false, avoid: false },
+  { name: 'BORGONHA',  sub: 'reservado · evitar',       hex: '#6b0a0a', textLight: true,  avoid: true  },
+  { name: 'CHAMPANHE', sub: 'Tons metálicos suaves',    hex: '#d4b896', textLight: false, avoid: false },
+  { name: 'ESMERALDA', sub: 'Veludo · Cetim profundo',  hex: '#1a4a2e', textLight: true,  avoid: false },
 ]
 
-function SlotUpload({ slot, photo, isAdmin, onUpload, onDelete, uploading }) {
+function RefSlot({ slot, photo, isAdmin, onUpload, onDelete, uploading }) {
   const fileRef = useRef(null)
+  const isUploading = uploading === slot.id
 
   return (
     <div className="traje-ref-item">
       <div
         className={'traje-ref-img' + (isAdmin ? ' traje-ref-admin' : '')}
-        onClick={() => isAdmin && !photo && fileRef.current?.click()}
+        onClick={() => isAdmin && !photo && !isUploading && fileRef.current?.click()}
       >
-        {/* Foto enviada */}
+        {/* ── Foto enviada ── */}
         {photo && (
           <img
             src={photo.thumb_url}
@@ -39,43 +40,46 @@ function SlotUpload({ slot, photo, isAdmin, onUpload, onDelete, uploading }) {
           />
         )}
 
-        {/* Placeholder sem foto */}
-        {!photo && (
-          <>
-            <div className="traje-ref-lines">
-              {[...Array(12)].map((_, j) => (
-                <div key={j} className="ref-line" />
-              ))}
-            </div>
-            <p className="traje-ref-label">{slot.label}</p>
-            <p className="traje-ref-sub">{slot.sub}</p>
-          </>
+        {/* ── Placeholder sem foto ── */}
+        {!photo && !isUploading && (
+          <div className="traje-ref-lines">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="ref-line" />
+            ))}
+          </div>
         )}
 
-        {/* Overlay admin */}
-        {isAdmin && (
-          <div className="traje-ref-overlay">
-            {uploading === slot.id ? (
-              <p className="traje-ref-overlay-text">Enviando...</p>
-            ) : photo ? (
+        {/* ── Spinner de upload ── */}
+        {isUploading && (
+          <div className="traje-uploading">
+            <div className="traje-spinner" />
+            <p className="traje-uploading-text">Enviando...</p>
+          </div>
+        )}
+
+        {/* ── Hover overlay para admin ── */}
+        {isAdmin && !isUploading && (
+          <div className="traje-overlay">
+            {!photo ? (
+              /* Slot vazio — mostra "+" */
+              <span className="traje-overlay-plus">+</span>
+            ) : (
+              /* Slot com foto — mostra botão remover */
               <button
-                className="traje-ref-delete"
+                className="traje-overlay-remove"
                 onClick={(e) => { e.stopPropagation(); onDelete(photo) }}
               >
                 ✕ remover
               </button>
-            ) : (
-              <p className="traje-ref-overlay-text">+ adicionar foto</p>
             )}
           </div>
         )}
 
-        {/* Caption se tiver foto */}
-        {photo && !isAdmin && (
-          <div className="traje-ref-caption-bar">
-            <p className="traje-ref-label">{slot.label}</p>
-          </div>
-        )}
+        {/* ── Label no rodapé (sempre visível) ── */}
+        <div className="traje-ref-footer">
+          <p className="traje-ref-label">{slot.label}</p>
+          {!photo && <p className="traje-ref-sub">{slot.sub}</p>}
+        </div>
 
         <input
           ref={fileRef}
@@ -85,6 +89,7 @@ function SlotUpload({ slot, photo, isAdmin, onUpload, onDelete, uploading }) {
           onChange={(e) => {
             const file = e.target.files?.[0]
             if (file) onUpload(slot.id, file)
+            e.target.value = ''
           }}
         />
       </div>
@@ -97,10 +102,9 @@ export default function Traje() {
   const { slug, token } = useEvent()
   const isAdmin         = user?.admin === true
 
-  const [photos, setPhotos]     = useState([])
-  const [uploading, setUploading] = useState(null) // slot id sendo enviado
+  const [photos, setPhotos]       = useState([])
+  const [uploading, setUploading] = useState(null)
 
-  // Carrega fotos da categoria 'traje'
   useEffect(() => {
     const load = async () => {
       try {
@@ -116,17 +120,16 @@ export default function Traje() {
   const handleUpload = async (slotId, file) => {
     setUploading(slotId)
     try {
-      // 1. Envia para Cloudinary
       const cloudData = await uploadToCloudinary(file, 'festa-duda/traje')
-
-      // 2. Salva no banco com categoria 'traje' e caption = slotId
       const photo = await createPhoto(slug, token, {
         ...cloudData,
         caption:  slotId,
         category: 'traje',
       })
-
-      setPhotos((prev) => [...prev.filter(p => p.caption !== slotId), photo])
+      setPhotos((prev) => [
+        ...prev.filter(p => p.caption !== slotId),
+        photo,
+      ])
     } catch (err) {
       console.error('Erro no upload:', err)
       alert('Erro ao enviar foto. Verifique as configurações do Cloudinary.')
@@ -145,8 +148,8 @@ export default function Traje() {
     }
   }
 
-  // Encontra a foto de cada slot pelo caption
-  const photoForSlot = (slotId) => photos.find(p => p.caption === slotId) || null
+  const photoForSlot = (slotId) =>
+    photos.find(p => p.caption === slotId) || null
 
   return (
     <section className="section">
@@ -156,7 +159,6 @@ export default function Traje() {
         subtitle="social completo · uma releitura dos anos 20"
       />
 
-      {/* Topo: card + aviso */}
       <div className="traje-top">
         <div className="traje-card">
           <p className="traje-card-eyebrow">TRAJE</p>
@@ -206,16 +208,16 @@ export default function Traje() {
 
           {isAdmin && (
             <p className="traje-admin-hint">
-              ⚙ Clique em cada imagem para adicionar uma foto de referência.
+              ⚙ Passe o mouse sobre cada imagem para adicionar uma foto.
             </p>
           )}
         </div>
       </div>
 
-      {/* Grade de referências com upload */}
+      {/* Grade de referências */}
       <div className="traje-refs">
         {SLOTS.map((slot) => (
-          <SlotUpload
+          <RefSlot
             key={slot.id}
             slot={slot}
             photo={photoForSlot(slot.id)}
