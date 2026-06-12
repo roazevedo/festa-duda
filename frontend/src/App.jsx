@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthProvider'
 import { useAuth } from './contexts/useAuth'
-import EventSite from './pages/EventSite'
+import Home from './pages/Home'
 import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import EventSite from './pages/EventSite'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function AppRoutes() {
   const { loading } = useAuth()
@@ -31,8 +34,22 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login"          element={<Login />} />
-      <Route path="/:slug/:token"   element={<EventSite />} />
+      {/* Pública */}
+      <Route path="/"      element={<Home />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* Protegida */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Site do evento */}
+      <Route path="/:slug/:token" element={<EventSite />} />
     </Routes>
   )
 }

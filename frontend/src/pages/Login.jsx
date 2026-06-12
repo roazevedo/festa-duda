@@ -17,7 +17,7 @@ export default function Login() {
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/')
+      navigate('/dashboard')
     } catch {
       setError('Email ou senha inválidos.')
     } finally {
@@ -28,6 +28,13 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-box">
+        <button
+          className="login-platform-logo"
+          onClick={() => navigate('/')}
+        >
+          Convida<span>.me</span>
+        </button>
+
         <p className="login-eyebrow">área restrita</p>
         <h1 className="login-title">Acesso</h1>
         <p className="login-sub">administração do evento</p>
@@ -63,11 +70,8 @@ export default function Login() {
           </button>
         </form>
 
-        <button
-          className="login-back"
-          onClick={() => navigate('/')}
-        >
-          ← voltar ao site
+        <button className="login-back" onClick={() => navigate('/')}>
+          ← voltar ao início
         </button>
       </div>
     </div>

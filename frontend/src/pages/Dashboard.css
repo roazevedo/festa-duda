@@ -1,0 +1,401 @@
+.dash {
+  min-height: 100vh;
+  background: #07051a;
+  color: #f0ecff;
+}
+
+/* ── HEADER ── */
+.dash-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 5, 26, 0.95);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+  backdrop-filter: blur(16px);
+}
+
+.dash-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.8vw, 18px);
+  letter-spacing: 0.2em;
+  color: #f0ecff;
+  text-transform: uppercase;
+}
+
+.dash-logo span {
+  background: linear-gradient(90deg, #f0c060, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dash-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dash-user-email {
+  font-family: var(--font-body);
+  font-size: clamp(12px, 1.4vw, 15px);
+  color: #9b8cc4;
+  font-style: italic;
+}
+
+.dash-logout-btn {
+  background: transparent;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  color: #9b8cc4;
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 10px);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dash-logout-btn:hover {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+/* ── MAIN ── */
+.dash-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 48px);
+}
+
+/* ── BOAS VINDAS ── */
+.dash-welcome-title {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 2vw, 20px);
+  letter-spacing: 0.3em;
+  color: #f0ecff;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.dash-welcome-sub {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.7vw, 18px);
+  color: #9b8cc4;
+  font-style: italic;
+}
+
+/* ── STATS GLOBAIS ── */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(8px, 1.5vw, 16px);
+}
+
+.dash-stat-card {
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: clamp(16px, 2.5vw, 28px);
+  text-align: center;
+  background: #0e0b28;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+}
+
+.dash-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+  opacity: 0.5;
+}
+
+.dash-stat-card:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(109,40,217,0.2);
+}
+
+.dash-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #f0c060, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dash-stat-label {
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 0.3em;
+  color: #9b8cc4;
+  text-transform: uppercase;
+}
+
+/* ── SECTION ── */
+.dash-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: clamp(16px, 2.5vw, 28px);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.18);
+}
+
+.dash-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(12px, 1.6vw, 16px);
+  letter-spacing: 0.3em;
+  color: #f0ecff;
+  text-transform: uppercase;
+}
+
+.dash-new-btn {
+  background: transparent;
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+  color: #9b8cc4;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── EMPTY/LOADING ── */
+.dash-loading,
+.dash-empty-text {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: #9b8cc4;
+  font-style: italic;
+  padding: 32px 0;
+}
+
+/* ── EVENTOS GRID ── */
+.dash-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.dash-event-card {
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: #0e0b28;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.dash-event-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #f0c060);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.dash-event-card:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(109,40,217,0.2);
+}
+
+.dash-event-card:hover::before { opacity: 1; }
+
+.dash-event-header {
+  padding: clamp(16px, 2vw, 24px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.dash-event-type {
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 10px);
+  letter-spacing: 0.4em;
+  color: #f0c060;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.dash-event-name {
+  font-family: var(--font-title);
+  font-size: clamp(18px, 2.5vw, 26px);
+  color: #f0ecff;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.dash-event-date-text {
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 0.15em;
+  color: #9b8cc4;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dash-event-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.dash-event-stat {
+  padding: clamp(10px, 1.5vw, 16px);
+  text-align: center;
+  border-right: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.dash-event-stat:last-child { border-right: none; }
+
+.dash-event-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 26px);
+  color: #a78bfa;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.dash-event-stat-label {
+  font-family: var(--font-display);
+  font-size: clamp(7px, 0.9vw, 9px);
+  letter-spacing: 0.25em;
+  color: #9b8cc4;
+  text-transform: uppercase;
+}
+
+.dash-event-link-box {
+  padding: clamp(12px, 1.5vw, 18px) clamp(16px, 2vw, 24px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  background: rgba(7, 5, 26, 0.6);
+}
+
+.dash-event-link-label {
+  font-family: var(--font-display);
+  font-size: clamp(8px, 0.9vw, 10px);
+  letter-spacing: 0.3em;
+  color: #f0c060;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+
+.dash-event-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dash-event-link-url {
+  font-family: monospace;
+  font-size: clamp(11px, 1.3vw, 13px);
+  color: #9b8cc4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.dash-copy-btn {
+  background: transparent;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #9b8cc4;
+  font-family: var(--font-display);
+  font-size: clamp(8px, 0.9vw, 10px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.dash-copy-btn:hover {
+  border-color: rgba(139, 92, 246, 0.7);
+  color: #f0ecff;
+}
+
+.dash-event-actions {
+  padding: clamp(12px, 1.5vw, 18px) clamp(16px, 2vw, 24px);
+  display: flex;
+  gap: 10px;
+}
+
+.dash-open-btn {
+  flex: 1;
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  border: none;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px rgba(109,40,217,0.3);
+}
+
+.dash-open-btn:hover {
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  box-shadow: 0 4px 20px rgba(109,40,217,0.5);
+}
+
+.dash-external-btn {
+  background: transparent;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  color: #9b8cc4;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dash-external-btn:hover {
+  border-color: rgba(139, 92, 246, 0.6);
+  color: #f0ecff;
+}
+
+@media (max-width: 640px) {
+  .dash-stats       { grid-template-columns: repeat(2, 1fr); }
+  .dash-events-grid { grid-template-columns: 1fr; }
+  .dash-user-email  { display: none; }
+}

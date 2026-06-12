@@ -13,6 +13,10 @@ class Event < ApplicationRecord
                          inclusion: { in: %w[quinze_anos casamento aniversario] }
   validates :event_date, presence: true
 
+  # Garante que os campos sempre tenham um valor booleano
+  validates :rsvp_list_public, inclusion: { in: [ true, false ] }
+  validates :messages_public,  inclusion: { in: [ true, false ] }
+
   def full_path
     "/#{slug}/#{token}"
   end

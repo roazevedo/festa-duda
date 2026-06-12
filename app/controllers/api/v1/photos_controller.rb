@@ -1,6 +1,7 @@
 class Api::V1::PhotosController < Api::V1::EventResourcesController
   before_action :authenticate_user!, only: [ :create, :update, :destroy ]
   before_action :set_photo,          only: [ :update, :destroy ]
+  ALLOWED_CATEGORIES = %w[galeria traje].freeze
 
   def index
     photos = @event.photos
@@ -29,7 +30,7 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
 
   def destroy
     @photo.destroy
-    render json: { message: 'Foto removida.' }
+    render json: { message: "Foto removida." }
   end
 
   private
@@ -37,14 +38,16 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
   def set_photo
     @photo = @event.photos.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Foto não encontrada.' }, status: :not_found
+    render json: { error: "Foto não encontrada." }, status: :not_found
   end
 
   def photo_params
-    params.require(:photo).permit(
-      :url, :thumb_url, :caption,
-      :cloudinary_id, :category
-    )
+    params.require(:photo).permit(:url, :cloudinary_id, :thumb_url, :caption, :category)
+          .tap do |p|
+      unless ALLOWED_CATEGORIES.include?(p[:category])
+        raise ActionController::BadRequest, "Categoria inválida"
+      end
+    end
   end
 
   def photo_json(photo)

@@ -1,6 +1,9 @@
 .login-page {
   min-height: 100vh;
-  background: radial-gradient(ellipse at 40% 30%, #2a0808 0%, #0e0a08 60%);
+  background: #07051a;
+  background-image:
+    radial-gradient(ellipse 80% 70% at 50% -20%, rgba(109,40,217,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(240,192,96,0.06) 0%, transparent 60%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,29 +11,67 @@
 }
 
 .login-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: clamp(32px, 5vw, 56px) clamp(28px, 4vw, 48px);
+  background: #0e0b28;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: clamp(36px, 5vw, 60px) clamp(32px, 4vw, 52px);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   text-align: center;
+  position: relative;
+  box-shadow: 0 0 60px rgba(109, 40, 217, 0.15);
+}
+
+/* Linha decorativa no topo do card */
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #8b5cf6, #f0c060, #8b5cf6, transparent);
+}
+
+.login-platform-logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.8vw, 19px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  align-self: center;
+  transition: opacity 0.2s;
+}
+
+.login-platform-logo:hover { opacity: 0.75; }
+
+.login-platform-logo span {
+  background: linear-gradient(90deg, #f0c060, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Texto sem gradiente */
+.login-platform-logo-text {
+  color: #f0ecff;
 }
 
 .login-eyebrow {
   font-family: var(--font-display);
   font-size: 10px;
   letter-spacing: 0.5em;
-  color: var(--text-muted);
+  color: #9b8cc4;
   text-transform: uppercase;
 }
 
 .login-title {
   font-family: var(--font-title);
   font-size: clamp(28px, 5vw, 40px);
-  color: var(--cream);
+  color: #f0ecff;
   font-style: italic;
 }
 
@@ -38,19 +79,20 @@
   font-family: var(--font-display);
   font-size: 10px;
   letter-spacing: 0.4em;
-  color: var(--gold-dim);
+  color: #9b8cc4;
   text-transform: uppercase;
   margin-bottom: 16px;
+  opacity: 0.7;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   text-align: left;
   margin-top: 8px;
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  padding-top: 28px;
 }
 
 .login-field {
@@ -63,16 +105,16 @@
   font-family: var(--font-display);
   font-size: 10px;
   letter-spacing: 0.35em;
-  color: var(--text-muted);
+  color: #9b8cc4;
   text-transform: uppercase;
 }
 
 .login-input {
-  background: var(--bg-dark);
+  background: rgba(7, 5, 26, 0.8);
   border: none;
-  border-bottom: 1px solid var(--gold-dim);
-  color: var(--cream);
-  padding: 10px 4px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.35);
+  color: #f0ecff;
+  padding: 11px 4px;
   font-family: var(--font-body);
   font-size: var(--text-base);
   outline: none;
@@ -80,44 +122,50 @@
   width: 100%;
 }
 
-.login-input:focus { border-bottom-color: var(--gold); }
+.login-input:focus { border-bottom-color: #8b5cf6; }
 
 .login-error {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--red-light);
+  color: #f87171;
   font-style: italic;
 }
 
 .login-btn {
-  background: var(--red);
-  color: var(--cream);
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #fff;
   border: none;
-  padding: 14px;
+  padding: 15px;
   font-family: var(--font-display);
   font-size: 11px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.25s;
   margin-top: 4px;
   width: 100%;
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.35);
 }
 
-.login-btn:hover:not(:disabled) { background: var(--red-light); }
+.login-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  box-shadow: 0 6px 28px rgba(109, 40, 217, 0.55);
+  transform: translateY(-1px);
+}
+
 .login-btn:disabled { opacity: 0.6; cursor: wait; }
 
 .login-back {
   background: transparent;
   border: none;
-  color: var(--text-muted);
+  color: #9b8cc4;
   font-family: var(--font-display);
   font-size: 9px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 10px;
   transition: color 0.2s;
 }
 
-.login-back:hover { color: var(--cream); }
+.login-back:hover { color: #f0ecff; }

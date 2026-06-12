@@ -1,14 +1,16 @@
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
 import './AdminBar.css'
 
 export default function AdminBar() {
   const { user, logout } = useAuth()
+  const navigate         = useNavigate()
 
   if (!user) return null
 
   const handleLogout = async () => {
     await logout()
-    window.location.href = '/'
+    navigate('/')
   }
 
   return (
@@ -20,9 +22,17 @@ export default function AdminBar() {
           <span className="admin-bar-sep">·</span>
           <span className="admin-bar-email">{user.email}</span>
         </div>
-        <button className="admin-bar-logout" onClick={handleLogout}>
-          Sair
-        </button>
+        <div className="admin-bar-right">
+          <button
+            className="admin-bar-dashboard"
+            onClick={() => navigate('/dashboard')}
+          >
+            Painel
+          </button>
+          <button className="admin-bar-logout" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
       </div>
     </div>
   )

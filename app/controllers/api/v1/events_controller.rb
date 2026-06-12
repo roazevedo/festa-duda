@@ -1,7 +1,7 @@
 class Api::V1::EventsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy]
-  before_action :set_event,          only: [:show, :update, :destroy]
-  before_action :authorize_owner!,   only: [:update, :destroy]
+  before_action :authenticate_user!, only: [ :index, :create, :update, :destroy ]
+  before_action :set_event,          only: [ :show, :update, :destroy ]
+  before_action :authorize_owner!,   only: [ :update, :destroy ]
 
   # GET /api/v1/events/:slug/:token — público
   def show
@@ -38,7 +38,7 @@ class Api::V1::EventsController < ApplicationController
   # DELETE /api/v1/events/:slug/:token
   def destroy
     @event.destroy
-    render json: { message: 'Evento removido.' }
+    render json: { message: "Evento removido." }
   end
 
   private
@@ -46,32 +46,47 @@ class Api::V1::EventsController < ApplicationController
   def set_event
     @event = Event.find_by!(slug: params[:slug], token: params[:token])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Evento não encontrado.' }, status: :not_found
+    render json: { error: "Evento não encontrado." }, status: :not_found
   end
 
   def authorize_owner!
     unless @event.user == current_user || current_user.admin?
-      render json: { error: 'Não autorizado.' }, status: :forbidden
+      render json: { error: "Não autorizado." }, status: :forbidden
     end
   end
 
   def event_params
     params.require(:event).permit(
-      :slug, :name, :event_type, :event_date,
-      :venue_name, :venue_address, settings: {}
+      :slug,
+      :name,
+      :event_type,
+      :event_date,
+      :venue_name,
+      :venue_address,
+      :rsvp_list_public,
+      :messages_public,
+      settings: {}
     )
   end
 
   def event_json(event)
     {
-      id:            event.id,
-      slug:          event.slug,
-      name:          event.name,
-      event_type:    event.event_type,
-      event_date:    event.event_date,
-      venue_name:    event.venue_name,
-      venue_address: event.venue_address,
-      settings:      event.settings || {}
+      id:               event.id,
+      slug:             event.slug,
+      token:            event.token,
+      name:             event.name,
+      event_type:       event.event_type,
+      event_date:       event.event_date,
+      venue_name:       event.venue_name,
+      venue_address:    event.venue_address,
+      rsvp_list_public: event.rsvp_list_public,
+      messages_public:  event.messages_public,
+      settings:         event.settings || {},
+      stats: {
+        rsvps:    event.rsvps.where(attending: "yes").count,
+        messages: event.messages.count,
+        photos:   event.photos.count
+      }
     }
   end
 end
