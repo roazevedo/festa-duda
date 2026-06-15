@@ -11,6 +11,16 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
+
+  # Ativa o Rack::Attack e limpa o cache apenas para specs marcadas
+  config.before(:each, rate_limit: true) do
+    Rack::Attack.enabled = true
+    Rack::Attack.cache.store.clear
+  end
+
+  config.after(:each, rate_limit: true) do
+    Rack::Attack.enabled = false
+  end
 end
 
 Shoulda::Matchers.configure do |config|

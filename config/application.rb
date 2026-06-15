@@ -32,6 +32,8 @@ module FestaDuda
     # Serve arquivos estáticos do build do React
     config.public_file_server.enabled = true
 
+    config.middleware.use Rack::Attack
+
     config.action_dispatch.default_headers = {
       "X-Frame-Options"        => "SAMEORIGIN",
       "X-Content-Type-Options" => "nosniff",
