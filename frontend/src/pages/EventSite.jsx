@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { EventProvider } from '../contexts/EventProvider'
 import { useEvent } from '../contexts/useEvent'
@@ -124,6 +125,15 @@ function EventContent() {
 
 export default function EventSite() {
   const { slug, token } = useParams()
+
+  useEffect(() => {
+    const meta = document.createElement('meta')
+    meta.name = 'robots'
+    meta.content = 'noindex, nofollow'
+    document.head.appendChild(meta)
+
+    return () => document.head.removeChild(meta)
+  }, [])
 
   return (
     <EventProvider slug={slug} token={token}>

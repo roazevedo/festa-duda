@@ -1,4 +1,5 @@
 require_relative "boot"
+require_relative "../lib/security_headers_middleware"
 
 require "rails/all"
 
@@ -33,17 +34,6 @@ module FestaDuda
     config.public_file_server.enabled = true
 
     config.middleware.use Rack::Attack
-
-    config.action_dispatch.default_headers = {
-      "X-Frame-Options"        => "SAMEORIGIN",
-      "X-Content-Type-Options" => "nosniff",
-      "X-XSS-Protection"       => "1; mode=block",
-      "Content-Security-Policy" =>
-        "default-src 'self'; " \
-        "img-src 'self' res.cloudinary.com data:; " \
-        "script-src 'self'; " \
-        "style-src 'self' 'unsafe-inline'; " \
-        "font-src 'self' fonts.gstatic.com;"
-    }
+    config.middleware.unshift SecurityHeadersMiddleware
   end
 end

@@ -3,7 +3,21 @@ class Api::V1::SessionsController < ApplicationController
     user = User.find_by(email: params.dig(:user, :email))
 
     if user&.valid_password?(params.dig(:user, :password))
-      warden.set_user(user, scope: :user)  # ← dispara o JWT dispatch sem sessão
+      warden.set_user(user, scope: :user)
+
+      # O token JWT recém-gerado fica em request.env neste ponto —
+      # o header Authorization só é escrito DEPOIS, por um middleware
+      # do devise-jwt (response.headers ainda estaria nil aqui).
+      token = request.env["warden-jwt_auth.token"] ||
+              response.headers["Authorization"]&.split(" ")&.last
+
+      if token
+        jti = JWT.decode(token, nil, false).first["jti"]
+        SessionActivity.store.write(
+          "jwt_last_seen:#{jti}", Time.current, expires_in: SessionActivity::INACTIVITY_TIMEOUT
+        )
+      end
+
       render json: {
         message: "Login realizado com sucesso.",
         user: {

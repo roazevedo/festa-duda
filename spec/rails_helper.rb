@@ -7,6 +7,7 @@ require 'factory_bot_rails'
 Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
 
 RSpec.configure do |config|
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryBot::Syntax::Methods
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
