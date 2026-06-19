@@ -176,3 +176,42 @@
     border-bottom: none;
   }
 }
+
+/* ── Estado "Em breve" — feature ainda não implementada ── */
+.gifts-wrapper {
+  position: relative;
+}
+
+.gifts-wrapper-disabled .gifts-table {
+  filter: grayscale(0.6);
+  opacity: 0.35;
+  pointer-events: none; /* desativa cliques nos botões PIX/CARTÃO */
+  user-select: none;
+}
+
+.coming-soon-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  z-index: 10;
+  background: var(--red);
+  border: 1px solid var(--gold);
+  padding: 10px 36px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.coming-soon-banner span {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 2vw, 18px);
+  letter-spacing: 0.4em;
+  color: var(--cream);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .coming-soon-banner {
+    padding: 8px 24px;
+  }
+}

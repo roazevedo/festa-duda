@@ -44,6 +44,15 @@ export function AuthProvider({ children }) {
     verify()
   }, [logout])
 
+  // ── Guarda um token JWT recebido externamente (Google OAuth, etc.) ──
+  const storeToken = useCallback((jwt, userData) => {
+    localStorage.setItem('token', jwt)
+    setToken(jwt)
+    setUser(userData)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
+  }, [])
+
+  // ── Login manual ──
   const login = async (email, password) => {
     const response = await axios.post(
       `${API}/login`,
@@ -52,14 +61,39 @@ export function AuthProvider({ children }) {
     )
     const jwt = response.headers['authorization']?.replace('Bearer ', '')
     if (!jwt) throw new Error('Token não recebido')
-    localStorage.setItem('token', jwt)
-    setToken(jwt)
-    setUser(response.data.user)
+    storeToken(jwt, response.data.user)
+    return response.data.user
+  }
+
+  // ── Cadastro manual ──
+  const signup = async (email, password, passwordConfirmation) => {
+    const response = await axios.post(
+      `${API}/signup`,
+      { user: { email, password, password_confirmation: passwordConfirmation } },
+      { withCredentials: false }
+    )
+    const jwt = response.headers['authorization']?.replace('Bearer ', '')
+    if (!jwt) throw new Error('Token não recebido')
+    storeToken(jwt, response.data.user)
+    return response.data.user
+  }
+
+  // ── Login / cadastro com Google ──
+  // Recebe o credential (Google ID Token) retornado pelo @react-oauth/google
+  const loginWithGoogle = async (credential) => {
+    const response = await axios.post(
+      `${API}/auth/google`,
+      { credential },
+      { withCredentials: false }
+    )
+    const jwt = response.headers['authorization']?.replace('Bearer ', '')
+    if (!jwt) throw new Error('Token não recebido')
+    storeToken(jwt, response.data.user)
     return response.data.user
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, signup, loginWithGoogle, logout, loading }}>
       {children}
     </AuthContext.Provider>
   )

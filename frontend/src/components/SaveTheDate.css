@@ -1,0 +1,128 @@
+.std-section {
+  padding: clamp(56px, 8vw, 96px) clamp(20px, 4vw, 48px);
+  text-align: center;
+  background: var(--bg-dark);
+}
+
+.std-eyebrow {
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 11px);
+  letter-spacing: 0.5em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.std-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px);
+  color: var(--gold);
+  font-style: italic;
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+.std-frame {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.std-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Botão de adicionar (admin, sem vídeo ainda) ── */
+.std-add-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.std-add-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.std-add-icon {
+  font-size: clamp(28px, 4vw, 40px);
+  font-family: var(--font-display);
+  line-height: 1;
+}
+
+.std-add-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* ── Botão de remover (admin, com vídeo) ── */
+.std-remove-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.2s;
+}
+
+.std-remove-btn:hover {
+  background: var(--red);
+}
+
+/* ── Estado de upload em progresso ── */
+.std-uploading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.std-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: std-spin 0.8s linear infinite;
+}
+
+@keyframes std-spin {
+  to { transform: rotate(360deg); }
+}
+
+.std-uploading-text {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 480px) {
+  .std-frame { aspect-ratio: 4 / 5; }
+}

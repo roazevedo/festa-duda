@@ -7,7 +7,7 @@ class Photo < ApplicationRecord
   ALLOWED_EXTENSIONS = %w[jpg jpeg png gif webp].freeze
 
   validates :url, format: {
-    with: /\Ahttps:\/\/res\.cloudinary\.com\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?\z/i,
+    with: /\Ahttps:\/\/res\.cloudinary\.com\/.+\.(jpg|jpeg|png|gif|webp|mp4|mov|webm)(\?.*)?\z/i,
     message: "deve ser uma URL válida do Cloudinary"
   }
   validates :cloudinary_id, format: {

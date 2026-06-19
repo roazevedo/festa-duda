@@ -13,7 +13,7 @@
 .login-box {
   background: #0e0b28;
   border: 1px solid rgba(139, 92, 246, 0.25);
-  padding: clamp(36px, 5vw, 60px) clamp(32px, 4vw, 52px);
+  padding: clamp(36px, 5vw, 56px) clamp(32px, 4vw, 48px);
   width: 100%;
   max-width: 420px;
   display: flex;
@@ -44,6 +44,7 @@
   margin-bottom: 8px;
   align-self: center;
   transition: opacity 0.2s;
+  color: #f0ecff;
 }
 
 .login-platform-logo:hover { opacity: 0.75; }
@@ -53,11 +54,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* Texto sem gradiente */
-.login-platform-logo-text {
-  color: #f0ecff;
 }
 
 .login-eyebrow {
@@ -85,14 +81,15 @@
   opacity: 0.7;
 }
 
+/* ── Formulário ── */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   text-align: left;
   margin-top: 8px;
   border-top: 1px solid rgba(139, 92, 246, 0.2);
-  padding-top: 28px;
+  padding-top: 24px;
 }
 
 .login-field {
@@ -155,6 +152,76 @@
 
 .login-btn:disabled { opacity: 0.6; cursor: wait; }
 
+/* ── Divisor "ou" ── */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.login-divider span {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: #9b8cc4;
+  text-transform: uppercase;
+}
+
+/* ── Botão Google ── */
+.login-google-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* O @react-oauth/google renderiza um iframe — alinhamos ao centro */
+.login-google-wrapper > div {
+  width: 100% !important;
+}
+
+/* ── Alternar login/cadastro ── */
+.login-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.login-switch-text {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #9b8cc4;
+  text-transform: uppercase;
+}
+
+.login-switch-btn {
+  background: transparent;
+  border: none;
+  color: #a78bfa;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+
+.login-switch-btn:hover { color: #f0c060; }
+
+/* ── Voltar ── */
 .login-back {
   background: transparent;
   border: none;
@@ -164,7 +231,7 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 6px;
   transition: color 0.2s;
 }
 

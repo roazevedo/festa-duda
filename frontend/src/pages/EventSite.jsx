@@ -13,7 +13,8 @@ import Palavras from '../components/Palavras'
 import Traje from '../components/Traje'
 import Galeria from '../components/Galeria'
 import Salao from '../components/Salao'
-import './Home.css'
+import SaveTheDate from '../components/SaveTheDate'
+import './EventSite.css'
 
 function EventContent() {
   const { loading, error } = useEvent()
@@ -78,6 +79,8 @@ function EventContent() {
       <AdminBar />
       <main style={{ paddingTop: user ? '40px' : '0' }}>
         <Hero />
+        <div className="section-divider" />
+        <SaveTheDate />
         <div className="section-divider" />
         <Convite />
         <Countdown />

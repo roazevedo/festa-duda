@@ -33,6 +33,7 @@ function PixModal({ gift, onClose }) {
 
 export default function Presentes() {
   const [pixGift, setPixGift] = useState(null)
+  const comingSoon = true // ← muda para false quando o pagamento estiver pronto
 
   return (
     <section className="section">
@@ -42,37 +43,37 @@ export default function Presentes() {
         subtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />
 
-      <div className="gifts-table">
-        {GIFTS.map((gift, i) => (
-          <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
-            <div className="gift-info">
-              <div className="gift-top">
-                <span className="gift-num">{String(gift.id).padStart(2, '0')}</span>
-                <span className="gift-name">{gift.name.toUpperCase()}</span>
-              </div>
-              <p className="gift-desc">{gift.desc}</p>
-              <p className="gift-value">
-                R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-            <div className="gift-btns">
-              <button
-                className="gift-btn"
-                onClick={() => setPixGift(gift)}
-              >
-                PIX
-              </button>
-              <a
-                href={gift.mp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="gift-btn"
-              >
-                CARTÃO
-              </a>
-            </div>
+      <div className={'gifts-wrapper' + (comingSoon ? ' gifts-wrapper-disabled' : '')}>
+        {comingSoon && (
+          <div className="coming-soon-banner">
+            <span>Em breve</span>
           </div>
-        ))}
+        )}
+
+        <div className="gifts-table">
+          {GIFTS.map((gift, i) => (
+            <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
+              <div className="gift-info">
+                <div className="gift-top">
+                  <span className="gift-num">{String(gift.id).padStart(2, '0')}</span>
+                  <span className="gift-name">{gift.name.toUpperCase()}</span>
+                </div>
+                <p className="gift-desc">{gift.desc}</p>
+                <p className="gift-value">
+                  R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+              <div className="gift-btns">
+                <button className="gift-btn" onClick={() => setPixGift(gift)}>
+                  PIX
+                </button>
+                <a href={gift.mp} target="_blank" rel="noopener noreferrer" className="gift-btn">
+                  CARTÃO
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {pixGift && (

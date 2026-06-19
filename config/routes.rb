@@ -1,14 +1,12 @@
 Rails.application.routes.draw do
-  # Rotas de autenticação — controle total, sem Devise routing
-  post   "/api/v1/login",  to: "api/v1/sessions#create"
-  delete "/api/v1/logout", to: "api/v1/sessions#jwt_logout"
+  post   "/api/v1/login",        to: "api/v1/sessions#create"
+  delete "/api/v1/logout",       to: "api/v1/sessions#jwt_logout"
+  post   "/api/v1/signup",       to: "api/v1/registrations#create"
+  post   "/api/v1/auth/google",  to: "api/v1/google_auth#create"
 
-  # Devise apenas para registrations e helpers do model — pula sessions
   devise_for :users,
     path: "",
-    skip: [ :sessions ],
-    path_names: { registration: "api/v1/signup" },
-    controllers: { registrations: "api/v1/registrations" }
+    skip: [:sessions, :registrations]
 
   namespace :api do
     namespace :v1 do

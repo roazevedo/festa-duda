@@ -24,6 +24,13 @@ class Rack::Attack
     end
   end
 
+  ### Throttle no cadastro — evita criação massiva de contas ###
+  throttle("signup attempts by ip", limit: 5, period: 1.hour) do |req|
+    if req.path == "/api/v1/signup" && req.post?
+      req.ip
+    end
+  end
+
   ### Throttle em criação de RSVP/mensagens — evita spam ###
   throttle("rsvp/message creation by ip", limit: 10, period: 1.minute) do |req|
     if req.post? && req.path.match?(%r{/(rsvps|messages)\z})
