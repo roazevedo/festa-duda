@@ -1,117 +1,170 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../contexts/useAuth'
 import { useEvent } from '../contexts/useEvent'
-import { getPhotos, createPhoto, deletePhoto } from '../services/api'
-import { uploadToCloudinary } from '../services/cloudinary'
+import { updateEvent } from '../services/api'
 import './SaveTheDate.css'
 
+// ── Extrai o ID do vídeo de qualquer formato de URL do YouTube ──
+// Cobre os formatos mais comuns:
+//   https://www.youtube.com/watch?v=ID
+//   https://youtu.be/ID
+//   https://www.youtube.com/embed/ID
+function extractYouTubeId(url) {
+  if (!url) return null
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^&?/\s]+)/
+  )
+  return match?.[1] || null
+}
+
 export default function SaveTheDate() {
-  const { user }        = useAuth()
-  const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
-  const fileRef         = useRef(null)
+  const { user }          = useAuth()
+  const { slug, token, event, setEvent } = useEvent()
+  const isAdmin           = user?.admin === true
 
-  const [video, setVideo]         = useState(null)
-  const [loading, setLoading]     = useState(true)
-  const [uploading, setUploading] = useState(false)
+  // ID do vídeo salvo no settings do evento
+  const savedId = event?.settings?.youtube_save_the_date || null
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await getPhotos(slug, token, 'save_the_date')
-        setVideo(data[0] || null)
-      } catch (err) {
-        console.error('Erro ao carregar o vídeo:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [slug, token])
+  const [editing, setEditing]   = useState(false)   // mostra/esconde o campo de input
+  const [input, setInput]       = useState('')       // valor digitado pelo admin
+  const [saving, setSaving]     = useState(false)
+  const [error, setError]       = useState('')
 
-  const handleUpload = async (file) => {
-    if (!file.type.startsWith('video/')) {
-      alert('Selecione um arquivo de vídeo.')
+  // Não renderiza nada para convidados se não houver vídeo configurado
+  if (!savedId && !isAdmin) return null
+
+  const handleSave = async () => {
+    setError('')
+    const id = extractYouTubeId(input.trim())
+
+    if (!id) {
+      setError('Link inválido. Cole a URL completa do YouTube.')
       return
     }
-    setUploading(true)
+
+    setSaving(true)
     try {
-      const cloudData = await uploadToCloudinary(file, 'festa-duda/save-the-date', 'video')
-      const photo = await createPhoto(slug, token, {
-        ...cloudData,
-        caption:  'save_the_date',
-        category: 'save_the_date',
+      // PATCH /api/v1/events/:slug/:token
+      // Mescla o novo campo ao settings existente para não perder outros dados
+      const updatedEvent = await updateEvent(slug, token, {
+        settings: {
+          ...event.settings,
+          youtube_save_the_date: id,
+        }
       })
-      setVideo(photo)
+      // Atualiza o contexto do evento para refletir imediatamente na página
+      setEvent(updatedEvent)
+      setEditing(false)
+      setInput('')
     } catch (err) {
-      console.error('Erro no upload:', err)
-      alert('Erro ao enviar o vídeo. Verifique as configurações do Cloudinary.')
+      console.error('Erro ao salvar o vídeo:', err)
+      setError('Erro ao salvar. Tente novamente.')
     } finally {
-      setUploading(false)
+      setSaving(false)
     }
   }
 
-  const handleDelete = async () => {
-    if (!video) return
-    if (!window.confirm('Remover este vídeo?')) return
+  const handleRemove = async () => {
+    if (!window.confirm('Remover o vídeo do Save the Date?')) return
+    setSaving(true)
     try {
-      await deletePhoto(slug, token, video.id)
-      setVideo(null)
+      const restSettings = { ...event.settings }
+      delete restSettings.youtube_save_the_date
+
+      const updatedEvent = await updateEvent(slug, token, {
+        settings: restSettings
+      })
+      setEvent(updatedEvent)
     } catch (err) {
-      console.error('Erro ao remover o vídeo:', err)
+      console.error('Erro ao remover:', err)
+    } finally {
+      setSaving(false)
     }
   }
-
-  // Sem vídeo e sem ser admin: a seção simplesmente não aparece para o convidado
-  if (!loading && !video && !isAdmin) return null
 
   return (
     <section className="std-section">
       <p className="std-eyebrow">guarde a data</p>
       <h2 className="std-title">Save the Date</h2>
 
-      <div className="std-frame">
-        {video ? (
-          <>
-            <video
-              className="std-video"
-              src={video.url}
-              poster={video.thumb_url}
-              controls
-              playsInline
-            />
-            {isAdmin && (
-              <button className="std-remove-btn" onClick={handleDelete} title="Remover vídeo">
-                ✕
-              </button>
-            )}
-          </>
-        ) : uploading ? (
-          <div className="std-uploading">
-            <div className="std-spinner" />
-            <p className="std-uploading-text">Enviando vídeo...</p>
-          </div>
-        ) : (
-          isAdmin && (
-            <button className="std-add-btn" onClick={() => fileRef.current?.click()}>
-              <span className="std-add-icon">+</span>
-              <span className="std-add-label">Adicionar vídeo</span>
+      {/* ── Vídeo do YouTube ── */}
+      {savedId ? (
+        <div className="std-video-wrapper">
+          <iframe
+            className="std-iframe"
+            src={`https://www.youtube.com/embed/${savedId}`}
+            title="Save the Date"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+          {/* Botão de remover — só admin */}
+          {isAdmin && (
+            <button
+              className="std-remove-btn"
+              onClick={handleRemove}
+              disabled={saving}
+              title="Remover vídeo"
+            >
+              ✕
             </button>
-          )
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        /* Placeholder — só aparece para admin quando não há vídeo */
+        isAdmin && !editing && (
+          <div className="std-frame">
+            <button
+              className="std-add-btn"
+              onClick={() => setEditing(true)}
+            >
+              <span className="std-add-icon">+</span>
+              <span className="std-add-label">Adicionar vídeo do YouTube</span>
+            </button>
+          </div>
+        )
+      )}
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="video/*"
-        style={{ display: 'none' }}
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) handleUpload(file)
-          e.target.value = ''
-        }}
-      />
+      {/* ── Campo de input para colar o link ── */}
+      {isAdmin && editing && (
+        <div className="std-input-wrapper">
+          <p className="std-input-label">Cole o link do YouTube:</p>
+          <input
+            className="std-input"
+            type="url"
+            placeholder="https://www.youtube.com/watch?v=..."
+            value={input}
+            onChange={e => { setInput(e.target.value); setError('') }}
+            autoFocus
+          />
+          {error && <p className="std-error">{error}</p>}
+          <div className="std-input-actions">
+            <button
+              className="std-save-btn"
+              onClick={handleSave}
+              disabled={saving || !input.trim()}
+            >
+              {saving ? 'Salvando...' : 'Salvar'}
+            </button>
+            <button
+              className="std-cancel-btn"
+              onClick={() => { setEditing(false); setInput(''); setError('') }}
+              disabled={saving}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Botão para trocar o vídeo — aparece quando já há um vídeo salvo */}
+      {isAdmin && savedId && !editing && (
+        <button
+          className="std-change-btn"
+          onClick={() => setEditing(true)}
+        >
+          ⚙ Trocar vídeo
+        </button>
+      )}
     </section>
   )
 }

@@ -117,7 +117,7 @@ function EventContent() {
               <path d="M 10 52 A 30 30 0 0 1 70 52" stroke="#c9a84c" strokeWidth="0.7" opacity="0.5" />
             </svg>
             <p className="footer-act">FIM DO ATO — VIII</p>
-            <p className="footer-bis">Bis · 29 · VIII · MMXXVI</p>
+            <p className="footer-bis">Bis · 29 · 08 · 2026</p>
             <p className="footer-sub">até as cortinas se abrirem.</p>
           </div>
         </footer>

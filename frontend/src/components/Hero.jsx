@@ -99,7 +99,7 @@ export default function Hero() {
 
             <p className="hero-venue">SALÃO ELITE · RIO DE JANEIRO</p>
 
-            <p className="hero-roman">XXIX · VIII · MMXXVI</p>
+            <p className="hero-roman">29 · 08 · 2026</p>
 
             <p className="hero-time">cortinas às 21 horas</p>
 

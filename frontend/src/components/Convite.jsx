@@ -25,7 +25,7 @@ export default function Convite() {
           <div className="ticket-center">
             <p className="ticket-label">MARIA EDUARDA</p>
             <p className="ticket-xv">XV</p>
-            <p className="ticket-date">29 · VIII · MMXXVI</p>
+            <p className="ticket-date">29 · 08 · 2026</p>
           </div>
           <div className="ticket-bottom">
             <p className="ticket-detail">SALÃO ELITE · 21 HORAS</p>

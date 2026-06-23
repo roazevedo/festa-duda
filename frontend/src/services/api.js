@@ -64,3 +64,9 @@ export const deletePhoto = (slug, token, id) =>
 // ── Events ───────────────────────────────────────────────────
 export const getEvent = (slug, token) =>
   apiFetch(`/events/${slug}/${token}`)
+
+export const updateEvent = (slug, token, data) =>
+  apiFetch(`/events/${slug}/${token}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ event: data }),
+  })

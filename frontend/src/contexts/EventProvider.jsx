@@ -22,7 +22,7 @@ export function EventProvider({ slug, token, children }) {
   }, [slug, token])
 
   return (
-    <EventContext.Provider value={{ event, slug, token, loading, error }}>
+    <EventContext.Provider value={{ event, setEvent, slug, token, loading, error }}>
       {children}
     </EventContext.Provider>
   )
