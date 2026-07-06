@@ -45,7 +45,8 @@ Rails.application.configure do
   config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # (o health check do Fly chega por HTTP puro direto na máquina)
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -89,10 +90,13 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
+  # No Fly.io, FLY_APP_NAME já vem preenchido e o app responde em
+  # <app>.fly.dev; para domínio próprio, defina APP_HOST (ex: "convida.me")
+  # com `fly secrets set APP_HOST=convida.me`.
+  allowed_hosts = [ ENV["APP_HOST"] ]
+  allowed_hosts << "#{ENV['FLY_APP_NAME']}.fly.dev" if ENV["FLY_APP_NAME"].present?
+  allowed_hosts = allowed_hosts.compact_blank
+  config.hosts.concat(allowed_hosts) if allowed_hosts.any?
   # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

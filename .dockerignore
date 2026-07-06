@@ -40,3 +40,7 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# O frontend não é buildado na imagem — o build já vai em public/
+# (gerado pelo ./build.sh antes do deploy)
+/frontend
