@@ -315,7 +315,10 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.secret_key_base
+    # Em produção resolve para credentials.secret_key_base (mesmo valor
+    # de antes); em test/CI usa o fallback do Rails, que funciona sem o
+    # master.key — credentials.secret_key_base seria nil e quebraria o JWT.
+    jwt.secret = Rails.application.secret_key_base
     jwt.dispatch_requests = [
       [ "POST", %r{^/api/v1/login$} ],
       [ "POST", %r{^/api/v1/signup$} ],
