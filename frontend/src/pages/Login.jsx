@@ -4,6 +4,11 @@ import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../contexts/useAuth'
 import './Login.css'
 
+// O Google OAuth não aceita origens *.fly.dev (Public Suffix List).
+// Reative quando o site tiver domínio próprio cadastrado nas
+// Authorized JavaScript origins do Google Cloud Console.
+const GOOGLE_LOGIN_ENABLED = false
+
 export default function Login() {
   const { login, signup, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
@@ -128,22 +133,26 @@ export default function Login() {
           </button>
         </form>
 
-        {/* ── Divisor ── */}
-        <div className="login-divider">
-          <span>ou</span>
-        </div>
+        {GOOGLE_LOGIN_ENABLED && (
+          <>
+            {/* ── Divisor ── */}
+            <div className="login-divider">
+              <span>ou</span>
+            </div>
 
-        {/* ── Botão Google ── */}
-        <div className="login-google-wrapper">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError('Erro ao autenticar com o Google.')}
-            text={isSignup ? 'signup_with' : 'signin_with'}
-            shape="rectangular"
-            theme="filled_black"
-            width="100%"
-          />
-        </div>
+            {/* ── Botão Google ── */}
+            <div className="login-google-wrapper">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Erro ao autenticar com o Google.')}
+                text={isSignup ? 'signup_with' : 'signin_with'}
+                shape="rectangular"
+                theme="filled_black"
+                width="100%"
+              />
+            </div>
+          </>
+        )}
 
         {/* ── Alternar entre login e cadastro ── */}
         <div className="login-switch">
