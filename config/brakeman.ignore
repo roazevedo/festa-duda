@@ -1,0 +1,17 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Unmaintained Dependency",
+      "warning_code": 121,
+      "fingerprint": "21ab0fe00fdd5899ffc405cff75aadb91b805ee996a614f7e27b08a287e9062d",
+      "check_name": "EOLRails",
+      "message": "Support for Rails 7.2.3.1 ends on 2026-08-09",
+      "file": "Gemfile.lock",
+      "line": 217,
+      "link": "https://brakemanscanner.org/docs/warning_types/unmaintained_dependency/",
+      "note": "Upgrade para Rails 8 planejado antes do fim do suporte (2026-08-09). Remover este ignore ao atualizar."
+    }
+  ],
+  "updated": "2026-07-05",
+  "brakeman_version": "7.1.1"
+}
