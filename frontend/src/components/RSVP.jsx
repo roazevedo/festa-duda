@@ -1,28 +1,35 @@
 import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
+import { useAuth } from '../contexts/useAuth'
 import { useEvent } from '../contexts/useEvent'
 import { getRsvps, createRsvp } from '../services/api'
 import './RSVP.css'
 
 export default function RSVP() {
+  const { user }        = useAuth()
   const { slug, token } = useEvent()
+  const isAdmin         = user?.admin === true
 
   const [form, setForm] = useState({
     name: '', guests: '0', restriction: '', attending: 'yes'
   })
-  const [submitted, setSubmitted] = useState(false)
-  const [list, setList]           = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [sending, setSending]     = useState(false)
+  const [companionNames, setCompanionNames] = useState([])
+  const [submitted, setSubmitted]           = useState(false)
+  const [list, setList]                     = useState([])
+  const [loading, setLoading]               = useState(true)
+  const [sending, setSending]               = useState(false)
 
-  // Carrega confirmações do banco
+  // Carrega confirmações — a API retorna 403 para não-admins (lista privada)
   useEffect(() => {
     const load = async () => {
       try {
         const data = await getRsvps(slug, token)
         setList(data)
       } catch (err) {
-        console.error('Erro ao carregar RSVPs:', err)
+        // 403 = lista privada, ignora silenciosamente
+        if (!err.message?.includes('403')) {
+          console.error('Erro ao carregar RSVPs:', err)
+        }
       } finally {
         setLoading(false)
       }
@@ -31,7 +38,26 @@ export default function RSVP() {
   }, [slug, token])
 
   const handleChange = (e) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    setForm((f) => ({ ...f, [name]: value }))
+
+    // Quando o número de acompanhantes muda, ajusta o array de nomes
+    if (name === 'guests') {
+      const count = parseInt(value) || 0
+      setCompanionNames((prev) => {
+        const next = [...prev]
+        while (next.length < count) next.push('')
+        return next.slice(0, count)
+      })
+    }
+  }
+
+  const handleCompanionName = (index, value) => {
+    setCompanionNames((prev) => {
+      const next = [...prev]
+      next[index] = value
+      return next
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -40,10 +66,11 @@ export default function RSVP() {
     setSending(true)
     try {
       const newRsvp = await createRsvp(slug, token, {
-        name:        form.name,
-        guests:      parseInt(form.guests),
-        attending:   form.attending,
-        restriction: form.restriction,
+        name:            form.name,
+        guests:          parseInt(form.guests),
+        attending:       form.attending,
+        restriction:     form.restriction,
+        companion_names: companionNames.filter(n => n.trim()),
       })
       setList((prev) => [newRsvp, ...prev])
       setSubmitted(true)
@@ -54,7 +81,14 @@ export default function RSVP() {
     }
   }
 
-  const confirmed = list.filter((r) => r.attending === 'yes')
+  const resetForm = () => {
+    setSubmitted(false)
+    setForm({ name: '', guests: '0', restriction: '', attending: 'yes' })
+    setCompanionNames([])
+  }
+
+  const confirmed      = list.filter((r) => r.attending === 'yes')
+  const guestCount     = parseInt(form.guests) || 0
 
   return (
     <section className="section">
@@ -68,6 +102,7 @@ export default function RSVP() {
         <div className="rsvp-form-side">
           {!submitted ? (
             <form className="rsvp-form" onSubmit={handleSubmit}>
+
               <div className="form-group">
                 <label className="form-label">seu nome</label>
                 <input
@@ -108,6 +143,29 @@ export default function RSVP() {
                 </select>
               </div>
 
+              {/* Campos de nome para cada acompanhante */}
+              {guestCount > 0 && (
+                <div className="form-companions">
+                  <p className="form-companions-label">
+                    nome dos acompanhantes
+                  </p>
+                  {Array.from({ length: guestCount }).map((_, i) => (
+                    <div key={i} className="form-group">
+                      <label className="form-label">
+                        acompanhante {i + 1}
+                      </label>
+                      <input
+                        className="form-input"
+                        type="text"
+                        value={companionNames[i] || ''}
+                        onChange={(e) => handleCompanionName(i, e.target.value)}
+                        placeholder="nome completo"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="form-label">restrição alimentar</label>
                 <input
@@ -133,10 +191,7 @@ export default function RSVP() {
               <p className="success-icon">🥂</p>
               <h3 className="success-title">Até lá!</h3>
               <p className="success-text">Sua poltrona está reservada.</p>
-              <button
-                className="rsvp-btn-outline"
-                onClick={() => { setSubmitted(false); setForm({ name: '', guests: '0', restriction: '', attending: 'yes' }) }}
-              >
+              <button className="rsvp-btn-outline" onClick={resetForm}>
                 Adicionar outra confirmação
               </button>
             </div>
@@ -151,22 +206,27 @@ export default function RSVP() {
             <cite>— a família</cite>
           </blockquote>
 
-          {!loading && confirmed.length > 0 && (
+          {/* Lista de confirmados — visível apenas para admin */}
+          {isAdmin && !loading && confirmed.length > 0 && (
             <div className="rsvp-confirmed">
               <p className="confirmed-title">
                 {confirmed.length} na plateia
               </p>
               <div className="confirmed-list">
-                {confirmed.slice(0, 8).map((r) => (
-                  <span key={r.id} className="confirmed-name">
-                    {r.name}
-                  </span>
+                {confirmed.map((r) => (
+                  <div key={r.id} className="confirmed-item">
+                    <span className="confirmed-name">{r.name}</span>
+                    {r.companion_names?.length > 0 && (
+                      <div className="confirmed-companions">
+                        {r.companion_names.map((cn, i) => (
+                          <span key={i} className="confirmed-companion">
+                            + {cn}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
-                {confirmed.length > 8 && (
-                  <span className="confirmed-more">
-                    +{confirmed.length - 8} mais
-                  </span>
-                )}
               </div>
             </div>
           )}

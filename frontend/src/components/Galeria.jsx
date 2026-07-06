@@ -51,7 +51,7 @@ export default function Galeria() {
         setPhotos((prev) => [...prev, photo])
       } catch (err) {
         console.error('Erro no upload:', err)
-        alert('Erro ao enviar foto. Verifique as configurações do Cloudinary.')
+        alert(err.message || 'Erro ao enviar foto. Verifique as configurações do Cloudinary.')
       }
       const done = i + 1
       setUploadCount({ done, total: arr.length })

@@ -26,69 +26,73 @@ function RefSlot({ slot, photo, isAdmin, onUpload, onDelete, uploading }) {
   const isUploading = uploading === slot.id
 
   return (
-    <div className="traje-slot">
-
-      {/* Imagem ou placeholder */}
-      <div className="traje-slot-img">
-        {photo ? (
+    <div className="traje-ref-item">
+      <div
+        className={'traje-ref-img' + (isAdmin ? ' traje-ref-admin' : '')}
+        onClick={() => isAdmin && !photo && !isUploading && fileRef.current?.click()}
+      >
+        {/* ── Foto enviada ── */}
+        {photo && (
           <img
             src={photo.thumb_url}
             alt={slot.label}
-            className="traje-photo"
+            className="traje-ref-photo"
           />
-        ) : isUploading ? (
-          <div className="traje-uploading">
-            <div className="traje-spinner" />
-            <p className="traje-uploading-text">Enviando...</p>
-          </div>
-        ) : (
-          <div className="traje-lines">
-            {[...Array(14)].map((_, i) => (
-              <div key={i} className="traje-line" />
+        )}
+
+        {/* ── Placeholder sem foto ── */}
+        {!photo && !isUploading && (
+          <div className="traje-ref-lines">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="ref-line" />
             ))}
           </div>
         )}
 
-        {/* Rodapé com label */}
-        <div className="traje-slot-footer">
-          <p className="traje-slot-label">{slot.label}</p>
+        {/* ── Spinner de upload ── */}
+        {isUploading && (
+          <div className="traje-uploading">
+            <div className="traje-spinner" />
+            <p className="traje-uploading-text">Enviando...</p>
+          </div>
+        )}
+
+        {/* ── Hover overlay para admin ── */}
+        {isAdmin && !isUploading && (
+          <div className="traje-overlay">
+            {!photo ? (
+              /* Slot vazio — mostra "+" */
+              <span className="traje-overlay-plus">+</span>
+            ) : (
+              /* Slot com foto — mostra botão remover */
+              <button
+                className="traje-overlay-remove"
+                onClick={(e) => { e.stopPropagation(); onDelete(photo) }}
+              >
+                ✕ remover
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ── Label no rodapé (sempre visível) ── */}
+        <div className="traje-ref-footer">
+          <p className="traje-ref-label">{slot.label}</p>
+          {!photo && <p className="traje-ref-sub">{slot.sub}</p>}
         </div>
 
-        {/* Botão de adicionar — cobre o slot inteiro, só admin, só slot vazio */}
-        {isAdmin && !photo && !isUploading && (
-          <button
-            className="traje-add-btn"
-            onClick={() => fileRef.current?.click()}
-            title={`Adicionar foto: ${slot.label}`}
-          >
-            +
-          </button>
-        )}
-
-        {/* Botão de remover — só admin, só slot com foto */}
-        {isAdmin && photo && (
-          <button
-            className="traje-remove-btn"
-            onClick={() => onDelete(photo)}
-            title="Remover foto"
-          >
-            ✕
-          </button>
-        )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) onUpload(slot.id, file)
+            e.target.value = ''
+          }}
+        />
       </div>
-
-      {/* Input de arquivo oculto */}
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        style={{ display: 'none' }}
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) onUpload(slot.id, file)
-          e.target.value = ''
-        }}
-      />
     </div>
   )
 }
@@ -210,6 +214,7 @@ export default function Traje() {
         </div>
       </div>
 
+      {/* Grade de referências */}
       <div className="traje-refs">
         {SLOTS.map((slot) => (
           <RefSlot
@@ -224,6 +229,7 @@ export default function Traje() {
         ))}
       </div>
 
+      {/* Paleta de cores */}
       <p className="traje-palette-title">CORES SUGERIDAS ·</p>
       <div className="traje-palette">
         {COLORS.map((c) => (

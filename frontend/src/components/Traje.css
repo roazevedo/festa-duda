@@ -1,204 +1,337 @@
-.std-section {
-  padding: clamp(56px, 8vw, 96px) clamp(20px, 4vw, 48px);
-  text-align: center;
-  background: var(--bg-dark);
+.traje-top {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+  margin-bottom: clamp(28px, 4vw, 48px);
 }
 
-.std-eyebrow {
+/* ── Card esquerdo ── */
+.traje-card {
+  border: 1px solid var(--gold);
+  padding: clamp(20px, 3vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.traje-card-eyebrow {
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.4em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.traje-card-title {
+  font-family: var(--font-title);
+  font-size: clamp(22px, 3.5vw, 38px);
+  color: var(--gold);
+  font-weight: 700;
+  font-style: italic;
+}
+
+.traje-card-text {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* ── Aviso direito ── */
+.traje-warning {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.traje-fan {
+  width: clamp(40px, 6vw, 64px);
+  height: auto;
+}
+
+.traje-warning-text {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--cream);
+  line-height: 1.7;
+}
+
+.traje-rule {
+  height: 1px;
+  background: var(--border);
+}
+
+.traje-ref-note {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.traje-admin-hint {
   font-family: var(--font-display);
   font-size: clamp(9px, 1.1vw, 11px);
-  letter-spacing: 0.5em;
-  color: var(--gold-dim);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.std-title {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 5vw, 44px);
+  letter-spacing: 0.2em;
   color: var(--gold);
-  font-style: italic;
-  margin-bottom: clamp(28px, 4vw, 44px);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  background: rgba(201,168,76,0.05);
 }
 
-/* ── Wrapper do iframe — mantém proporção 16:9 ── */
-.std-video-wrapper {
+/* ── Grade de referências ── */
+.traje-refs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(8px, 1.5vw, 16px);
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+.traje-ref-img {
+  aspect-ratio: 3/4;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   position: relative;
-  max-width: 720px;
-  margin: 0 auto;
-  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s;
 }
 
-.std-iframe {
+.traje-ref-admin {
+  cursor: pointer;
+}
+
+.traje-ref-admin:hover {
+  border-color: var(--gold);
+}
+
+/* ── Linhas de placeholder ── */
+.traje-ref-lines {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 8px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.ref-line {
+  height: 1px;
+  background: var(--gold);
+  transform: rotate(-38deg) scaleX(3);
+  transform-origin: left;
+}
+
+/* ── Foto carregada ── */
+.traje-ref-photo {
   width: 100%;
   height: 100%;
-  border: 1px solid var(--border);
+  object-fit: cover;
   display: block;
+  transition: transform 0.35s ease;
 }
 
-/* ── Placeholder (sem vídeo, admin logado) ── */
-.std-frame {
-  position: relative;
-  max-width: 720px;
-  margin: 0 auto;
-  aspect-ratio: 16 / 9;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+.traje-ref-admin:hover .traje-ref-photo {
+  transform: scale(1.04);
+}
+
+/* ── Overlay de hover (admin) ── */
+.traje-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  transition: background 0.25s;
+  z-index: 2;
 }
 
-/* ── Botão de adicionar ── */
-.std-add-btn {
+.traje-ref-admin:hover .traje-overlay {
+  background: rgba(0, 0, 0, 0.52);
+}
+
+/* ── "+" centralizado ── */
+.traje-overlay-plus {
+  font-size: clamp(36px, 5vw, 56px);
+  color: var(--cream);
+  font-weight: 200;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+}
+
+.traje-ref-admin:hover .traje-overlay-plus {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Botão remover ── */
+.traje-overlay-remove {
+  background: var(--red);
+  border: none;
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 11px);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s, background 0.2s;
+}
+
+.traje-ref-admin:hover .traje-overlay-remove {
+  opacity: 1;
+}
+
+.traje-overlay-remove:hover {
+  background: var(--red-light);
+}
+
+/* ── Spinner de upload ── */
+.traje-uploading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  background: transparent;
-  border: 1px dashed var(--border);
-  color: var(--text-muted);
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.std-add-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.std-add-icon {
-  font-size: clamp(28px, 4vw, 40px);
-  font-family: var(--font-display);
-  line-height: 1;
-}
-
-.std-add-label {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-}
-
-/* ── Botão de remover (canto superior direito do vídeo) ── */
-.std-remove-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--border);
-  color: var(--cream);
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 5;
-  transition: background 0.2s;
-}
-
-.std-remove-btn:hover { background: var(--red); }
-
-/* ── Campo de input para colar o link ── */
-.std-input-wrapper {
-  max-width: 720px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
   gap: 12px;
-  text-align: left;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  padding: clamp(20px, 3vw, 32px);
 }
 
-.std-input-label {
+.traje-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.traje-uploading-text {
   font-family: var(--font-display);
   font-size: 10px;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.3em;
   color: var(--gold-dim);
   text-transform: uppercase;
 }
 
-.std-input {
-  background: var(--bg-dark);
-  border: none;
-  border-bottom: 1px solid var(--border);
-  color: var(--cream);
-  padding: 10px 4px;
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  font-style: italic;
-  outline: none;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-
-.std-input:focus { border-bottom-color: var(--gold); }
-
-.std-error {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--red);
-  font-style: italic;
-}
-
-.std-input-actions {
+/* ── Rodapé de cada slot ── */
+.traje-ref-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
 }
 
-.std-save-btn {
-  background: var(--gold);
-  border: none;
-  color: var(--bg-dark);
+.traje-ref-label {
   font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.3em;
+  font-size: clamp(7px, 0.9vw, 10px);
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  text-align: center;
   text-transform: uppercase;
-  padding: 10px 24px;
-  cursor: pointer;
-  transition: opacity 0.2s;
 }
 
-.std-save-btn:hover:not(:disabled) { opacity: 0.85; }
-.std-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.std-cancel-btn {
-  background: transparent;
-  border: 1px solid var(--border);
+.traje-ref-sub {
+  font-family: var(--font-body);
+  font-size: clamp(10px, 1.1vw, 12px);
   color: var(--text-muted);
-  font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  font-style: italic;
+  text-align: center;
 }
 
-.std-cancel-btn:hover { border-color: var(--border); color: var(--cream); }
-
-/* ── Botão "Trocar vídeo" (aparece sob o iframe quando há vídeo) ── */
-.std-change-btn {
-  display: block;
-  margin: 12px auto 0;
-  background: transparent;
-  border: none;
+/* ── Paleta ── */
+.traje-palette-title {
+  font-family: var(--font-display);
+  font-size: clamp(10px, 1.3vw, 13px);
+  letter-spacing: 0.45em;
   color: var(--text-muted);
-  font-family: var(--font-display);
-  font-size: 9px;
-  letter-spacing: 0.3em;
+  text-align: center;
   text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s;
+  margin-bottom: clamp(14px, 2vw, 24px);
 }
 
-.std-change-btn:hover { color: var(--gold); }
+.traje-palette {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(8px, 1.5vw, 16px);
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
 
-@media (max-width: 480px) {
-  .std-video-wrapper,
-  .std-frame { aspect-ratio: 4 / 5; }
+.traje-color {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.traje-swatch {
+  width: 100%;
+  aspect-ratio: 1 / 1.3;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.traje-avoid-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.traje-swatch-name {
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 11px);
+  letter-spacing: 0.2em;
+  position: relative;
+  z-index: 1;
+}
+
+.traje-color-sub {
+  font-family: var(--font-body);
+  font-size: clamp(11px, 1.3vw, 14px);
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.traje-avoid-text { color: var(--red-light); }
+
+.traje-footer-note {
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: lowercase;
+}
+
+@media (max-width: 640px) {
+  .traje-top     { grid-template-columns: 1fr; }
+  .traje-refs    { grid-template-columns: repeat(2, 1fr); }
+  .traje-palette { grid-template-columns: repeat(3, 1fr); }
 }
