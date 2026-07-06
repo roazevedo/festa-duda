@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   devise_for :users,
     path: "",
-    skip: [:sessions, :registrations]
+    skip: [ :sessions, :registrations ]
 
   namespace :api do
     namespace :v1 do

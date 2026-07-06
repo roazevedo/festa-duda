@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Api::V1::Registrations", type: :request do
-
   def signup(email:, password:, password_confirmation: password)
     post "/api/v1/signup",
       params: {
@@ -15,7 +14,6 @@ RSpec.describe "Api::V1::Registrations", type: :request do
   end
 
   describe "POST /api/v1/signup" do
-
     context "com dados válidos" do
       before { signup(email: "nova@exemplo.com", password: "Senha@123456") }
 

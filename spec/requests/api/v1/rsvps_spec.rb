@@ -1,14 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Rsvps', type: :request do
-
   let(:event) { create(:event) }
   let(:url)   { "/api/v1/events/#{event.slug}/#{event.token}/rsvps" }
 
   # ── GET index ─────────────────────────────────────────────
 
   describe 'GET /rsvps' do
-
     it 'retorna todos os rsvps do evento' do
       create_list(:rsvp, 4, event: event)
       get url
@@ -30,7 +28,6 @@ RSpec.describe 'Api::V1::Rsvps', type: :request do
   # ── POST create ───────────────────────────────────────────
 
   describe 'POST /rsvps' do
-
     context 'com dados válidos' do
       let(:params) { { rsvp: { name: 'João Silva', guests: 1, attending: 'yes', restriction: '' } } }
 
@@ -42,7 +39,7 @@ RSpec.describe 'Api::V1::Rsvps', type: :request do
       it 'retorna os dados do rsvp criado' do
         post url, params: params
         body = JSON.parse(response.body)
-        expect(body['name']).to     eq('João Silva')
+        expect(body['name']).to eq('João Silva')
         expect(body['attending']).to eq('yes')
       end
     end

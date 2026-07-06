@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Rsvp, type: :model do
-
   describe 'validações' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_inclusion_of(:attending)

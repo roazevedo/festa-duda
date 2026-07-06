@@ -6,7 +6,7 @@ class Api::V1::EventResourcesController < ApplicationController
   def set_event
     @event = Event.find_by!(slug: params[:slug], token: params[:token])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Evento não encontrado.' }, status: :not_found
+    render json: { error: "Evento não encontrado." }, status: :not_found
   end
 
   # Só o dono do evento (ou um admin da plataforma) pode gerenciar
@@ -14,7 +14,7 @@ class Api::V1::EventResourcesController < ApplicationController
   # então estar autenticado NÃO basta para autorizar escrita.
   def authorize_owner!
     unless admin_viewing?
-      render json: { error: 'Não autorizado.' }, status: :forbidden
+      render json: { error: "Não autorizado." }, status: :forbidden
     end
   end
 

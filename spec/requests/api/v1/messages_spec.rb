@@ -1,14 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Messages', type: :request do
-
   let(:event) { create(:event) }
   let(:url)   { "/api/v1/events/#{event.slug}/#{event.token}/messages" }
 
   # ── GET index ─────────────────────────────────────────────
 
   describe 'GET /messages' do
-
     it 'retorna todas as mensagens do evento' do
       create_list(:message, 3, event: event)
       get url
@@ -60,7 +58,6 @@ RSpec.describe 'Api::V1::Messages', type: :request do
   # ── POST create ───────────────────────────────────────────
 
   describe 'POST /messages' do
-
     context 'com dados válidos' do
       let(:params) do
         { message: { name: 'Tia Célia', body: 'Parabéns minha querida!' } }

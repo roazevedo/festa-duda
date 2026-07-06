@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Authentication', type: :request do
-
   let(:user)  { create(:user, password: 'Senha@123456') }
   let(:admin) { create(:user, :admin, password: 'Senha@123456') }
 
@@ -21,7 +20,6 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
   # ── Login ─────────────────────────────────────────────────
 
   describe 'POST /api/v1/login' do
-
     context 'com credenciais corretas' do
       before { login(user.email, 'Senha@123456') }
 
@@ -79,7 +77,6 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
   # ── Profile ───────────────────────────────────────────────
 
   describe 'GET /api/v1/profile' do
-
     context 'com token válido' do
       it 'retorna os dados do usuário logado' do
         get '/api/v1/profile',
@@ -111,7 +108,6 @@ RSpec.describe 'Api::V1::Authentication', type: :request do
   # ── Logout ────────────────────────────────────────────────
 
   describe 'DELETE /api/v1/logout' do
-
     it 'retorna 200 ao deslogar' do
       token = auth_token
       delete '/api/v1/logout',

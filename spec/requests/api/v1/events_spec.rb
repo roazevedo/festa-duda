@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Events', type: :request do
-
   let(:admin) { create(:user, :admin, password: 'Senha@123456') }
   let(:user)  { create(:user, password: 'Senha@123456') }
   let!(:event) { create(:event, user: admin) }
@@ -16,7 +15,6 @@ RSpec.describe 'Api::V1::Events', type: :request do
   # ── GET show (público) ────────────────────────────────────
 
   describe 'GET /api/v1/events/:slug/:token' do
-
     context 'com slug e token corretos' do
       before { get "/api/v1/events/#{event.slug}/#{event.token}" }
 
@@ -71,7 +69,6 @@ RSpec.describe 'Api::V1::Events', type: :request do
   # ── GET index (autenticado) ───────────────────────────────
 
   describe 'GET /api/v1/events' do
-
     context 'usuário autenticado' do
       it 'retorna apenas os próprios eventos' do
         outro_evento = create(:event, user: user)
@@ -97,7 +94,6 @@ RSpec.describe 'Api::V1::Events', type: :request do
   # ── POST create ───────────────────────────────────────────
 
   describe 'POST /api/v1/events' do
-
     let(:valid_params) do
       {
         event: {

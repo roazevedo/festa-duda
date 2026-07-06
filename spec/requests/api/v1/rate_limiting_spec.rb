@@ -2,7 +2,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Rate Limiting (Rack::Attack)', type: :request, rate_limit: true do
-
   # ── Login: throttle por IP ──────────────────────────────
 
   describe 'login throttle por IP' do
