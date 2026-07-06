@@ -7,12 +7,11 @@ class SecurityHeadersMiddleware
     "Content-Security-Policy" =>
       "default-src 'self'; " \
       "img-src 'self' res.cloudinary.com data: https://*.googleusercontent.com https://*.cartocdn.com https://*.openstreetmap.org; " \
-      "connect-src 'self' https://accounts.google.com https://*.cartocdn.com https://api.cloudinary.com; " \
       "script-src 'self' https://accounts.google.com; " \
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " \
       "font-src 'self' fonts.gstatic.com; " \
       "frame-src https://accounts.google.com https://www.youtube.com; " \
-      "connect-src 'self' https://accounts.google.com;" \
+      "connect-src 'self' https://accounts.google.com https://*.cartocdn.com https://api.cloudinary.com;"
   }.freeze
 
   def initialize(app)

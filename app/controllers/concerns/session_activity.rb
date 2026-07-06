@@ -12,15 +12,19 @@ module SessionActivity
 
   INACTIVITY_TIMEOUT = 30.minutes
 
-  # Store dedicado em memória — independente do cache geral da
-  # aplicação (que em test/development costuma ser :null_store,
-  # o que faria essa verificação falhar sempre).
+  # Store dedicado — independente do cache geral da aplicação (que em
+  # test/development costuma ser :null_store, o que faria essa
+  # verificação falhar sempre).
   #
-  # Observação: em produção com múltiplas instâncias/dynos, este
-  # store NÃO é compartilhado entre processos. Para esse cenário,
-  # troque por um RedisCacheStore.
+  # Com REDIS_URL definido, o "último acesso" é compartilhado entre
+  # processos/dynos; sem ele, fica em memória (por processo).
   def self.store
-    @store ||= ActiveSupport::Cache::MemoryStore.new
+    @store ||=
+      if ENV["REDIS_URL"].present?
+        ActiveSupport::Cache::RedisCacheStore.new(url: ENV["REDIS_URL"])
+      else
+        ActiveSupport::Cache::MemoryStore.new
+      end
   end
 
   included do

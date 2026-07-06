@@ -1,8 +1,8 @@
 class Api::V1::PhotosController < Api::V1::EventResourcesController
   before_action :authenticate_user!, only: [ :create, :update, :destroy ]
+  before_action :authorize_owner!,   only: [ :create, :update, :destroy ]
   before_action :set_photo,          only: [ :update, :destroy ]
-  ALLOWED_CATEGORIES = %w[galeria traje].freeze
-  ALLOWED_CATEGORIES = %w[galeria traje save_the_date].freeze
+  ALLOWED_CATEGORIES = %w[galeria traje save_the_date convite].freeze
 
   def index
     photos = @event.photos

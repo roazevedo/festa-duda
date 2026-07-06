@@ -1,5 +1,8 @@
 class Api::V1::MessagesController < Api::V1::EventResourcesController
   def index
+    unless @event.messages_public? || admin_viewing?
+      render json: { error: "Mural privado" }, status: :forbidden and return
+    end
     messages = @event.messages.order(created_at: :desc)
     render json: messages.map { |m| message_json(m) }
   end

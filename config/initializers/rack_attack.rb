@@ -1,6 +1,12 @@
 class Rack::Attack
-  # ── Cache em memória (suficiente para começar) ──
-  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+  # ── Com REDIS_URL definido, os contadores são compartilhados entre
+  # processos/dynos; sem ele, cache em memória (limite por processo) ──
+  Rack::Attack.cache.store =
+    if ENV["REDIS_URL"].present?
+      ActiveSupport::Cache::RedisCacheStore.new(url: ENV["REDIS_URL"])
+    else
+      ActiveSupport::Cache::MemoryStore.new
+    end
 
   ### Throttle geral — protege contra DDoS ###
   throttle("requests by ip", limit: 300, period: 5.minutes) do |req|

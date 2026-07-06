@@ -31,6 +31,30 @@ RSpec.describe 'Api::V1::Messages', type: :request do
       get "/api/v1/events/#{event.slug}/token-errado/messages"
       expect(response).to have_http_status(:not_found)
     end
+
+    context 'quando o mural é privado' do
+      let(:event) { create(:event, messages_public: false) }
+
+      def auth_headers(u)
+        post '/api/v1/login',
+          params: { user: { email: u.email, password: 'Senha@123456' } },
+          as:     :json
+        { 'Authorization' => response.headers['Authorization'] }
+      end
+
+      it 'retorna 403 para visitantes' do
+        create(:message, event: event)
+        get url
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'retorna as mensagens para o dono do evento' do
+        create(:message, event: event)
+        get url, headers: auth_headers(event.user)
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body).length).to eq(1)
+      end
+    end
   end
 
   # ── POST create ───────────────────────────────────────────
