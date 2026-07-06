@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get    "profile",              to: "profile#show"
+      post   "cloudinary/signature", to: "cloudinary_signatures#create"
       get    "events",               to: "events#index"
       post   "events",               to: "events#create"
       get    "events/:slug/:token",  to: "events#show"
@@ -26,6 +27,9 @@ Rails.application.routes.draw do
       delete "events/:slug/:token/photos/:id",   to: "photos#destroy"
     end
   end
+
+  # Health check usado pelo Fly.io (isento de host authorization)
+  get "up" => "rails/health#show", as: :rails_health_check
 
   get "/favicon.ico", to: proc { [ 204, {}, [] ] }
   get "*path",

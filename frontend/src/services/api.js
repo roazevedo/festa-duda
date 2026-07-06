@@ -61,6 +61,13 @@ export const deletePhoto = (slug, token, id) =>
     method: 'DELETE',
   })
 
+// ── Cloudinary (upload signed) ───────────────────────────────
+export const getCloudinarySignature = (folder) =>
+  apiFetch('/cloudinary/signature', {
+    method: 'POST',
+    body: JSON.stringify({ folder }),
+  })
+
 // ── Events ───────────────────────────────────────────────────
 export const getEvent = (slug, token) =>
   apiFetch(`/events/${slug}/${token}`)
