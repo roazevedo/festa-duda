@@ -14,10 +14,9 @@
 
 .ticket-top {
   position: relative;
-  flex: 1;              /* ← troca 'min-height: 160px' por 'flex: 1' */
+  flex: 1;
   overflow: hidden;
-  border-bottom: 1px solid var(--border);
-  min-height: 200px;   /* ← altura mínima de segurança */
+  min-height: 320px;
 }
 
 .ticket-lines {
@@ -48,48 +47,6 @@
   letter-spacing: 0.25em;
   color: var(--gold-dim);
   text-transform: uppercase;
-}
-
-.ticket-center {
-  padding: clamp(16px, 2.5vw, 24px);
-  text-align: center;
-  border-bottom: 1px solid var(--border);
-}
-
-.ticket-label {
-  font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 12px);
-  letter-spacing: 0.35em;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-
-.ticket-xv {
-  font-family: var(--font-display);
-  font-size: clamp(44px, 7vw, 72px);
-  color: var(--red-light);
-  line-height: 1;
-  font-weight: 700;
-}
-
-.ticket-date {
-  font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 12px);
-  letter-spacing: 0.25em;
-  color: var(--gold-dim);
-  margin-top: 10px;
-}
-
-.ticket-bottom {
-  padding: clamp(12px, 2vw, 18px);
-  text-align: center;
-}
-
-.ticket-detail {
-  font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 12px);
-  letter-spacing: 0.35em;
-  color: var(--text-muted);
 }
 
 /* ── Arte do convite ── */
