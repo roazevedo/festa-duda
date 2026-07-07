@@ -1,52 +1,6 @@
 .convite-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: clamp(24px, 4vw, 56px);
-  align-items: stretch;  /* ← troca 'start' por 'stretch' */
-}
-
-.convite-ticket {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-}
-
-.ticket-top {
-  position: relative;
-  flex: 1;
-  overflow: hidden;
-  min-height: 320px;
-}
-
-.ticket-lines {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding: 8px;
-  opacity: 0.12;
-}
-
-.ticket-line {
-  height: 1px;
-  background: var(--gold);
-  transform: rotate(-38deg) scaleX(3);
-  transform-origin: left;
-}
-
-.ticket-portrait {
-  position: absolute;
-  bottom: 14px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(8px, 1vw, 11px);
-  letter-spacing: 0.25em;
-  color: var(--gold-dim);
-  text-transform: uppercase;
+  justify-content: center;
 }
 
 /* ── Arte do convite ── */
@@ -59,6 +13,8 @@
   justify-content: center;
   overflow: hidden;
   min-height: 320px;
+  width: 100%;
+  max-width: 640px;
 }
 
 .convite-arte-admin {
@@ -79,36 +35,7 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 640px) {
-  .convite-wrapper {
-    grid-template-columns: 1fr;
-  }
-  .convite-ticket {
-    max-width: 280px;
-    margin: 0 auto;
-  }
-}
-
-/* ── Adiciona ao final do Convite.css existente ── */
-
-/* Admin — cursor pointer e hover no ticket-top */
-.ticket-top-admin {
-  cursor: pointer;
-  position: relative;
-}
-
-/* Foto preenchendo o ticket-top */
-.ticket-portrait-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-}
-
-/* Overlay de hover — aparece sobre o placeholder */
+/* ── Overlay de hover — admin sem arte ── */
 .ticket-overlay {
   position: absolute;
   inset: 0;
@@ -120,7 +47,6 @@
   z-index: 2;
 }
 
-.ticket-top-admin:hover .ticket-overlay,
 .convite-arte-admin:hover .ticket-overlay {
   background: rgba(0, 0, 0, 0.5);
 }
@@ -135,13 +61,12 @@
   transition: opacity 0.25s, transform 0.25s;
 }
 
-.ticket-top-admin:hover .ticket-overlay-plus,
 .convite-arte-admin:hover .ticket-overlay-plus {
   opacity: 1;
   transform: scale(1);
 }
 
-/* Botão remover — canto superior direito */
+/* ── Botão remover — canto superior direito ── */
 .ticket-remove-btn {
   position: absolute;
   top: 8px;
@@ -162,7 +87,7 @@
 
 .ticket-remove-btn:hover { background: var(--red); }
 
-/* Estado de upload */
+/* ── Estado de upload ── */
 .ticket-uploading {
   position: absolute;
   inset: 0;
