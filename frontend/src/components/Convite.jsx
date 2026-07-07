@@ -6,51 +6,58 @@ import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import './Convite.css'
 
+const CAPTION_RETRATO = 'retrato_principal'
+const CAPTION_ARTE    = 'arte_convite'
+
 export default function Convite() {
   const { user }        = useAuth()
   const { slug, token } = useEvent()
   const isAdmin         = user?.admin === true
   const fileRef         = useRef(null)
+  const arteRef         = useRef(null)
 
-  const [photo, setPhoto]         = useState(null)
-  const [uploading, setUploading] = useState(false)
+  const [photo, setPhoto]                 = useState(null)
+  const [arte, setArte]                   = useState(null)
+  const [uploading, setUploading]         = useState(false)
+  const [uploadingArte, setUploadingArte] = useState(false)
 
   useEffect(() => {
     const load = async () => {
       try {
         const data = await getPhotos(slug, token, 'convite')
-        setPhoto(data[0] || null)
+        setPhoto(data.find((p) => p.caption === CAPTION_RETRATO) || null)
+        setArte(data.find((p) => p.caption === CAPTION_ARTE) || null)
       } catch (err) {
-        console.error('Erro ao carregar foto do convite:', err)
+        console.error('Erro ao carregar fotos do convite:', err)
       }
     }
     load()
   }, [slug, token])
 
-  const handleUpload = async (file) => {
-    setUploading(true)
+  const handleUpload = async (file, caption, setState, setBusy) => {
+    setBusy(true)
     try {
       const cloudData = await uploadToCloudinary(file, 'festa-duda/convite')
       const created = await createPhoto(slug, token, {
         ...cloudData,
-        caption:  'retrato_principal',
+        caption,
         category: 'convite',
       })
-      setPhoto(created)
+      setState(created)
     } catch (err) {
       console.error('Erro no upload:', err)
       alert(err.message || 'Erro ao enviar foto.')
     } finally {
-      setUploading(false)
+      setBusy(false)
     }
   }
 
-  const handleDelete = async () => {
-    if (!photo) return
-    if (!window.confirm('Remover o retrato principal?')) return
+  const handleDelete = async (target, setState, confirmText) => {
+    if (!target) return
+    if (!window.confirm(confirmText)) return
     try {
-      await deletePhoto(slug, token, photo.id)
-      setPhoto(null)
+      await deletePhoto(slug, token, target.id)
+      setState(null)
     } catch (err) {
       console.error('Erro ao remover foto:', err)
     }
@@ -110,7 +117,10 @@ export default function Convite() {
             {isAdmin && photo && (
               <button
                 className="ticket-remove-btn"
-                onClick={(e) => { e.stopPropagation(); handleDelete() }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDelete(photo, setPhoto, 'Remover o retrato principal?')
+                }}
                 title="Remover foto"
               >
                 ✕
@@ -125,7 +135,7 @@ export default function Convite() {
             style={{ display: 'none' }}
             onChange={(e) => {
               const file = e.target.files?.[0]
-              if (file) handleUpload(file)
+              if (file) handleUpload(file, CAPTION_RETRATO, setPhoto, setUploading)
               e.target.value = ''
             }}
           />
@@ -140,40 +150,59 @@ export default function Convite() {
           </div>
         </div>
 
-        {/* Lado direito — info */}
-        <div className="convite-info">
-          <p className="convite-grace">com a graça da família,</p>
-          <p className="convite-parents">Lohraine &amp; Rodrigo</p>
-          <p className="convite-honor">
-            têm a honra de convidar v.sa. para a celebração do baile
-            dos quinze anos de sua filha
-          </p>
+        {/* Lado direito — arte do convite */}
+        <div
+          className={'convite-arte' + (isAdmin ? ' convite-arte-admin' : '')}
+          onClick={() => isAdmin && !arte && !uploadingArte && arteRef.current?.click()}
+        >
+          {arte ? (
+            <img
+              src={arte.url}
+              alt="Convite"
+              className="convite-arte-img"
+            />
+          ) : uploadingArte ? (
+            <div className="ticket-uploading">
+              <div className="ticket-spinner" />
+              <p className="ticket-uploading-text">Enviando...</p>
+            </div>
+          ) : (
+            <p className="convite-arte-placeholder">convite · em breve</p>
+          )}
 
-          <h2 className="convite-name">
-            Maria<br />Eduarda
-          </h2>
+          {/* Overlay de hover — admin sem arte */}
+          {isAdmin && !arte && !uploadingArte && (
+            <div className="ticket-overlay">
+              <span className="ticket-overlay-plus">+</span>
+            </div>
+          )}
 
-          <div className="convite-details">
-            <div className="convite-row">
-              <span className="convite-label">DATA</span>
-              <span className="convite-value">sábado, 29 de agosto de 2026</span>
-            </div>
-            <div className="convite-row">
-              <span className="convite-label">HORA</span>
-              <span className="convite-value">21 horas</span>
-            </div>
-            <div className="convite-row">
-              <span className="convite-label">SALÃO</span>
-              <span className="convite-value">Elite</span>
-            </div>
-            <div className="convite-row">
-              <span className="convite-label">ENDEREÇO</span>
-              <span className="convite-value">
-                Rua Vítor Meireles, 485<br />
-                Riachuelo · Rio de Janeiro
-              </span>
-            </div>
-          </div>
+          {/* Botão remover — admin com arte */}
+          {isAdmin && arte && (
+            <button
+              className="ticket-remove-btn"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDelete(arte, setArte, 'Remover a arte do convite?')
+              }}
+              title="Remover convite"
+            >
+              ✕
+            </button>
+          )}
+
+          <input
+            ref={arteRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) handleUpload(file, CAPTION_ARTE, setArte, setUploadingArte)
+              e.target.value = ''
+            }}
+          />
         </div>
 
       </div>

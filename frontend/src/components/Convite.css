@@ -92,76 +92,34 @@
   color: var(--text-muted);
 }
 
-/* ── Info ── */
-.convite-grace {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  font-style: italic;
-  margin-bottom: 2px;
-}
-
-.convite-parents {
-  font-family: var(--font-title);
-  font-size: clamp(20px, 3vw, 30px);
-  color: var(--gold);
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.convite-honor {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  font-style: italic;
-  line-height: 1.7;
-  margin-bottom: 16px;
-}
-
-.convite-name {
-  font-family: var(--font-title);
-  font-size: clamp(36px, 6vw, 68px);
-  font-weight: 700;
-  color: var(--red-light);
-  line-height: 1.0;
-  margin-bottom: 24px;
-}
-
-/* ── Details table ── */
-.convite-details {
+/* ── Arte do convite ── */
+.convite-arte {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 320px;
 }
 
-.convite-row {
-  display: grid;
-  grid-template-columns: 100px 1fr;   /* coluna label fixa, valor ocupa o resto */
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(201,168,76,0.08);
-  align-items: baseline;
+.convite-arte-admin {
+  cursor: pointer;
 }
 
-.convite-row:last-child {
-  border-bottom: none;
+.convite-arte-img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.convite-label {
+.convite-arte-placeholder {
   font-family: var(--font-display);
   font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.3em;
   color: var(--gold-dim);
   text-transform: uppercase;
-  flex-shrink: 0;    /* nunca comprime o label */
-}
-
-.convite-value {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--cream);
-  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
@@ -205,7 +163,8 @@
   z-index: 2;
 }
 
-.ticket-top-admin:hover .ticket-overlay {
+.ticket-top-admin:hover .ticket-overlay,
+.convite-arte-admin:hover .ticket-overlay {
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -219,7 +178,8 @@
   transition: opacity 0.25s, transform 0.25s;
 }
 
-.ticket-top-admin:hover .ticket-overlay-plus {
+.ticket-top-admin:hover .ticket-overlay-plus,
+.convite-arte-admin:hover .ticket-overlay-plus {
   opacity: 1;
   transform: scale(1);
 }
