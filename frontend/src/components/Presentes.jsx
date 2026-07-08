@@ -2,10 +2,18 @@ import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
 import { useAuth } from '../contexts/useAuth'
 import { useEvent } from '../contexts/useEvent'
-import { getGifts, createGift, updateGift, deleteGift } from '../services/api'
+import {
+  getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
+} from '../services/api'
 import './Presentes.css'
 
 const EMPTY_FORM = { name: '', description: '', price: '' }
+
+const FEEDBACK = {
+  sucesso:  { tone: 'ok',    text: 'Presente recebido com carinho — muito obrigada!' },
+  pendente: { tone: 'warn',  text: 'Pagamento em processamento. Assim que confirmar, o presente chega até nós.' },
+  erro:     { tone: 'error', text: 'O pagamento não foi concluído. Se quiser, tente novamente.' },
+}
 
 const formatPrice = (value) =>
   Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
@@ -14,12 +22,13 @@ export default function Presentes() {
   const { user }        = useAuth()
   const { slug, token } = useEvent()
   const isAdmin         = user?.admin === true
-  const comingSoon      = true // ← muda para false quando o pagamento estiver pronto
 
   const [gifts, setGifts]         = useState([])
   const [form, setForm]           = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
   const [saving, setSaving]       = useState(false)
+  const [payingId, setPayingId]   = useState(null)
+  const [feedback, setFeedback]   = useState(null)
 
   useEffect(() => {
     const load = async () => {
@@ -32,6 +41,20 @@ export default function Presentes() {
     }
     load()
   }, [slug, token])
+
+  // Retorno do Checkout Pro (back_urls: ?presente=sucesso|pendente|erro)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const status = params.get('presente')
+    if (!status || !FEEDBACK[status]) return
+
+    setFeedback(FEEDBACK[status])
+    params.delete('presente')
+    const query = params.toString()
+    window.history.replaceState(
+      null, '', window.location.pathname + (query ? `?${query}` : '')
+    )
+  }, [])
 
   const handleChange = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value })
@@ -87,7 +110,17 @@ export default function Presentes() {
     }
   }
 
-  const disabled = comingSoon && !isAdmin
+  const handlePay = async (gift) => {
+    setPayingId(gift.id)
+    try {
+      const { init_point } = await createGiftCheckout(slug, token, gift.id)
+      window.location.href = init_point
+    } catch (err) {
+      console.error('Erro ao iniciar pagamento:', err)
+      alert(err.message || 'Erro ao iniciar o pagamento. Tente novamente.')
+      setPayingId(null)
+    }
+  }
 
   return (
     <section className="section">
@@ -96,6 +129,19 @@ export default function Presentes() {
         title="Os Presentes"
         subtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />
+
+      {feedback && (
+        <div className={`gifts-feedback gifts-feedback-${feedback.tone}`}>
+          <span>{feedback.text}</span>
+          <button
+            className="gifts-feedback-close"
+            onClick={() => setFeedback(null)}
+            title="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {isAdmin && (
         <form className="gifts-admin-form" onSubmit={handleSubmit}>
@@ -151,13 +197,7 @@ export default function Presentes() {
         </form>
       )}
 
-      <div className={'gifts-wrapper' + (disabled ? ' gifts-wrapper-disabled' : '')}>
-        {disabled && (
-          <div className="coming-soon-banner">
-            <span>Em breve</span>
-          </div>
-        )}
-
+      <div className="gifts-wrapper">
         {gifts.length > 0 ? (
           <div className="gifts-table">
             {gifts.map((gift, i) => (
@@ -170,7 +210,7 @@ export default function Presentes() {
                   {gift.description && <p className="gift-desc">{gift.description}</p>}
                   <p className="gift-value">R$ {formatPrice(gift.price)}</p>
                 </div>
-                {isAdmin && (
+                {isAdmin ? (
                   <div className="gift-admin-btns">
                     <button
                       className="gift-admin-btn"
@@ -187,6 +227,14 @@ export default function Presentes() {
                       remover
                     </button>
                   </div>
+                ) : (
+                  <button
+                    className="gift-btn"
+                    onClick={() => handlePay(gift)}
+                    disabled={payingId !== null}
+                  >
+                    {payingId === gift.id ? 'aguarde...' : 'Presentear'}
+                  </button>
                 )}
               </div>
             ))}

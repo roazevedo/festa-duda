@@ -44,6 +44,13 @@ class Rack::Attack
     end
   end
 
+  ### Throttle em checkout de presentes — evita flood de preferências MP ###
+  throttle("gift checkout by ip", limit: 10, period: 1.minute) do |req|
+    if req.post? && req.path.match?(%r{/gifts/\d+/checkout\z})
+      req.ip
+    end
+  end
+
   ### Resposta customizada quando bloqueado ###
   self.throttled_responder = lambda do |request|
     retry_after = (request.env["rack.attack.match_data"] || {})[:period]

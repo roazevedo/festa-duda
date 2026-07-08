@@ -82,6 +82,11 @@ export const deleteGift = (slug, token, id) =>
     method: 'DELETE',
   })
 
+export const createGiftCheckout = (slug, token, id) =>
+  apiFetch(`/events/${slug}/${token}/gifts/${id}/checkout`, {
+    method: 'POST',
+  })
+
 // ── Cloudinary (upload signed) ───────────────────────────────
 export const getCloudinarySignature = (folder) =>
   apiFetch('/cloudinary/signature', {

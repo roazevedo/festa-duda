@@ -25,6 +25,8 @@ Rails.application.routes.draw do
       post   "events/:slug/:token/gifts",        to: "gifts#create"
       patch  "events/:slug/:token/gifts/:id",    to: "gifts#update"
       delete "events/:slug/:token/gifts/:id",    to: "gifts#destroy"
+      post   "events/:slug/:token/gifts/:id/checkout", to: "gift_checkouts#create"
+      post   "webhooks/mercado_pago",            to: "mercado_pago_webhooks#create"
       get    "events/:slug/:token/photos",       to: "photos#index"
       post   "events/:slug/:token/photos",       to: "photos#create"
       patch  "events/:slug/:token/photos/:id",   to: "photos#update"

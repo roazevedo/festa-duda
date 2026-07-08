@@ -48,4 +48,5 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
   gem "shoulda-matchers"   # matchers extras para validações
+  gem "webmock"            # stub de chamadas HTTP externas (Mercado Pago)
 end

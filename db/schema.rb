@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_08_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_08_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_08_000000) do
     t.boolean "rsvp_list_public", default: false, null: false
     t.boolean "messages_public", default: true, null: false
     t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "gift_payments", force: :cascade do |t|
+    t.bigint "gift_id", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "status", default: "pending", null: false
+    t.string "mp_preference_id"
+    t.string "mp_payment_id"
+    t.string "payer_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gift_id"], name: "index_gift_payments_on_gift_id"
+    t.index ["mp_payment_id"], name: "index_gift_payments_on_mp_payment_id", unique: true
+    t.index ["status"], name: "index_gift_payments_on_status"
   end
 
   create_table "gifts", force: :cascade do |t|
@@ -101,6 +115,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_08_000000) do
   end
 
   add_foreign_key "events", "users"
+  add_foreign_key "gift_payments", "gifts"
   add_foreign_key "gifts", "events"
   add_foreign_key "messages", "events"
   add_foreign_key "photos", "events"
