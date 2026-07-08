@@ -110,23 +110,35 @@
   border-color: var(--gold);
 }
 
-/* ── Linhas de placeholder ── */
-.traje-ref-lines {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding: 8px;
-  opacity: 0.08;
-  pointer-events: none;
+/* ── Card "adicionar fotos" (admin) ── */
+.traje-ref-add {
+  cursor: pointer;
+  border-style: dashed;
+  gap: 8px;
 }
 
-.ref-line {
-  height: 1px;
-  background: var(--gold);
-  transform: rotate(-38deg) scaleX(3);
-  transform-origin: left;
+.traje-ref-add:hover {
+  border-color: var(--gold);
+}
+
+.traje-add-plus {
+  font-size: clamp(32px, 4vw, 48px);
+  color: var(--gold-dim);
+  font-weight: 200;
+  line-height: 1;
+  transition: color 0.25s;
+}
+
+.traje-ref-add:hover .traje-add-plus {
+  color: var(--gold);
+}
+
+.traje-add-text {
+  font-family: var(--font-display);
+  font-size: clamp(8px, 1vw, 10px);
+  letter-spacing: 0.25em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
 }
 
 /* ── Foto carregada ── */
@@ -156,23 +168,6 @@
 
 .traje-ref-admin:hover .traje-overlay {
   background: rgba(0, 0, 0, 0.52);
-}
-
-/* ── "+" centralizado ── */
-.traje-overlay-plus {
-  font-size: clamp(36px, 5vw, 56px);
-  color: var(--cream);
-  font-weight: 200;
-  line-height: 1;
-  opacity: 0;
-  transform: scale(0.7);
-  transition: opacity 0.25s, transform 0.25s;
-  pointer-events: none;
-}
-
-.traje-ref-admin:hover .traje-overlay-plus {
-  opacity: 1;
-  transform: scale(1);
 }
 
 /* ── Botão remover ── */
@@ -225,38 +220,6 @@
   letter-spacing: 0.3em;
   color: var(--gold-dim);
   text-transform: uppercase;
-}
-
-/* ── Rodapé de cada slot ── */
-.traje-ref-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px 8px;
-  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  z-index: 1;
-}
-
-.traje-ref-label {
-  font-family: var(--font-display);
-  font-size: clamp(7px, 0.9vw, 10px);
-  letter-spacing: 0.2em;
-  color: var(--gold-dim);
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.traje-ref-sub {
-  font-family: var(--font-body);
-  font-size: clamp(10px, 1.1vw, 12px);
-  color: var(--text-muted);
-  font-style: italic;
-  text-align: center;
 }
 
 /* ── Paleta ── */
