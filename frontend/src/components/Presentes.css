@@ -24,6 +24,19 @@
   border-bottom: none;
 }
 
+/* Total ímpar: a última linha ocupa a largura toda,
+   sem deixar célula vazia ao lado */
+.gift-row:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+
+/* Com total ímpar, a penúltima linha (coluna direita) ainda tem
+   uma linha abaixo — mantém a divisória */
+.gift-row-right:nth-last-child(2) {
+  border-bottom: 1px solid var(--border);
+}
+
 .gift-info {
   display: flex;
   flex-direction: column;

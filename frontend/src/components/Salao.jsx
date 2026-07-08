@@ -111,6 +111,12 @@ export default function Salao() {
             <span className="salao-detail-label">estrutura</span>
             <span className="salao-detail-value">estacionamento proprio · valet · acessibilidade total</span>
           </div>
+          <div className="salao-detail">
+            <span className="salao-detail-label">importante</span>
+            <span className="salao-detail-value">
+              não será permitida a entrada de bebidas alcoólicas trazidas de fora
+            </span>
+          </div>
 
           <a
             href={MAPS_URL}

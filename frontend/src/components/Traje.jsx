@@ -164,11 +164,14 @@ export default function Traje() {
           <p className="traje-card-eyebrow">TRAJE</p>
           <h3 className="traje-card-title">Social Completo</h3>
           <p className="traje-card-text">
-            Nossa celebração será inspirada na elegância e no glamour
-            dos anos 20, em uma releitura moderna e sofisticada.
+            Uma noite inspirada na elegância dos anos 20.
           </p>
           <p className="traje-card-text" style={{ marginTop: 10 }}>
-            <em>Não é necessário utilizar trajes temáticos ou fantasias.</em>
+            <em>
+              O traje temático não é obrigatório, mas, se desejar, você pode
+              acrescentar um acessório ou detalhe inspirado na época para
+              entrar no clima.
+            </em>
           </p>
         </div>
 
@@ -192,18 +195,16 @@ export default function Traje() {
           </svg>
 
           <p className="traje-warning-text">
-            Para valorizar a debutante em seu momento especial, pedimos
-            gentilmente que as convidadas{' '}
+            Pedimos, gentilmente, que as convidadas{' '}
             <strong style={{ color: '#e8c84a', fontStyle: 'italic', fontWeight: 400 }}>
-              evitem trajes em tons de vermelho, vinho e marsala.
+              evitem trajes em tons de vermelho (incluindo vinho e marsala).
             </strong>
           </p>
 
           <div className="traje-rule" />
 
           <p className="traje-ref-note">
-            As imagens abaixo servem como referência do nível de formalidade
-            esperado para a ocasião.
+            As imagens abaixo são apenas referências de traje e inspiração.
           </p>
 
           {isAdmin && (
