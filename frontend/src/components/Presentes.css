@@ -68,98 +68,124 @@
   margin-top: 4px;
 }
 
-/* ── Botões PIX / CARTÃO ── */
-.gift-btns {
+/* ── Botões admin (editar / remover) ── */
+.gift-admin-btns {
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex-shrink: 0;
 }
 
-.gift-btn {
+.gift-admin-btn {
   display: block;
   background: transparent;
   border: 1px solid var(--border);
-  color: var(--cream);
+  color: var(--text-muted);
   font-family: var(--font-display);
   font-size: clamp(9px, 1.1vw, 11px);
   letter-spacing: 0.25em;
   padding: 7px 16px;
   cursor: pointer;
-  text-decoration: none;
   text-align: center;
-  transition: background 0.2s, border-color 0.2s;
+  text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
   white-space: nowrap;
 }
 
-.gift-btn:hover {
+.gift-admin-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--cream);
+}
+
+.gift-admin-btn-remove:hover {
   background: var(--red);
   border-color: var(--red);
+  color: var(--cream);
 }
 
-/* ── Modal PIX ── */
-.pix-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.88);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 16px;
-}
-
-.pix-modal {
-  background: var(--bg-card);
+/* ── Formulário admin de cadastro ── */
+.gifts-admin-form {
   border: 1px solid var(--border);
-  padding: 36px 32px;
-  max-width: 380px;
-  width: 100%;
+  background: var(--bg-card);
+  padding: clamp(20px, 3vw, 32px);
+  margin-bottom: 32px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
 }
 
-.pix-modal-label {
+.gifts-admin-title {
   font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 0.4em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wider);
   color: var(--gold-dim);
   text-transform: uppercase;
 }
 
-.pix-key {
-  background: var(--bg-dark);
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  font-family: monospace;
-  font-size: var(--text-base);
-  color: var(--gold);
-  user-select: all;
+.gifts-admin-fields {
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 0.8fr;
+  gap: 16px;
 }
 
-.pix-modal-info {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--text-muted);
-  line-height: 1.7;
-  font-style: italic;
+.gifts-admin-actions {
+  display: flex;
+  gap: 12px;
 }
 
-.pix-close {
-  background: transparent;
+.gifts-admin-submit {
+  background: var(--red);
+  color: var(--cream);
   border: none;
-  color: var(--text-muted);
+  padding: 12px 28px;
   font-family: var(--font-display);
-  font-size: 10px;
-  letter-spacing: 0.4em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wide);
   text-transform: uppercase;
   cursor: pointer;
-  align-self: center;
-  transition: color 0.2s;
+  transition: background 0.2s;
 }
 
-.pix-close:hover { color: var(--cream); }
+.gifts-admin-submit:hover { background: var(--red-light); }
+
+.gifts-admin-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.gifts-admin-cancel {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 12px 20px;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gifts-admin-cancel:hover {
+  border-color: var(--gold-dim);
+  color: var(--cream);
+}
+
+/* ── Lista vazia ── */
+.gifts-empty {
+  border: 1px solid var(--border);
+  padding: clamp(32px, 5vw, 56px);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wider);
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .gifts-admin-fields { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 640px) {
   .gifts-table {
@@ -185,7 +211,7 @@
 .gifts-wrapper-disabled .gifts-table {
   filter: grayscale(0.6);
   opacity: 0.35;
-  pointer-events: none; /* desativa cliques nos botões PIX/CARTÃO */
+  pointer-events: none; /* desativa interação enquanto o pagamento não está pronto */
   user-select: none;
 }
 

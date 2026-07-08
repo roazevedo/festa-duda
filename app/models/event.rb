@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   has_many :rsvps,    dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :photos,   dependent: :destroy
+  has_many :gifts,    dependent: :destroy
 
   before_create :generate_token
 

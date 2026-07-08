@@ -61,6 +61,27 @@ export const deletePhoto = (slug, token, id) =>
     method: 'DELETE',
   })
 
+// ── Gifts ────────────────────────────────────────────────────
+export const getGifts = (slug, token) =>
+  apiFetch(`/events/${slug}/${token}/gifts`)
+
+export const createGift = (slug, token, data) =>
+  apiFetch(`/events/${slug}/${token}/gifts`, {
+    method: 'POST',
+    body: JSON.stringify({ gift: data }),
+  })
+
+export const updateGift = (slug, token, id, data) =>
+  apiFetch(`/events/${slug}/${token}/gifts/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ gift: data }),
+  })
+
+export const deleteGift = (slug, token, id) =>
+  apiFetch(`/events/${slug}/${token}/gifts/${id}`, {
+    method: 'DELETE',
+  })
+
 // ── Cloudinary (upload signed) ───────────────────────────────
 export const getCloudinarySignature = (folder) =>
   apiFetch('/cloudinary/signature', {

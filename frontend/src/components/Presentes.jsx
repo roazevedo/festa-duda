@@ -1,39 +1,93 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
+import { useAuth } from '../contexts/useAuth'
+import { useEvent } from '../contexts/useEvent'
+import { getGifts, createGift, updateGift, deleteGift } from '../services/api'
 import './Presentes.css'
 
-const GIFTS = [
-  { id: 1,  name: 'Maquiagem profissional', desc: 'Make completa para a noite de gala',       value: 250, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 2,  name: 'Manicure & pedicure',    desc: 'Cuidados finais antes do grande dia',      value: 150, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 3,  name: 'Coroa de princesa',      desc: 'A peça central do ritual dos quinze',      value: 400, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 4,  name: 'Bouquet de rosas',       desc: 'Arranjo do cerimonial das quinze velas',   value: 180, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 5,  name: 'Sapato de salto',        desc: 'O par perfeito para o primeiro baile',     value: 350, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 6,  name: 'Decoração da mesa',      desc: 'Velas, flores e detalhes dourados',        value: 300, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 7,  name: 'Hospedagem dos avós',    desc: 'Para que toda a família esteja por perto', value: 500, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 8,  name: 'Hora extra fotógrafo',   desc: 'Cada momento eternizado',                  value: 280, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 9,  name: 'Joia personalizada',     desc: 'Pingente com as iniciais ME',              value: 600, pix: 'pix@mariaeduarda15.com', mp: '#' },
-  { id: 10, name: 'Diária na viagem',       desc: 'Contribuição para a viagem de presente',   value: 220, pix: 'pix@mariaeduarda15.com', mp: '#' },
-]
+const EMPTY_FORM = { name: '', description: '', price: '' }
 
-function PixModal({ gift, onClose }) {
-  return (
-    <div className="pix-overlay" onClick={onClose}>
-      <div className="pix-modal" onClick={e => e.stopPropagation()}>
-        <p className="pix-modal-label">Chave Pix</p>
-        <div className="pix-key">{gift.pix}</div>
-        <p className="pix-modal-info">
-          Valor sugerido: <strong>R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
-          <br />Informe seu nome na mensagem.
-        </p>
-        <button className="pix-close" onClick={onClose}>fechar</button>
-      </div>
-    </div>
-  )
-}
+const formatPrice = (value) =>
+  Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 
 export default function Presentes() {
-  const [pixGift, setPixGift] = useState(null)
-  const comingSoon = true // ← muda para false quando o pagamento estiver pronto
+  const { user }        = useAuth()
+  const { slug, token } = useEvent()
+  const isAdmin         = user?.admin === true
+  const comingSoon      = true // ← muda para false quando o pagamento estiver pronto
+
+  const [gifts, setGifts]         = useState([])
+  const [form, setForm]           = useState(EMPTY_FORM)
+  const [editingId, setEditingId] = useState(null)
+  const [saving, setSaving]       = useState(false)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getGifts(slug, token)
+        setGifts(data)
+      } catch (err) {
+        console.error('Erro ao carregar presentes:', err)
+      }
+    }
+    load()
+  }, [slug, token])
+
+  const handleChange = (field) => (e) =>
+    setForm({ ...form, [field]: e.target.value })
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setForm(EMPTY_FORM)
+  }
+
+  const startEdit = (gift) => {
+    setEditingId(gift.id)
+    setForm({
+      name:        gift.name,
+      description: gift.description || '',
+      price:       String(gift.price),
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    try {
+      const data = {
+        name:        form.name.trim(),
+        description: form.description.trim(),
+        price:       Number(form.price),
+      }
+      if (editingId) {
+        const updated = await updateGift(slug, token, editingId, data)
+        setGifts(gifts.map((g) => (g.id === editingId ? updated : g)))
+      } else {
+        const created = await createGift(slug, token, data)
+        setGifts([...gifts, created])
+      }
+      cancelEdit()
+    } catch (err) {
+      console.error('Erro ao salvar presente:', err)
+      alert(err.message || 'Erro ao salvar presente.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDelete = async (gift) => {
+    if (!window.confirm(`Remover "${gift.name}" da lista?`)) return
+    try {
+      await deleteGift(slug, token, gift.id)
+      setGifts(gifts.filter((g) => g.id !== gift.id))
+      if (editingId === gift.id) cancelEdit()
+    } catch (err) {
+      console.error('Erro ao remover presente:', err)
+      alert(err.message || 'Erro ao remover presente.')
+    }
+  }
+
+  const disabled = comingSoon && !isAdmin
 
   return (
     <section className="section">
@@ -43,42 +97,108 @@ export default function Presentes() {
         subtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />
 
-      <div className={'gifts-wrapper' + (comingSoon ? ' gifts-wrapper-disabled' : '')}>
-        {comingSoon && (
+      {isAdmin && (
+        <form className="gifts-admin-form" onSubmit={handleSubmit}>
+          <p className="gifts-admin-title">
+            {editingId ? 'editar presente' : 'cadastrar presente'}
+          </p>
+          <div className="gifts-admin-fields">
+            <div className="form-group">
+              <label className="form-label">nome</label>
+              <input
+                className="form-input"
+                type="text"
+                value={form.name}
+                onChange={handleChange('name')}
+                placeholder="Ex.: Coroa de princesa"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">descrição</label>
+              <input
+                className="form-input"
+                type="text"
+                value={form.description}
+                onChange={handleChange('description')}
+                placeholder="Ex.: A peça central do ritual dos quinze"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">valor (R$)</label>
+              <input
+                className="form-input"
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={form.price}
+                onChange={handleChange('price')}
+                placeholder="Ex.: 400.00"
+                required
+              />
+            </div>
+          </div>
+          <div className="gifts-admin-actions">
+            <button className="gifts-admin-submit" type="submit" disabled={saving}>
+              {saving ? 'salvando...' : editingId ? 'salvar alterações' : 'adicionar'}
+            </button>
+            {editingId && (
+              <button className="gifts-admin-cancel" type="button" onClick={cancelEdit}>
+                cancelar
+              </button>
+            )}
+          </div>
+        </form>
+      )}
+
+      <div className={'gifts-wrapper' + (disabled ? ' gifts-wrapper-disabled' : '')}>
+        {disabled && (
           <div className="coming-soon-banner">
             <span>Em breve</span>
           </div>
         )}
 
-        <div className="gifts-table">
-          {GIFTS.map((gift, i) => (
-            <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
-              <div className="gift-info">
-                <div className="gift-top">
-                  <span className="gift-num">{String(gift.id).padStart(2, '0')}</span>
-                  <span className="gift-name">{gift.name.toUpperCase()}</span>
+        {gifts.length > 0 ? (
+          <div className="gifts-table">
+            {gifts.map((gift, i) => (
+              <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
+                <div className="gift-info">
+                  <div className="gift-top">
+                    <span className="gift-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="gift-name">{gift.name.toUpperCase()}</span>
+                  </div>
+                  {gift.description && <p className="gift-desc">{gift.description}</p>}
+                  <p className="gift-value">R$ {formatPrice(gift.price)}</p>
                 </div>
-                <p className="gift-desc">{gift.desc}</p>
-                <p className="gift-value">
-                  R$ {gift.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                </p>
+                {isAdmin && (
+                  <div className="gift-admin-btns">
+                    <button
+                      className="gift-admin-btn"
+                      onClick={() => startEdit(gift)}
+                      title="Editar presente"
+                    >
+                      editar
+                    </button>
+                    <button
+                      className="gift-admin-btn gift-admin-btn-remove"
+                      onClick={() => handleDelete(gift)}
+                      title="Remover presente"
+                    >
+                      remover
+                    </button>
+                  </div>
+                )}
               </div>
-              <div className="gift-btns">
-                <button className="gift-btn" onClick={() => setPixGift(gift)}>
-                  PIX
-                </button>
-                <a href={gift.mp} target="_blank" rel="noopener noreferrer" className="gift-btn">
-                  CARTÃO
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="gifts-empty">
+            {isAdmin
+              ? 'nenhum presente cadastrado — use o formulário acima.'
+              : 'lista de presentes · em breve'}
+          </p>
+        )}
       </div>
-
-      {pixGift && (
-        <PixModal gift={pixGift} onClose={() => setPixGift(null)} />
-      )}
     </section>
   )
 }
