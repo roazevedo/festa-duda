@@ -4,10 +4,23 @@ import { useAuth } from '../contexts/useAuth'
 import { useEvent } from '../contexts/useEvent'
 import {
   getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
+  getGiftPayments,
 } from '../services/api'
 import './Presentes.css'
 
 const EMPTY_FORM = { name: '', description: '', price: '' }
+
+const STATUS_LABELS = {
+  approved:     'aprovado',
+  pending:      'pendente',
+  authorized:   'autorizado',
+  in_process:   'em análise',
+  in_mediation: 'em mediação',
+  rejected:     'recusado',
+  cancelled:    'cancelado',
+  refunded:     'estornado',
+  charged_back: 'contestado',
+}
 
 const FEEDBACK = {
   sucesso:  { tone: 'ok',    text: 'Presente recebido com carinho — muito obrigada!' },
@@ -29,6 +42,7 @@ export default function Presentes() {
   const [saving, setSaving]       = useState(false)
   const [payingId, setPayingId]   = useState(null)
   const [feedback, setFeedback]   = useState(null)
+  const [payments, setPayments]   = useState(null)
 
   useEffect(() => {
     const load = async () => {
@@ -41,6 +55,19 @@ export default function Presentes() {
     }
     load()
   }, [slug, token])
+
+  useEffect(() => {
+    if (!isAdmin) return
+    const load = async () => {
+      try {
+        const data = await getGiftPayments(slug, token)
+        setPayments(data)
+      } catch (err) {
+        console.error('Erro ao carregar pagamentos:', err)
+      }
+    }
+    load()
+  }, [isAdmin, slug, token])
 
   // Retorno do Checkout Pro (back_urls: ?presente=sucesso|pendente|erro)
   useEffect(() => {
@@ -247,6 +274,32 @@ export default function Presentes() {
           </p>
         )}
       </div>
+
+      {isAdmin && payments && payments.payments.length > 0 && (
+        <div className="gifts-payments">
+          <div className="gifts-payments-header">
+            <p className="gifts-admin-title">pagamentos recebidos</p>
+            <p className="gifts-payments-total">
+              total aprovado: <strong>R$ {formatPrice(payments.total_approved)}</strong>
+            </p>
+          </div>
+          <div className="gifts-payments-list">
+            {payments.payments.map((p) => (
+              <div key={p.id} className="gifts-payment-row">
+                <span className="gp-gift">{p.gift_name}</span>
+                <span className="gp-amount">R$ {formatPrice(p.amount)}</span>
+                <span className={`gp-status gp-status-${p.status}`}>
+                  {STATUS_LABELS[p.status] || p.status}
+                </span>
+                <span className="gp-payer">{p.payer_email || '—'}</span>
+                <span className="gp-date">
+                  {new Date(p.created_at).toLocaleDateString('pt-BR')}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

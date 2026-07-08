@@ -68,6 +68,15 @@ RSpec.describe 'Api::V1::MercadoPagoWebhooks', type: :request do
       expect(payment.reload.status).to eq('pending')
     end
 
+    it 'ignora status desconhecido sem estourar 500 (MP não deve reenviar)' do
+      stub_mp_payment(id: 777, status: 'novo_status_do_mp', external_reference: payment.id.to_s)
+
+      post url, params: { type: 'payment', data: { id: '777' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(payment.reload.status).to eq('pending')
+    end
+
     it 'não confia no status enviado no payload da notificação' do
       # payload diz "approved", mas a API do MP diz "rejected"
       stub_mp_payment(id: 777, status: 'rejected', external_reference: payment.id.to_s)

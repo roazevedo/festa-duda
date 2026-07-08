@@ -12,8 +12,16 @@ class Api::V1::MercadoPagoWebhooksController < ApplicationController
     payment    = GiftPayment.find_by(id: mp_payment["external_reference"])
     return head :ok unless payment
 
+    status = mp_payment["status"]
+    unless GiftPayment::STATUSES.include?(status)
+      # Status novo/desconhecido do MP: não pode virar 500, senão o MP
+      # reenvia a notificação para sempre
+      Rails.logger.warn("Webhook MP: status desconhecido #{status.inspect} (payment #{payment_id})")
+      return head :ok
+    end
+
     payment.update!(
-      status:        mp_payment["status"],
+      status:        status,
       mp_payment_id: mp_payment["id"].to_s,
       payer_email:   mp_payment.dig("payer", "email")
     )

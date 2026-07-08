@@ -51,6 +51,14 @@ class Rack::Attack
     end
   end
 
+  ### Throttle no webhook do MP — cada notificação dispara uma consulta
+  ### nossa à API do MP; limita o potencial de amplificação ###
+  throttle("mp webhook by ip", limit: 60, period: 1.minute) do |req|
+    if req.post? && req.path == "/api/v1/webhooks/mercado_pago"
+      req.ip
+    end
+  end
+
   ### Resposta customizada quando bloqueado ###
   self.throttled_responder = lambda do |request|
     retry_after = (request.env["rack.attack.match_data"] || {})[:period]

@@ -236,6 +236,79 @@
   color: var(--cream);
 }
 
+/* ── Painel admin: pagamentos recebidos ── */
+.gifts-payments {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: clamp(20px, 3vw, 32px);
+  margin-top: 32px;
+}
+
+.gifts-payments-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.gifts-payments-total {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.gifts-payments-total strong {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.gifts-payments-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.gifts-payment-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 0.8fr 1.4fr 0.7fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.gifts-payment-row:last-child { border-bottom: none; }
+
+.gp-gift   { color: var(--cream); }
+.gp-amount { color: var(--gold); font-weight: 600; }
+.gp-payer  { overflow-wrap: anywhere; }
+.gp-date   { text-align: right; }
+
+.gp-status {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.gp-status-approved                        { color: var(--gold); }
+.gp-status-pending, .gp-status-in_process,
+.gp-status-authorized, .gp-status-in_mediation { color: var(--gold-dim); }
+.gp-status-rejected, .gp-status-cancelled,
+.gp-status-refunded, .gp-status-charged_back   { color: var(--red-light); }
+
+@media (max-width: 640px) {
+  .gifts-payment-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .gp-date { text-align: left; }
+}
+
 /* ── Lista vazia ── */
 .gifts-empty {
   border: 1px solid var(--border);

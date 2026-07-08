@@ -87,6 +87,9 @@ export const createGiftCheckout = (slug, token, id) =>
     method: 'POST',
   })
 
+export const getGiftPayments = (slug, token) =>
+  apiFetch(`/events/${slug}/${token}/gift_payments`)
+
 // ── Cloudinary (upload signed) ───────────────────────────────
 export const getCloudinarySignature = (folder) =>
   apiFetch('/cloudinary/signature', {
