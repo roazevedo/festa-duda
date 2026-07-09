@@ -105,7 +105,7 @@ export default function Salao() {
           </div>
           <div className="salao-detail">
             <span className="salao-detail-label">hora</span>
-            <span className="salao-detail-value">21 horas</span>
+            <span className="salao-detail-value">20 horas</span>
           </div>
           <div className="salao-detail">
             <span className="salao-detail-label">estrutura</span>

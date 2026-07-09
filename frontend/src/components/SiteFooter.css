@@ -1,0 +1,13 @@
+/* ── Footer global — presente em todas as páginas ── */
+.site-footer {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.site-footer-copy {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}

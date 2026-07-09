@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import EventSite from './pages/EventSite'
 import ProtectedRoute from './components/ProtectedRoute'
+import SiteFooter from './components/SiteFooter'
 
 function AppRoutes() {
   const { loading } = useAuth()
@@ -54,11 +55,22 @@ function AppRoutes() {
   )
 }
 
+function AppLayout() {
+  const { loading } = useAuth()
+
+  return (
+    <>
+      <AppRoutes />
+      {!loading && <SiteFooter />}
+    </>
+  )
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <AppRoutes />
+        <AppLayout />
       </BrowserRouter>
     </AuthProvider>
   )

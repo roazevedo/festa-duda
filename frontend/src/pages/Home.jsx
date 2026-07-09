@@ -199,18 +199,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="landing-footer">
-        <div className="landing-nav-inner">
-          <button className="landing-logo landing-logo-sm" onClick={() => navigate('/')}>
-            Convida<span>.me</span>
-          </button>
-          <p className="landing-footer-copy">
-            © {new Date().getFullYear()} · plataforma de eventos memoráveis
-          </p>
-        </div>
-      </footer>
-
     </div>
   )
 }
