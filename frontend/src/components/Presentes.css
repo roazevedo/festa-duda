@@ -52,7 +52,7 @@
 
 .gift-num {
   font-family: var(--font-display);
-  font-size: clamp(11px, 1.4vw, 14px);
+  font-size: clamp(12px, 1.6vw, 16px);
   color: var(--gold);
   font-weight: 700;
   flex-shrink: 0;
@@ -60,14 +60,14 @@
 
 .gift-name {
   font-family: var(--font-display);
-  font-size: clamp(10px, 1.3vw, 13px);
+  font-size: clamp(11px, 1.5vw, 15px);
   letter-spacing: 0.15em;
   color: var(--cream);
 }
 
 .gift-desc {
   font-family: var(--font-body);
-  font-size: clamp(13px, 1.6vw, 16px);
+  font-size: clamp(15px, 1.8vw, 18px);
   color: var(--text-muted);
   font-style: italic;
   line-height: 1.4;
@@ -75,7 +75,7 @@
 
 .gift-value {
   font-family: var(--font-display);
-  font-size: clamp(16px, 2.2vw, 22px);
+  font-size: clamp(18px, 2.5vw, 25px);
   color: var(--gold);
   font-weight: 700;
   margin-top: 4px;
@@ -88,7 +88,7 @@
   border: 1px solid var(--gold-dim);
   color: var(--cream);
   font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(10px, 1.2vw, 12px);
   letter-spacing: 0.25em;
   padding: 10px 20px;
   cursor: pointer;
@@ -139,7 +139,7 @@
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: color 0.2s;
   flex-shrink: 0;
 }
@@ -160,7 +160,7 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(10px, 1.2vw, 12px);
   letter-spacing: 0.25em;
   padding: 7px 16px;
   cursor: pointer;
@@ -304,7 +304,7 @@
 
 .gp-status {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }

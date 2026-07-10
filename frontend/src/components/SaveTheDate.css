@@ -6,7 +6,7 @@
 
 .std-eyebrow {
   font-family: var(--font-display);
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(10px, 1.2vw, 12px);
   letter-spacing: 0.5em;
   color: var(--gold-dim);
   text-transform: uppercase;
@@ -15,7 +15,7 @@
 
 .std-title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 5vw, 44px);
+  font-size: clamp(31px, 5.6vw, 49px);
   color: var(--gold);
   font-style: italic;
   margin-bottom: clamp(28px, 4vw, 44px);
@@ -71,14 +71,14 @@
 }
 
 .std-add-icon {
-  font-size: clamp(28px, 4vw, 40px);
+  font-size: clamp(31px, 4.5vw, 45px);
   font-family: var(--font-display);
   line-height: 1;
 }
 
 .std-add-label {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
@@ -93,7 +93,7 @@
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid var(--border);
   color: var(--cream);
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   z-index: 5;
   transition: background 0.2s;
@@ -116,7 +116,7 @@
 
 .std-input-label {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.4em;
   color: var(--gold-dim);
   text-transform: uppercase;
@@ -155,7 +155,7 @@
   border: none;
   color: var(--bg-dark);
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 10px 24px;
@@ -171,7 +171,7 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 10px 20px;
@@ -192,7 +192,7 @@
   border: none;
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   cursor: pointer;

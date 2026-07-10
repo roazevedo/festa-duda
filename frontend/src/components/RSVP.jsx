@@ -11,7 +11,7 @@ export default function RSVP() {
   const isAdmin         = user?.admin === true
 
   const [form, setForm] = useState({
-    name: '', guests: '0', restriction: '', attending: 'yes'
+    name: '', guests: '0', attending: 'yes'
   })
   const [companionNames, setCompanionNames] = useState([])
   const [submitted, setSubmitted]           = useState(false)
@@ -69,7 +69,6 @@ export default function RSVP() {
         name:            form.name,
         guests:          parseInt(form.guests),
         attending:       form.attending,
-        restriction:     form.restriction,
         companion_names: companionNames.filter(n => n.trim()),
       })
       setList((prev) => [newRsvp, ...prev])
@@ -83,7 +82,7 @@ export default function RSVP() {
 
   const resetForm = () => {
     setSubmitted(false)
-    setForm({ name: '', guests: '0', restriction: '', attending: 'yes' })
+    setForm({ name: '', guests: '0', attending: 'yes' })
     setCompanionNames([])
   }
 
@@ -165,18 +164,6 @@ export default function RSVP() {
                   ))}
                 </div>
               )}
-
-              <div className="form-group">
-                <label className="form-label">restrição alimentar</label>
-                <input
-                  className="form-input"
-                  type="text"
-                  name="restriction"
-                  value={form.restriction}
-                  onChange={handleChange}
-                  placeholder="opcional"
-                />
-              </div>
 
               <button
                 className="rsvp-btn"

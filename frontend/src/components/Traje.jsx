@@ -6,14 +6,6 @@ import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import './Traje.css'
 
-const COLORS = [
-  { name: 'PRETO',     sub: 'Smoking · Vestido longo', hex: '#0e0a08', textLight: true,  avoid: false },
-  { name: 'DOURADO',   sub: 'Cetim · Lantejoula',       hex: '#c9a84c', textLight: false, avoid: false },
-  { name: 'BORGONHA',  sub: 'reservado · evitar',       hex: '#6b0a0a', textLight: true,  avoid: true  },
-  { name: 'CHAMPANHE', sub: 'Tons metálicos suaves',    hex: '#d4b896', textLight: false, avoid: false },
-  { name: 'ESMERALDA', sub: 'Veludo · Cetim profundo',  hex: '#1a4a2e', textLight: true,  avoid: false },
-]
-
 export default function Traje() {
   const { user }        = useAuth()
   const { slug, token } = useEvent()
@@ -190,38 +182,6 @@ export default function Traje() {
         </div>
       )}
 
-      {/* Paleta de cores */}
-      <p className="traje-palette-title">CORES SUGERIDAS ·</p>
-      <div className="traje-palette">
-        {COLORS.map((c) => (
-          <div key={c.name} className="traje-color">
-            <div
-              className={'traje-swatch' + (c.avoid ? ' traje-swatch-avoid' : '')}
-              style={{ background: c.hex }}
-            >
-              {c.avoid && (
-                <svg viewBox="0 0 100 100" className="traje-avoid-line">
-                  <line x1="10" y1="10" x2="90" y2="90"
-                    stroke="rgba(255,255,255,0.35)" strokeWidth="3" />
-                </svg>
-              )}
-              <span
-                className="traje-swatch-name"
-                style={{ color: c.textLight ? 'rgba(240,230,200,0.7)' : 'rgba(20,10,0,0.7)' }}
-              >
-                {c.name}
-              </span>
-            </div>
-            <p className={'traje-color-sub' + (c.avoid ? ' traje-avoid-text' : '')}>
-              {c.sub}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <p className="traje-footer-note">
-        o branco é reservado à aniversariante · vermelho, vinho e marsala, à debutante.
-      </p>
     </section>
   )
 }
