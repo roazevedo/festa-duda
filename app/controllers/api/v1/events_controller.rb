@@ -83,9 +83,14 @@ class Api::V1::EventsController < ApplicationController
       messages_public:  event.messages_public,
       settings:         event.settings || {},
       stats: {
-        rsvps:    event.rsvps.where(attending: "yes").count,
-        messages: event.messages.count,
-        photos:   event.photos.count
+        rsvps:          event.rsvps.where(attending: "yes").count,
+        messages:       event.messages.count,
+        photos:         event.photos.count,
+        gifts_received: GiftPayment.approved
+                                   .joins(:gift)
+                                   .where(gifts: { event_id: event.id })
+                                   .sum(:amount)
+                                   .to_f
       }
     }
   end

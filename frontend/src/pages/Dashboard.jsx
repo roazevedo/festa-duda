@@ -18,6 +18,12 @@ function formatDate(dateStr) {
   })
 }
 
+function formatBRL(value) {
+  return (value || 0).toLocaleString('pt-BR', {
+    style: 'currency', currency: 'BRL'
+  })
+}
+
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text)
     .then(() => alert('Link copiado!'))
@@ -56,9 +62,8 @@ export default function Dashboard() {
   const eventUrl = (event) =>
     `${window.location.origin}/${event.slug}/${event.token}`
 
-  const totalRsvps    = events.reduce((s, e) => s + (e.stats?.rsvps    || 0), 0)
   const totalMessages = events.reduce((s, e) => s + (e.stats?.messages || 0), 0)
-  const totalPhotos   = events.reduce((s, e) => s + (e.stats?.photos   || 0), 0)
+  const totalGifts    = events.reduce((s, e) => s + (e.stats?.gifts_received || 0), 0)
 
   return (
     <div className="dash">
@@ -95,16 +100,12 @@ export default function Dashboard() {
             <p className="dash-stat-label">Evento{events.length !== 1 ? 's' : ''}</p>
           </div>
           <div className="dash-stat-card">
-            <p className="dash-stat-value">{totalRsvps}</p>
-            <p className="dash-stat-label">Confirmações</p>
-          </div>
-          <div className="dash-stat-card">
             <p className="dash-stat-value">{totalMessages}</p>
             <p className="dash-stat-label">Mensagens</p>
           </div>
           <div className="dash-stat-card">
-            <p className="dash-stat-value">{totalPhotos}</p>
-            <p className="dash-stat-label">Fotos</p>
+            <p className="dash-stat-value dash-stat-money">{formatBRL(totalGifts)}</p>
+            <p className="dash-stat-label">Recebido em presentes</p>
           </div>
         </div>
 
@@ -161,11 +162,11 @@ export default function Dashboard() {
                     </p>
                     <p className="dash-event-stat-label">mensagens</p>
                   </div>
-                  <div className="dash-event-stat">
-                    <p className="dash-event-stat-value">
-                      {event.stats?.photos || 0}
+                  <div className="dash-event-stat dash-event-stat-gift">
+                    <p className="dash-event-stat-value dash-event-stat-money">
+                      {formatBRL(event.stats?.gifts_received)}
                     </p>
-                    <p className="dash-event-stat-label">fotos</p>
+                    <p className="dash-event-stat-label">recebido</p>
                   </div>
                 </div>
 

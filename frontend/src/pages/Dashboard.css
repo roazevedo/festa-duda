@@ -103,7 +103,7 @@
 /* ── STATS GLOBAIS ── */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(8px, 1.5vw, 16px);
 }
 
@@ -143,6 +143,8 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.dash-stat-money { font-size: clamp(20px, 3vw, 34px); }
 
 .dash-stat-label {
   font-family: var(--font-display);
@@ -266,7 +268,7 @@
 
 .dash-event-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   border-bottom: 1px solid rgba(139, 92, 246, 0.1);
 }
 
@@ -276,7 +278,14 @@
   border-right: 1px solid rgba(139, 92, 246, 0.1);
 }
 
+.dash-event-stat:nth-child(2),
 .dash-event-stat:last-child { border-right: none; }
+
+/* valor recebido ocupa uma linha inteira abaixo dos contadores */
+.dash-event-stat-gift {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(139, 92, 246, 0.1);
+}
 
 .dash-event-stat-value {
   font-family: var(--font-display);
@@ -285,6 +294,11 @@
   font-weight: 700;
   line-height: 1;
   margin-bottom: 4px;
+}
+
+.dash-event-stat-money {
+  font-size: clamp(16px, 2.2vw, 22px);
+  white-space: nowrap;
 }
 
 .dash-event-stat-label {
