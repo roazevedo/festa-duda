@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getRsvps, createRsvp } from '../services/api'
 import './RSVP.css'
 
 export default function RSVP() {
-  const { user }        = useAuth()
   const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
+  const isAdmin         = useEventAdmin()
 
   const [form, setForm] = useState({
     name: '', guests: '0', attending: 'yes'

@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
+import ThemePicker from './ThemePicker'
 import './AdminBar.css'
 
 export default function AdminBar() {
   const { user, logout } = useAuth()
   const navigate         = useNavigate()
+  const [themeOpen, setThemeOpen] = useState(false)
+  const isAdmin = useEventAdmin()
 
   if (!user) return null
 
@@ -23,6 +28,14 @@ export default function AdminBar() {
           <span className="admin-bar-email">{user.email}</span>
         </div>
         <div className="admin-bar-right">
+          {isAdmin && (
+            <button
+              className="admin-bar-dashboard"
+              onClick={() => setThemeOpen(true)}
+            >
+              Tema
+            </button>
+          )}
           <button
             className="admin-bar-dashboard"
             onClick={() => navigate('/dashboard')}
@@ -34,6 +47,8 @@ export default function AdminBar() {
           </button>
         </div>
       </div>
+
+      {themeOpen && <ThemePicker onClose={() => setThemeOpen(false)} />}
     </div>
   )
 }

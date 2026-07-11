@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import AtoHeader from './AtoHeader'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import {
   getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
@@ -32,9 +32,8 @@ const formatPrice = (value) =>
   Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 
 export default function Presentes() {
-  const { user }        = useAuth()
   const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
+  const isAdmin         = useEventAdmin()
 
   const [gifts, setGifts]         = useState([])
   const [form, setForm]           = useState(EMPTY_FORM)

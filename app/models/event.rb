@@ -5,6 +5,7 @@ class Event < ApplicationRecord
   has_many :photos,   dependent: :destroy
   has_many :gifts,    dependent: :destroy
 
+  before_validation :generate_slug, on: :create
   before_create :generate_token
 
   validates :slug,       presence: true, uniqueness: true,
@@ -23,6 +24,19 @@ class Event < ApplicationRecord
   end
 
   private
+
+  # Gera o slug a partir do nome quando não informado,
+  # acrescentando um sufixo aleatório em caso de colisão
+  def generate_slug
+    return if slug.present?
+
+    base = name.to_s.parameterize
+    base = "evento" if base.blank?
+
+    candidate = base
+    candidate = "#{base}-#{SecureRandom.hex(2)}" while Event.exists?(slug: candidate)
+    self.slug = candidate
+  end
 
   def generate_token
     self.token = SecureRandom.urlsafe_base64(24) until token_unique?

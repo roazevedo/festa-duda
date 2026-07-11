@@ -113,8 +113,10 @@ export default function Dashboard() {
         <div className="dash-section">
           <div className="dash-section-header">
             <h2 className="dash-section-title">Meus eventos</h2>
-            {/* Botão para criar novo evento — implementação futura */}
-            <button className="dash-new-btn" disabled title="Em breve">
+            <button
+              className="dash-new-btn"
+              onClick={() => navigate('/dashboard/novo')}
+            >
               + Novo evento
             </button>
           </div>
@@ -189,6 +191,14 @@ export default function Dashboard() {
 
                 {/* Ações */}
                 <div className="dash-event-actions">
+                  <button
+                    className="dash-open-btn"
+                    onClick={() =>
+                      navigate(`/dashboard/evento/${event.slug}/${event.token}`)
+                    }
+                  >
+                    Personalizar
+                  </button>
                   <button
                     className="dash-open-btn"
                     onClick={() => navigate(`/${event.slug}/${event.token}`)}

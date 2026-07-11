@@ -4,6 +4,8 @@ import { useAuth } from './contexts/useAuth'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import NewEvent from './pages/NewEvent'
+import EventManage from './pages/EventManage'
 import EventSite from './pages/EventSite'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
@@ -45,6 +47,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/novo"
+        element={
+          <ProtectedRoute>
+            <NewEvent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/evento/:slug/:token"
+        element={
+          <ProtectedRoute>
+            <EventManage />
           </ProtectedRoute>
         }
       />

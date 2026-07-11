@@ -164,7 +164,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 6px 0;
-  border-bottom: 1px solid rgba(139, 108, 46, 0.15);
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 15%, transparent);
 }
 
 .confirmed-item:last-child {

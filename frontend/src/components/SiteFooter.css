@@ -9,5 +9,5 @@
   font-size: clamp(10px, 1.1vw, 12px);
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--footer-copy, rgba(0, 0, 0, 0.4));
 }

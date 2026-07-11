@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { updateEvent } from '../services/api'
 import './SaveTheDate.css'
@@ -18,9 +18,8 @@ function extractYouTubeId(url) {
 }
 
 export default function SaveTheDate() {
-  const { user }          = useAuth()
   const { slug, token, event, setEvent } = useEvent()
-  const isAdmin           = user?.admin === true
+  const isAdmin           = useEventAdmin()
 
   // ID do vídeo salvo no settings do evento
   const savedId = event?.settings?.youtube_save_the_date || null

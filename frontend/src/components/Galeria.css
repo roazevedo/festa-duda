@@ -6,8 +6,8 @@
   gap: 12px;
   margin-bottom: 36px;
   padding: 28px;
-  border: 1px dashed rgba(139, 108, 46, 0.35);
-  background: rgba(139, 108, 46, 0.04);
+  border: 1px dashed color-mix(in srgb, var(--gold) 35%, transparent);
+  background: color-mix(in srgb, var(--gold) 5%, transparent);
 }
 
 .galeria-upload-btn {

@@ -30,6 +30,9 @@
   --btn-red-hover: #bf675d;
   --btn-text:      #faf4e6;
 
+  /* Texto do footer global (temas escuros sobrescrevem) */
+  --footer-copy:   rgba(0, 0, 0, 0.4);
+
   --font-title:   'Montserrat', sans-serif;
   --font-display: 'Montserrat', sans-serif;
   --font-body:    'Inter', sans-serif;
@@ -170,8 +173,8 @@ body {
 
 /* ── Aviso em destaque (traje / bebidas) ── */
 .aviso-destaque {
-  background: rgba(139, 26, 26, 0.07);
-  border: 1px solid rgba(139, 26, 26, 0.3);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   border-left: 4px solid var(--red);
   padding: 16px 20px;
 }

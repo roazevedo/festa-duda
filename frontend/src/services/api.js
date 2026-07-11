@@ -101,6 +101,15 @@ export const getCloudinarySignature = (folder) =>
 export const getEvent = (slug, token) =>
   apiFetch(`/events/${slug}/${token}`)
 
+export const getMyEvents = () =>
+  apiFetch('/events')
+
+export const createEvent = (data) =>
+  apiFetch('/events', {
+    method: 'POST',
+    body: JSON.stringify({ event: data }),
+  })
+
 export const updateEvent = (slug, token, data) =>
   apiFetch(`/events/${slug}/${token}`, {
     method: 'PATCH',

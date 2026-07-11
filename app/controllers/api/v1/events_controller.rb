@@ -72,6 +72,7 @@ class Api::V1::EventsController < ApplicationController
   def event_json(event)
     {
       id:               event.id,
+      user_id:          event.user_id,
       slug:             event.slug,
       token:            event.token,
       name:             event.name,

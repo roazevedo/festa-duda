@@ -14,11 +14,19 @@ import Traje from '../components/Traje'
 import Galeria from '../components/Galeria'
 import Salao from '../components/Salao'
 import SaveTheDate from '../components/SaveTheDate'
+import { getTheme, applyTheme, clearTheme } from '../themes'
 import './EventSite.css'
 
 function EventContent() {
-  const { loading, error } = useEvent()
+  const { event, loading, error } = useEvent()
   const { user } = useAuth()
+
+  // Aplica o tema salvo no evento; ao sair da página, restaura o padrão
+  useEffect(() => {
+    if (!event) return
+    applyTheme(getTheme(event.settings?.theme))
+    return clearTheme
+  }, [event])
 
   if (loading) {
     return (

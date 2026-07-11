@@ -89,7 +89,7 @@
 
 /* Aviso de bebidas — garante que o destaque sobreponha o estilo padrão */
 .salao-detail.aviso-destaque {
-  border: 1px solid rgba(139, 26, 26, 0.3);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   border-left: 4px solid var(--red);
   padding: 16px 20px;
 }
@@ -132,7 +132,7 @@
   border-radius: 50%;
   background: var(--gold);
   border: 2px solid var(--red);
-  box-shadow: 0 0 0 3px rgba(168, 132, 46, 0.3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 30%, transparent);
 }
 
 /* ── Popup customizado ── */

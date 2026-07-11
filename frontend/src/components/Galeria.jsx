@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import AtoHeader from './AtoHeader'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import './Galeria.css'
 
 export default function Galeria() {
-  const { user }        = useAuth()
   const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
+  const isAdmin         = useEventAdmin()
 
   const [photos, setPhotos]       = useState([])
   const [loading, setLoading]     = useState(true)

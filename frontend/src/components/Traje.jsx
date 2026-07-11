@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import AtoHeader from './AtoHeader'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import './Traje.css'
 
 export default function Traje() {
-  const { user }        = useAuth()
   const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
+  const isAdmin         = useEventAdmin()
   const fileRef         = useRef(null)
 
   const [photos, setPhotos]       = useState([])

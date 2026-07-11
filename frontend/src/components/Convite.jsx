@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import AtoHeader from './AtoHeader'
-import { useAuth } from '../contexts/useAuth'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
@@ -9,9 +9,8 @@ import './Convite.css'
 const CAPTION_ARTE = 'arte_convite'
 
 export default function Convite() {
-  const { user }        = useAuth()
   const { slug, token } = useEvent()
-  const isAdmin         = user?.admin === true
+  const isAdmin         = useEventAdmin()
   const arteRef         = useRef(null)
 
   const [arte, setArte]           = useState(null)
