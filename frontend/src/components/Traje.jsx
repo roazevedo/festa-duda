@@ -83,7 +83,7 @@ export default function Traje() {
 
         <div className="traje-warning">
           <svg className="traje-fan" viewBox="0 0 60 40" fill="none">
-            <g stroke="#c9a84c" strokeWidth="1">
+            <g stroke="#a8842e" strokeWidth="1">
               {[...Array(9)].map((_, i) => {
                 const a = (i / 8) * Math.PI
                 return (
@@ -100,9 +100,9 @@ export default function Traje() {
             </g>
           </svg>
 
-          <p className="traje-warning-text">
+          <p className="traje-warning-text aviso-destaque">
             Pedimos, gentilmente, que as convidadas{' '}
-            <strong style={{ color: '#e8c84a', fontStyle: 'italic', fontWeight: 400 }}>
+            <strong>
               evitem trajes em tons de vermelho (incluindo vinho e marsala).
             </strong>
           </p>

@@ -3,6 +3,14 @@
    ════════════════════════════════════════════════════════════ */
 
 .hero {
+  /* O banner mantém o tema escuro original — a paleta clara do site
+     não se aplica aqui, então as cores antigas são restauradas localmente */
+  --cream:      #f0e6cc;
+  --gold:       #c9a84c;
+  --gold-dim:   #7a6030;
+  --text-muted: #8a7a60;
+  --red-light:  #c0392b;
+
   position: relative;
   min-height: 100vh;
   display: flex;

@@ -78,7 +78,7 @@
   color: var(--gold);
   border: 1px solid var(--border);
   padding: 8px 12px;
-  background: rgba(201,168,76,0.05);
+  background: rgba(139, 108, 46, 0.06);
 }
 
 /* ── Grade de referências ── */
@@ -172,9 +172,9 @@
 
 /* ── Botão remover ── */
 .traje-overlay-remove {
-  background: var(--red);
+  background: var(--btn-red);
   border: none;
-  color: var(--cream);
+  color: var(--btn-text);
   font-family: var(--font-display);
   font-size: clamp(9px, 1.1vw, 12px);
   letter-spacing: 0.25em;
@@ -190,7 +190,7 @@
 }
 
 .traje-overlay-remove:hover {
-  background: var(--red-light);
+  background: var(--btn-red-hover);
 }
 
 /* ── Spinner de upload ── */
@@ -204,7 +204,7 @@
 .traje-spinner {
   width: 28px;
   height: 28px;
-  border: 2px solid rgba(201,168,76,0.2);
+  border: 2px solid rgba(139, 108, 46, 0.25);
   border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

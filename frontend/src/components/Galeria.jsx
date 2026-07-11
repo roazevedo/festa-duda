@@ -93,8 +93,8 @@ export default function Galeria() {
     <section className="section">
       <AtoHeader
         number="VII"
-        title="O Ensaio"
-        subtitle="cenas dos bastidores · um aperitivo do que será a noite"
+        title="A Trajetória"
+        subtitle="quinze anos de história em imagens"
       />
 
       {/* Botão de upload — só para admin */}
@@ -115,7 +115,7 @@ export default function Galeria() {
               onClick={() => fileInputRef.current?.click()}
             >
               <span className="galeria-upload-icon">+</span>
-              Adicionar Fotos ao Ensaio
+              Adicionar Fotos à Trajetória
             </button>
           ) : (
             <div className="galeria-upload-progress">
@@ -143,7 +143,7 @@ export default function Galeria() {
         <div className="galeria-empty">
           {isAdmin
             ? 'Nenhuma foto ainda. Use o botão acima para adicionar.'
-            : 'As fotos do ensaio serão adicionadas em breve.'}
+            : 'As fotos da trajetória serão adicionadas em breve.'}
         </div>
       )}
 
@@ -156,7 +156,7 @@ export default function Galeria() {
             >
               <img
                 src={photo.thumb_url}
-                alt={photo.caption || 'Foto do ensaio'}
+                alt={photo.caption || 'Foto da trajetória'}
                 className="galeria-img"
                 onClick={() => !isAdmin && setLightbox(photo)}
                 loading="lazy"
@@ -194,19 +194,13 @@ export default function Galeria() {
         </div>
       )}
 
-      <p className="galeria-note">
-        {photos.length > 0
-          ? `${photos.length} foto${photos.length !== 1 ? 's' : ''} · mais serão adicionadas após a festa`
-          : 'as fotos da festa serão adicionadas após o evento'}
-      </p>
-
       {/* Lightbox */}
       {lightbox && (
         <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
           <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
             <img
               src={lightbox.url}
-              alt={lightbox.caption || 'Foto do ensaio'}
+              alt={lightbox.caption || 'Foto da trajetória'}
               className="lightbox-img"
             />
             {lightbox.caption && (

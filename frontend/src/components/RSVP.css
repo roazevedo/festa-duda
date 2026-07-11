@@ -18,8 +18,8 @@
 }
 
 .rsvp-btn {
-  background: var(--red);
-  color: var(--cream);
+  background: var(--btn-red);
+  color: var(--btn-text);
   border: none;
   padding: 16px 28px;
   font-family: var(--font-display);
@@ -32,7 +32,7 @@
   margin-top: 4px;
 }
 
-.rsvp-btn:hover { background: var(--red-light); }
+.rsvp-btn:hover { background: var(--btn-red-hover); }
 
 .rsvp-btn-outline {
   background: transparent;
@@ -164,7 +164,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 6px 0;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  border-bottom: 1px solid rgba(139, 108, 46, 0.15);
 }
 
 .confirmed-item:last-child {

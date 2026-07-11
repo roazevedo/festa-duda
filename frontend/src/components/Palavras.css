@@ -18,8 +18,8 @@
 }
 
 .palavras-btn {
-  background: var(--red);
-  color: var(--cream);
+  background: var(--btn-red);
+  color: var(--btn-text);
   border: none;
   padding: 16px 28px;
   font-family: var(--font-display);
@@ -30,7 +30,7 @@
   transition: background 0.2s;
 }
 
-.palavras-btn:hover { background: var(--red-light); }
+.palavras-btn:hover { background: var(--btn-red-hover); }
 
 .palavras-feed {
   display: flex;

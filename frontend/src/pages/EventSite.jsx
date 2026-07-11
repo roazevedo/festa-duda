@@ -24,16 +24,16 @@ function EventContent() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#0e0a08',
+        background: '#ece3d0',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
         <p style={{
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Inter', sans-serif",
           fontSize: '11px',
           letterSpacing: '0.4em',
-          color: '#7a6030',
+          color: '#7a6a4d',
           textTransform: 'uppercase',
         }}>
           carregando...
@@ -46,7 +46,7 @@ function EventContent() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#0e0a08',
+        background: '#ece3d0',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -54,7 +54,7 @@ function EventContent() {
         gap: '16px',
       }}>
         <p style={{
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Inter', sans-serif",
           fontSize: '13px',
           letterSpacing: '0.4em',
           color: '#8b1a1a',
@@ -63,9 +63,9 @@ function EventContent() {
           Evento não encontrado
         </p>
         <p style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: "'Inter', sans-serif",
           fontSize: '16px',
-          color: '#7a6030',
+          color: '#7a6a4d',
           fontStyle: 'italic',
         }}>
           Verifique o link e tente novamente.
@@ -107,14 +107,14 @@ function EventContent() {
                     x1="40" y1="52"
                     x2={40 + 38 * Math.cos(a)}
                     y2={52 - 38 * Math.sin(a)}
-                    stroke="#c9a84c"
+                    stroke="#a8842e"
                     strokeWidth={i === 5 ? 1.5 : 0.9}
                     opacity="0.8"
                   />
                 )
               })}
-              <path d="M 2 52 A 38 38 0 0 1 78 52" stroke="#c9a84c" strokeWidth="1.2" />
-              <path d="M 10 52 A 30 30 0 0 1 70 52" stroke="#c9a84c" strokeWidth="0.7" opacity="0.5" />
+              <path d="M 2 52 A 38 38 0 0 1 78 52" stroke="#a8842e" strokeWidth="1.2" />
+              <path d="M 10 52 A 30 30 0 0 1 70 52" stroke="#a8842e" strokeWidth="0.7" opacity="0.5" />
             </svg>
             <p className="footer-act">FIM DO ATO — VIII</p>
             <p className="footer-bis">Bis · 29 · 08 · 2026</p>

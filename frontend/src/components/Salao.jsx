@@ -55,7 +55,7 @@ export default function Salao() {
         .addTo(map)
         .bindPopup(
           `<div class="salao-popup-inner">
-             <p class="salao-popup-name">Salão Elite</p>
+             <p class="salao-popup-name">Casa de Festas Elite</p>
              <p class="salao-popup-addr">Rua Vítor Meireles, 485<br>Riachuelo · Rio de Janeiro</p>
            </div>`,
           { className: 'salao-popup' }
@@ -90,7 +90,7 @@ export default function Salao() {
         <div className="salao-info">
           <div className="salao-detail">
             <span className="salao-detail-label">local</span>
-            <span className="salao-detail-value">Salao Elite</span>
+            <span className="salao-detail-value">Casa de Festas Elite</span>
           </div>
           <div className="salao-detail">
             <span className="salao-detail-label">endereco</span>
@@ -107,14 +107,12 @@ export default function Salao() {
             <span className="salao-detail-label">hora</span>
             <span className="salao-detail-value">20 horas</span>
           </div>
-          <div className="salao-detail">
-            <span className="salao-detail-label">estrutura</span>
-            <span className="salao-detail-value">estacionamento proprio · valet · acessibilidade total</span>
-          </div>
-          <div className="salao-detail">
+          <div className="salao-detail aviso-destaque">
             <span className="salao-detail-label">importante</span>
             <span className="salao-detail-value">
-              não será permitida a entrada de bebidas alcoólicas trazidas de fora
+              <strong>
+                não será permitida a entrada de bebidas alcoólicas trazidas de fora
+              </strong>
             </span>
           </div>
 

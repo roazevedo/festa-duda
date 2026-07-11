@@ -1,10 +1,7 @@
-@import '@fontsource/playfair-display/400.css';
-@import '@fontsource/playfair-display/700.css';
-@import '@fontsource/cinzel/400.css';
-@import '@fontsource/cinzel/700.css';
-@import '@fontsource/cormorant-garamond/300.css';
-@import '@fontsource/cormorant-garamond/400.css';
-@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/400-italic.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
 
 * {
   box-sizing: border-box;
@@ -13,21 +10,26 @@
 }
 
 :root {
-  --bg-dark:      #0e0a08;
-  --bg-section:   #141010;
-  --bg-card:      #1c1614;
+  --bg-dark:      #ece3d0;
+  --bg-section:   #e6dcc6;
+  --bg-card:      #f4ede0;
   --red:          #8b1a1a;
-  --red-light:    #c0392b;
-  --gold:         #c9a84c;
-  --gold-dim:     #7a6030;
-  --cream:        #f0e6cc;
-  --ivory:        #faf6ee;
-  --text-muted:   #8a7a60;
-  --border:       rgba(201,168,76,0.25);
+  --red-light:    #a82323;
+  --gold:         #a8842e;
+  --gold-dim:     #a98f58;
+  --cream:        #2e2417;
+  --ivory:        #201a10;
+  --text-muted:   #7a6a4d;
+  --border:       rgba(139, 108, 46, 0.3);
 
-  --font-title:   'Playfair Display', serif;
-  --font-display: 'Cinzel', serif;
-  --font-body:    'Cormorant Garamond', serif;
+  /* Botões — vermelho suave com texto claro */
+  --btn-red:       #b1554b;
+  --btn-red-hover: #bf675d;
+  --btn-text:      #faf4e6;
+
+  --font-title:   'Inter', sans-serif;
+  --font-display: 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
 
   /* ── Escala tipográfica fluida ──────────────────────────────────────
      clamp(mínimo, valor-fluido, máximo)
@@ -35,11 +37,11 @@
      fluido   = cresce com a largura da tela
      máximo   = tamanho em telas grandes (1280px+)
   ── */
-  --text-xs:   clamp(14px, 1.8vw, 18px);   /* labels, eyebrow        */
-  --text-sm:   clamp(17px, 2.2vw, 20px);   /* legenda, nota          */
-  --text-base: clamp(20px, 2.6vw, 24px);   /* corpo de texto         */
-  --text-md:   clamp(22px, 3vw,   29px);   /* subtítulos, citações   */
-  --text-lg:   clamp(26px, 3.8vw, 35px);   /* títulos de seção       */
+  --text-xs:   clamp(12px, 1.6vw, 16px);   /* labels, eyebrow        */
+  --text-sm:   clamp(15px, 2vw,   18px);   /* legenda, nota          */
+  --text-base: clamp(17px, 2.3vw, 21px);   /* corpo de texto         */
+  --text-md:   clamp(19px, 2.7vw, 26px);   /* subtítulos, citações   */
+  --text-lg:   clamp(23px, 3.4vw, 31px);   /* títulos de seção       */
   --text-xl:   clamp(35px, 5.5vw, 57px);   /* títulos grandes        */
   --text-2xl:  clamp(52px, 8.8vw,  96px);  /* hero name              */
   --text-3xl:  clamp(70px, 13vw,  132px);  /* hero name desktop      */
@@ -159,6 +161,20 @@ body {
   color: var(--text-muted);
   font-style: italic;
   font-size: var(--text-sm);
+}
+
+/* ── Aviso em destaque (traje / bebidas) ── */
+.aviso-destaque {
+  background: rgba(139, 26, 26, 0.07);
+  border: 1px solid rgba(139, 26, 26, 0.3);
+  border-left: 4px solid var(--red);
+  padding: 16px 20px;
+}
+
+.aviso-destaque strong {
+  color: var(--red);
+  font-weight: 700;
+  font-style: normal;
 }
 
 /* ── Scrollbar ── */

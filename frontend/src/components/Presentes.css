@@ -100,8 +100,9 @@
 }
 
 .gift-btn:hover {
-  background: var(--red);
-  border-color: var(--red);
+  background: var(--btn-red);
+  border-color: var(--btn-red);
+  color: var(--btn-text);
 }
 
 .gift-btn:disabled {
@@ -176,9 +177,9 @@
 }
 
 .gift-admin-btn-remove:hover {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--cream);
+  background: var(--btn-red);
+  border-color: var(--btn-red);
+  color: var(--btn-text);
 }
 
 /* ── Formulário admin de cadastro ── */
@@ -212,8 +213,8 @@
 }
 
 .gifts-admin-submit {
-  background: var(--red);
-  color: var(--cream);
+  background: var(--btn-red);
+  color: var(--btn-text);
   border: none;
   padding: 12px 28px;
   font-family: var(--font-display);
@@ -224,7 +225,7 @@
   transition: background 0.2s;
 }
 
-.gifts-admin-submit:hover { background: var(--red-light); }
+.gifts-admin-submit:hover { background: var(--btn-red-hover); }
 
 .gifts-admin-submit:disabled {
   opacity: 0.5;

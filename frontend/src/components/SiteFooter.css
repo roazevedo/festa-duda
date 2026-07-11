@@ -5,9 +5,9 @@
 }
 
 .site-footer-copy {
-  font-family: var(--font-display, 'Cinzel', serif);
+  font-family: var(--font-display, 'Inter', sans-serif);
   font-size: clamp(10px, 1.1vw, 12px);
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }

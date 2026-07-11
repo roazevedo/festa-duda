@@ -8,16 +8,16 @@ export default function ProtectedRoute({ children }) {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#0e0a08',
+        background: '#ece3d0',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
         <p style={{
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Inter', sans-serif",
           fontSize: '11px',
           letterSpacing: '0.4em',
-          color: '#7a6030',
+          color: '#7a6a4d',
           textTransform: 'uppercase',
         }}>
           carregando...

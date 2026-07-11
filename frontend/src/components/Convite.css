@@ -36,6 +36,12 @@
 }
 
 /* ── Overlay de hover — admin sem arte ── */
+/* Overlay escuro sobre a arte mantém texto claro */
+.ticket-overlay,
+.ticket-remove-btn {
+  --cream: #f0e6cc;
+}
+
 .ticket-overlay {
   position: absolute;
   inset: 0;
@@ -85,7 +91,7 @@
   justify-content: center;
 }
 
-.ticket-remove-btn:hover { background: var(--red); }
+.ticket-remove-btn:hover { background: var(--btn-red); }
 
 /* ── Estado de upload ── */
 .ticket-uploading {
@@ -96,7 +102,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgba(14, 10, 8, 0.85);
+  background: rgba(236, 227, 208, 0.9);
 }
 
 .ticket-spinner {

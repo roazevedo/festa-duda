@@ -87,10 +87,17 @@
   line-height: 1.6;
 }
 
+/* Aviso de bebidas — garante que o destaque sobreponha o estilo padrão */
+.salao-detail.aviso-destaque {
+  border: 1px solid rgba(139, 26, 26, 0.3);
+  border-left: 4px solid var(--red);
+  padding: 16px 20px;
+}
+
 .salao-btn {
   display: block;
-  background: var(--red);
-  color: var(--cream);
+  background: var(--btn-red);
+  color: var(--btn-text);
   text-align: center;
   text-decoration: none;
   padding: 16px;
@@ -102,7 +109,7 @@
   margin-top: 4px;
 }
 
-.salao-btn:hover { background: var(--red-light); }
+.salao-btn:hover { background: var(--btn-red-hover); }
 
 @media (max-width: 640px) {
   .salao-wrapper { grid-template-columns: 1fr; }
@@ -125,7 +132,7 @@
   border-radius: 50%;
   background: var(--gold);
   border: 2px solid var(--red);
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+  box-shadow: 0 0 0 3px rgba(168, 132, 46, 0.3);
 }
 
 /* ── Popup customizado ── */
@@ -135,7 +142,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 32px rgba(96, 72, 40, 0.25);
   padding: 0;
 }
 
@@ -191,7 +198,7 @@
 
 /* ── Attribution (texto de crédito no canto) ── */
 .salao-map .leaflet-control-attribution {
-  background: rgba(14, 10, 8, 0.75);
+  background: rgba(244, 237, 224, 0.8);
   color: var(--text-muted);
   font-size: 11px;
 }
