@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import {
@@ -150,10 +150,11 @@ export default function Presentes() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="IV"
-        title="Os Presentes"
-        subtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
+      <SectionHeading
+        id="presentes"
+        atoNumber="IV"
+        atoTitle="Os Presentes"
+        atoSubtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />
 
       {feedback && (

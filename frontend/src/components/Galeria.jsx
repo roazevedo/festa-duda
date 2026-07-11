@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
-import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
+import { isTeatro } from '../sections'
 import './Galeria.css'
 
 export default function Galeria() {
-  const { slug, token } = useEvent()
+  const { slug, token, event } = useEvent()
   const isAdmin         = useEventAdmin()
+  const teatro          = isTeatro(event)
 
   const [photos, setPhotos]       = useState([])
   const [loading, setLoading]     = useState(true)
@@ -90,10 +92,11 @@ export default function Galeria() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="VII"
-        title="A Trajetória"
-        subtitle="quinze anos de história em imagens"
+      <SectionHeading
+        id="galeria"
+        atoNumber="VII"
+        atoTitle="A Trajetória"
+        atoSubtitle="quinze anos de história em imagens"
       />
 
       {/* Botão de upload — só para admin */}
@@ -114,7 +117,7 @@ export default function Galeria() {
               onClick={() => fileInputRef.current?.click()}
             >
               <span className="galeria-upload-icon">+</span>
-              Adicionar Fotos à Trajetória
+              {teatro ? 'Adicionar Fotos à Trajetória' : 'Adicionar Fotos'}
             </button>
           ) : (
             <div className="galeria-upload-progress">
@@ -142,7 +145,7 @@ export default function Galeria() {
         <div className="galeria-empty">
           {isAdmin
             ? 'Nenhuma foto ainda. Use o botão acima para adicionar.'
-            : 'As fotos da trajetória serão adicionadas em breve.'}
+            : (teatro ? 'As fotos da trajetória serão adicionadas em breve.' : 'As fotos serão adicionadas em breve.')}
         </div>
       )}
 
@@ -155,7 +158,7 @@ export default function Galeria() {
             >
               <img
                 src={photo.thumb_url}
-                alt={photo.caption || 'Foto da trajetória'}
+                alt={photo.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
                 className="galeria-img"
                 onClick={() => !isAdmin && setLightbox(photo)}
                 loading="lazy"
@@ -199,7 +202,7 @@ export default function Galeria() {
           <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
             <img
               src={lightbox.url}
-              alt={lightbox.caption || 'Foto da trajetória'}
+              alt={lightbox.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
               className="lightbox-img"
             />
             {lightbox.caption && (

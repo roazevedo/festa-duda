@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getRsvps, createRsvp } from '../services/api'
+import { isTeatro } from '../sections'
 import './RSVP.css'
 
 export default function RSVP() {
-  const { slug, token } = useEvent()
+  const { slug, token, event } = useEvent()
   const isAdmin         = useEventAdmin()
+  const teatro          = isTeatro(event)
 
   const [form, setForm] = useState({
     name: '', guests: '0', attending: 'yes'
@@ -90,10 +92,11 @@ export default function RSVP() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="III"
-        title="Sua Confirmação"
-        subtitle="reservaremos sua poltrona até quinze de agosto"
+      <SectionHeading
+        id="rsvp"
+        atoNumber="III"
+        atoTitle="Sua Confirmação"
+        atoSubtitle="reservaremos sua poltrona até quinze de agosto"
       />
 
       <div className="rsvp-wrapper">
@@ -169,14 +172,18 @@ export default function RSVP() {
                 type="submit"
                 disabled={sending}
               >
-                {sending ? 'Enviando...' : 'Confirmar minha poltrona'}
+                {sending
+                  ? 'Enviando...'
+                  : (teatro ? 'Confirmar minha poltrona' : 'Confirmar presença')}
               </button>
             </form>
           ) : (
             <div className="rsvp-success">
               <p className="success-icon">🥂</p>
               <h3 className="success-title">Até lá!</h3>
-              <p className="success-text">Sua poltrona está reservada.</p>
+              <p className="success-text">
+                {teatro ? 'Sua poltrona está reservada.' : 'Sua presença está confirmada.'}
+              </p>
               <button className="rsvp-btn-outline" onClick={resetForm}>
                 Adicionar outra confirmação
               </button>
@@ -186,17 +193,27 @@ export default function RSVP() {
 
         <div className="rsvp-info-side">
           <blockquote className="rsvp-quote">
-            "Cada nome confirmado é uma cadeira no salão e um lugar
-            à mesa. A casa pede gentileza na resposta para que tudo
-            esteja em seu lugar quando as luzes se acenderem."
-            <cite>— a família</cite>
+            {teatro ? (
+              <>
+                "Cada nome confirmado é uma cadeira no salão e um lugar
+                à mesa. A casa pede gentileza na resposta para que tudo
+                esteja em seu lugar quando as luzes se acenderem."
+                <cite>— a família</cite>
+              </>
+            ) : (
+              <>
+                "Cada confirmação nos ajuda a preparar tudo com carinho.
+                Responda com antecedência para garantirmos o seu lugar."
+                <cite>— os anfitriões</cite>
+              </>
+            )}
           </blockquote>
 
           {/* Lista de confirmados — visível apenas para admin */}
           {isAdmin && !loading && confirmed.length > 0 && (
             <div className="rsvp-confirmed">
               <p className="confirmed-title">
-                {confirmed.length} na plateia
+                {confirmed.length} {teatro ? 'na plateia' : 'confirmados'}
               </p>
               <div className="confirmed-list">
                 {confirmed.map((r) => (

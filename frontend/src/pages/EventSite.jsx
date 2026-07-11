@@ -5,6 +5,7 @@ import { useEvent } from '../contexts/useEvent'
 import AdminBar from '../components/AdminBar'
 import { useAuth } from '../contexts/useAuth'
 import Hero from '../components/Hero'
+import HeroBanner from '../components/HeroBanner'
 import Convite from '../components/Convite'
 import Countdown from '../components/Countdown'
 import RSVP from '../components/RSVP'
@@ -13,9 +14,104 @@ import Palavras from '../components/Palavras'
 import Traje from '../components/Traje'
 import Galeria from '../components/Galeria'
 import Salao from '../components/Salao'
+import Local from '../components/Local'
 import SaveTheDate from '../components/SaveTheDate'
 import { getTheme, applyTheme, clearTheme } from '../themes'
+import { isTeatro, sectionEnabled } from '../sections'
 import './EventSite.css'
+
+// ── Template teatro — o site original da Maria Eduarda ──
+function TeatroLayout() {
+  return (
+    <>
+      <Hero />
+      <div className="section-divider" />
+      <SaveTheDate />
+      <div className="section-divider" />
+      <Convite />
+      <Countdown />
+      <div className="section-divider" />
+      <RSVP />
+      <div className="section-divider" />
+      <Presentes />
+      <div className="section-divider" />
+      <Palavras />
+      <div className="section-divider" />
+      <Traje />
+      <div className="section-divider" />
+      <Galeria />
+      <div className="section-divider" />
+      <Salao />
+
+      <footer className="footer">
+        <div className="footer-inner">
+          <svg className="footer-fan" viewBox="0 0 80 52" fill="none">
+            {[...Array(11)].map((_, i) => {
+              const a = (i / 10) * Math.PI
+              return (
+                <line key={i}
+                  x1="40" y1="52"
+                  x2={40 + 38 * Math.cos(a)}
+                  y2={52 - 38 * Math.sin(a)}
+                  stroke="#a8842e"
+                  strokeWidth={i === 5 ? 1.5 : 0.9}
+                  opacity="0.8"
+                />
+              )
+            })}
+            <path d="M 2 52 A 38 38 0 0 1 78 52" stroke="#a8842e" strokeWidth="1.2" />
+            <path d="M 10 52 A 30 30 0 0 1 70 52" stroke="#a8842e" strokeWidth="0.7" opacity="0.5" />
+          </svg>
+          <p className="footer-act">FIM DO ATO — VIII</p>
+          <p className="footer-bis">Bis · 29 · 08 · 2026</p>
+          <p className="footer-sub">até as cortinas se abrirem.</p>
+        </div>
+      </footer>
+    </>
+  )
+}
+
+// ── Template moderno — modular, seções configuráveis no painel ──
+function ModernoLayout({ event }) {
+  const show = (id) => sectionEnabled(event, id)
+
+  const sections = [
+    show('save_the_date') && <SaveTheDate key="save_the_date" />,
+    show('convite')       && <Convite key="convite" />,
+    show('countdown')     && <Countdown key="countdown" />,
+    show('rsvp')          && <RSVP key="rsvp" />,
+    show('presentes')     && <Presentes key="presentes" />,
+    show('palavras')      && <Palavras key="palavras" />,
+    show('galeria')       && <Galeria key="galeria" />,
+    show('local')         && <Local key="local" />,
+  ].filter(Boolean)
+
+  const footerDate = event?.event_date
+    ? new Date(event.event_date).toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      })
+    : null
+
+  return (
+    <>
+      <HeroBanner />
+      {sections.map((section, i) => (
+        <div key={section.key}>
+          {i > 0 && <div className="section-divider" />}
+          {section}
+        </div>
+      ))}
+
+      <footer className="footer">
+        <div className="footer-inner">
+          <p className="footer-act">{event?.name}</p>
+          {footerDate && <p className="footer-bis">{footerDate}</p>}
+          <p className="footer-sub">esperamos por você.</p>
+        </div>
+      </footer>
+    </>
+  )
+}
 
 function EventContent() {
   const { event, loading, error } = useEvent()
@@ -86,49 +182,7 @@ function EventContent() {
     <>
       <AdminBar />
       <main style={{ paddingTop: user ? '40px' : '0' }}>
-        <Hero />
-        <div className="section-divider" />
-        <SaveTheDate />
-        <div className="section-divider" />
-        <Convite />
-        <Countdown />
-        <div className="section-divider" />
-        <RSVP />
-        <div className="section-divider" />
-        <Presentes />
-        <div className="section-divider" />
-        <Palavras />
-        <div className="section-divider" />
-        <Traje />
-        <div className="section-divider" />
-        <Galeria />
-        <div className="section-divider" />
-        <Salao />
-
-        <footer className="footer">
-          <div className="footer-inner">
-            <svg className="footer-fan" viewBox="0 0 80 52" fill="none">
-              {[...Array(11)].map((_, i) => {
-                const a = (i / 10) * Math.PI
-                return (
-                  <line key={i}
-                    x1="40" y1="52"
-                    x2={40 + 38 * Math.cos(a)}
-                    y2={52 - 38 * Math.sin(a)}
-                    stroke="#a8842e"
-                    strokeWidth={i === 5 ? 1.5 : 0.9}
-                    opacity="0.8"
-                  />
-                )
-              })}
-              <path d="M 2 52 A 38 38 0 0 1 78 52" stroke="#a8842e" strokeWidth="1.2" />
-              <path d="M 10 52 A 30 30 0 0 1 70 52" stroke="#a8842e" strokeWidth="0.7" opacity="0.5" />
-            </svg>
-            <p className="footer-act">FIM DO ATO — VIII</p>
-            <p className="footer-bis">Bis · 29 · 08 · 2026</p>
-            <p className="footer-sub">até as cortinas se abrirem.</p>
-          </div>
-        </footer>
+        {isTeatro(event) ? <TeatroLayout /> : <ModernoLayout event={event} />}
       </main>
     </>
   )

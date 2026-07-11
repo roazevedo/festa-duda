@@ -278,4 +278,11 @@
   height: 18px;
   accent-color: var(--gold);
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.em-toggle-desc {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: clamp(12px, 1.4vw, 14px);
 }

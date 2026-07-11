@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEvent } from '../contexts/useEvent'
 import { getMessages, createMessage } from '../services/api'
 import './Palavras.css'
@@ -51,10 +51,11 @@ export default function Palavras() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="V"
-        title="As Palavras"
-        subtitle="deixe uma mensagem para Maria Eduarda"
+      <SectionHeading
+        id="palavras"
+        atoNumber="V"
+        atoTitle="As Palavras"
+        atoSubtitle="deixe uma mensagem para Maria Eduarda"
       />
 
       <div className="palavras-wrapper">

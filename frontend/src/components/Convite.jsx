@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
@@ -59,10 +59,11 @@ export default function Convite() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="I"
-        title="O Convite"
-        subtitle="a casa abre suas portas para a senhorita e quem lhe acompanha"
+      <SectionHeading
+        id="convite"
+        atoNumber="I"
+        atoTitle="O Convite"
+        atoSubtitle="a casa abre suas portas para a senhorita e quem lhe acompanha"
       />
 
       <div className="convite-wrapper">

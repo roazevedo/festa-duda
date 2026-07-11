@@ -5,6 +5,7 @@ import { useEvent } from '../contexts/useEvent'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { updateEvent } from '../services/api'
 import { getTheme, DEFAULT_THEME_ID } from '../themes'
+import { SECTIONS, sectionEnabled, isTeatro } from '../sections'
 import ThemePicker from '../components/ThemePicker'
 import './EventManage.css'
 
@@ -93,6 +94,24 @@ function ManageContent() {
       setEvent(updated)
     } catch {
       setFeedback('Erro ao salvar a configuração.')
+      setTimeout(() => setFeedback(null), 2500)
+    }
+  }
+
+  // Liga/desliga uma seção do site (event.settings.sections)
+  const toggleSection = async (id) => {
+    const sections = { ...(event.settings?.sections || {}) }
+    sections[id] = {
+      ...(sections[id] || {}),
+      enabled: !sectionEnabled(event, id),
+    }
+    try {
+      const updated = await updateEvent(slug, token, {
+        settings: { ...event.settings, sections },
+      })
+      setEvent(updated)
+    } catch {
+      setFeedback('Erro ao salvar a seção.')
       setTimeout(() => setFeedback(null), 2500)
     }
   }
@@ -218,6 +237,33 @@ function ManageContent() {
             )}
           </div>
 
+          {/* ── Seções do site ── */}
+          {!isTeatro(event) && (
+            <div className="em-card em-card-form">
+              <div className="em-card-info">
+                <h3 className="em-card-title">Seções do site</h3>
+                <p className="em-card-desc">
+                  monte a página do seu jeito — ligue e desligue o que quiser
+                </p>
+              </div>
+              <div className="em-toggles">
+                {SECTIONS.map((s) => (
+                  <label key={s.id} className="em-toggle">
+                    <input
+                      type="checkbox"
+                      checked={sectionEnabled(event, s.id)}
+                      onChange={() => toggleSection(s.id)}
+                    />
+                    <span>
+                      {s.label}
+                      <span className="em-toggle-desc"> · {s.description}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* ── Privacidade ── */}
           <div className="em-card em-card-form">
             <div className="em-card-info">
@@ -251,9 +297,8 @@ function ManageContent() {
             <div className="em-card-info">
               <h3 className="em-card-title">Fotos, presentes e conteúdo</h3>
               <p className="em-card-desc">
-                arte do convite, save the date, galeria, lista de presentes e
-                referências de traje são editados direto no site, logado como
-                você
+                foto de capa (banner), arte do convite, galeria e lista de
+                presentes são editados direto no site, logado como você
               </p>
             </div>
             <a
