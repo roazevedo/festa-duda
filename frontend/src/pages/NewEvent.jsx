@@ -20,11 +20,15 @@ export default function NewEvent() {
   const [saving, setSaving]       = useState(false)
   const [error, setError]         = useState(null)
 
-  const canSubmit = eventType && name.trim() && date && !saving
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!canSubmit) return
+    if (saving) return
+
+    // Validação com mensagem — melhor que botão mudo/desabilitado
+    if (!eventType)    return setError('Escolha o tipo do evento.')
+    if (!name.trim())  return setError('Informe o nome do evento ou aniversariante.')
+    if (!date)         return setError('Informe a data e o horário da festa.')
+
     setSaving(true)
     setError(null)
     try {
@@ -147,7 +151,7 @@ export default function NewEvent() {
 
           {error && <p className="ne-error">{error}</p>}
 
-          <button className="ne-submit" type="submit" disabled={!canSubmit}>
+          <button className="ne-submit" type="submit" disabled={saving}>
             {saving ? 'Criando...' : 'Criar meu evento'}
           </button>
 

@@ -101,9 +101,15 @@ export default function Home() {
           <div className="landing-hero-btns">
             <button
               className="landing-btn-primary"
-              onClick={() => navigate('/login')}
+              onClick={() =>
+                navigate(
+                  user
+                    ? '/dashboard/novo'
+                    : '/login?mode=signup&next=/dashboard/novo'
+                )
+              }
             >
-              {user ? 'Ir para o painel' : 'Criar meu evento'}
+              Criar meu evento
             </button>
             <button
               className="landing-btn-secondary"

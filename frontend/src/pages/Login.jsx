@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../contexts/useAuth'
 import './Login.css'
@@ -10,10 +10,17 @@ import './Login.css'
 const GOOGLE_LOGIN_ENABLED = false
 
 export default function Login() {
-  const { login, signup, loginWithGoogle } = useAuth()
+  const { user, login, signup, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [mode, setMode]                   = useState('login')  // 'login' | 'signup'
+  // Destino pós-login: ?next=/rota (somente caminhos internos)
+  const next = searchParams.get('next')
+  const dest = next?.startsWith('/') ? next : '/dashboard'
+
+  const [mode, setMode] = useState(
+    searchParams.get('mode') === 'signup' ? 'signup' : 'login'
+  )
   const [email, setEmail]                 = useState('')
   const [password, setPassword]           = useState('')
   const [passwordConf, setPasswordConf]   = useState('')
@@ -21,6 +28,11 @@ export default function Login() {
   const [loading, setLoading]             = useState(false)
 
   const isSignup = mode === 'signup'
+
+  // Quem já está logado não precisa ver o login de novo
+  useEffect(() => {
+    if (user) navigate(dest, { replace: true })
+  }, [user, dest, navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -38,7 +50,7 @@ export default function Login() {
       } else {
         await login(email, password)
       }
-      navigate('/dashboard')
+      navigate(dest)
     } catch (err) {
       const msg = err?.response?.data?.errors?.[0]
         || err?.response?.data?.error
@@ -54,7 +66,7 @@ export default function Login() {
     setLoading(true)
     try {
       await loginWithGoogle(credential)
-      navigate('/dashboard')
+      navigate(dest)
     } catch {
       setError('Erro ao autenticar com o Google.')
     } finally {
