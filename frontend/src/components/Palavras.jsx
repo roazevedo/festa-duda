@@ -53,7 +53,7 @@ export default function Palavras() {
     <section className="section">
       <SectionHeading
         id="palavras"
-        atoNumber="V"
+        atoNumber="IV"
         atoTitle="As Palavras"
         atoSubtitle="deixe uma mensagem para Maria Eduarda"
       />

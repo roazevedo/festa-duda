@@ -107,12 +107,10 @@ export default function Salao() {
             <span className="salao-detail-label">hora</span>
             <span className="salao-detail-value">20 horas</span>
           </div>
-          <div className="salao-detail aviso-destaque">
-            <span className="salao-detail-label">importante</span>
+          <div className="salao-detail">
+            <span className="salao-detail-label">estacionamento</span>
             <span className="salao-detail-value">
-              <strong>
-                não será permitida a entrada de bebidas alcoólicas trazidas de fora
-              </strong>
+              o salão conta com estacionamento no local
             </span>
           </div>
 

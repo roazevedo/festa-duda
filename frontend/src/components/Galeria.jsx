@@ -94,7 +94,7 @@ export default function Galeria() {
     <section className="section">
       <SectionHeading
         id="galeria"
-        atoNumber="VII"
+        atoNumber="III"
         atoTitle="A Trajetória"
         atoSubtitle="quinze anos de história em imagens"
       />

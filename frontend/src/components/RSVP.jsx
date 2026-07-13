@@ -94,7 +94,7 @@ export default function RSVP() {
     <section className="section">
       <SectionHeading
         id="rsvp"
-        atoNumber="III"
+        atoNumber="VII"
         atoTitle="Sua Confirmação"
         atoSubtitle="reservaremos sua poltrona até quinze de agosto"
       />
@@ -235,6 +235,14 @@ export default function RSVP() {
           )}
         </div>
       </div>
+
+      {teatro && (
+        <p className="rsvp-aviso aviso-destaque">
+          <strong>Não haverá bebidas alcoólicas no evento.</strong>{' '}
+          Não será permitida a entrada ou o consumo de bebidas alcoólicas
+          trazidas externamente. Agradecemos a compreensão.
+        </p>
+      )}
     </section>
   )
 }

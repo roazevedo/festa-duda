@@ -152,7 +152,7 @@ export default function Presentes() {
     <section className="section">
       <SectionHeading
         id="presentes"
-        atoNumber="IV"
+        atoNumber="V"
         atoTitle="Os Presentes"
         atoSubtitle="contribuições em dinheiro · pix ou cartão · escolha o que tocar seu coração"
       />

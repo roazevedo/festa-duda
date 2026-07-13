@@ -184,3 +184,13 @@
   color: var(--text-muted);
   font-style: italic;
 }
+
+/* Aviso de bebidas alcoólicas — abaixo do formulário (template teatro) */
+.rsvp-aviso {
+  margin-top: clamp(28px, 4vw, 48px);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: 1.7;
+  text-align: center;
+}

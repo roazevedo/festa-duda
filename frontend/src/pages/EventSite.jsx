@@ -31,15 +31,15 @@ function TeatroLayout() {
       <Convite />
       <Countdown />
       <div className="section-divider" />
-      <RSVP />
-      <div className="section-divider" />
-      <Presentes />
+      <Galeria />
       <div className="section-divider" />
       <Palavras />
       <div className="section-divider" />
+      <Presentes />
+      <div className="section-divider" />
       <Traje />
       <div className="section-divider" />
-      <Galeria />
+      <RSVP />
       <div className="section-divider" />
       <Salao />
 
