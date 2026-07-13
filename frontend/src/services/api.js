@@ -56,6 +56,12 @@ export const updatePhoto = (slug, token, id, data) =>
     body: JSON.stringify({ photo: data }),
   })
 
+export const reorderPhotos = (slug, token, ids) =>
+  apiFetch(`/events/${slug}/${token}/photos/reorder`, {
+    method: 'PATCH',
+    body: JSON.stringify({ ids }),
+  })
+
 export const deletePhoto = (slug, token, id) =>
   apiFetch(`/events/${slug}/${token}/photos/${id}`, {
     method: 'DELETE',

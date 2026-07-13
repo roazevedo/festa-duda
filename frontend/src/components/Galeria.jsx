@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
-import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
+import { getPhotos, createPhoto, updatePhoto, deletePhoto, reorderPhotos } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { isTeatro } from '../sections'
 import { useConfirm } from './useConfirm'
@@ -22,6 +22,7 @@ export default function Galeria() {
   const [uploadCount, setUploadCount] = useState({ done: 0, total: 0 })
   const fileInputRef = useRef(null)
   const [confirm, confirmModal] = useConfirm()
+  const [dragId, setDragId] = useState(null)
 
   useEffect(() => {
     const load = async () => {
@@ -93,6 +94,36 @@ export default function Galeria() {
     if (next) setLightbox(next)
   }
 
+  // ── Reordenação por arrastar (admin) ──
+  // Ao passar sobre outra foto durante o arrasto, a lista já é
+  // reorganizada no estado; ao soltar, a ordem é persistida.
+  const handleDragStart = (id) => () => setDragId(id)
+
+  const handleDragOver = (overId) => (e) => {
+    e.preventDefault()
+    if (dragId == null || dragId === overId) return
+    setPhotos((prev) => {
+      const from = prev.findIndex((p) => p.id === dragId)
+      const to   = prev.findIndex((p) => p.id === overId)
+      if (from < 0 || to < 0 || from === to) return prev
+      const next = [...prev]
+      const [moved] = next.splice(from, 1)
+      next.splice(to, 0, moved)
+      return next
+    })
+  }
+
+  const handleDragEnd = async () => {
+    if (dragId == null) return
+    setDragId(null)
+    try {
+      await reorderPhotos(slug, token, photos.map((p) => p.id))
+    } catch (err) {
+      console.error('Erro ao salvar a ordem:', err)
+      alert('Não foi possível salvar a nova ordem. Recarregue a página e tente de novo.')
+    }
+  }
+
   return (
     <section className="section">
       <SectionHeading
@@ -137,7 +168,8 @@ export default function Galeria() {
           )}
 
           <p className="galeria-upload-hint">
-            Selecione uma ou várias fotos · JPG, PNG, WEBP
+            Selecione uma ou várias fotos · JPG, PNG, WEBP · arraste as
+            fotos para mudar a ordem
           </p>
         </div>
       )}
@@ -155,13 +187,26 @@ export default function Galeria() {
       {photos.length > 0 && (
         <div className="galeria-grid">
           {photos.map((photo) => (
-            <div key={photo.id} className="galeria-item">
+            <div
+              key={photo.id}
+              className={
+                'galeria-item'
+                + (isAdmin ? ' galeria-item-draggable' : '')
+                + (dragId === photo.id ? ' galeria-item-dragging' : '')
+              }
+              draggable={isAdmin}
+              onDragStart={isAdmin ? handleDragStart(photo.id) : undefined}
+              onDragOver={isAdmin ? handleDragOver(photo.id) : undefined}
+              onDragEnd={isAdmin ? handleDragEnd : undefined}
+              onDrop={(e) => e.preventDefault()}
+            >
               <img
                 src={photo.thumb_url}
                 alt={photo.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
                 className="galeria-img"
                 onClick={() => setLightbox(photo)}
                 loading="lazy"
+                draggable={false}
               />
 
               {/* Overlay admin com legenda e delete */}

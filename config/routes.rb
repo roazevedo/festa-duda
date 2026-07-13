@@ -30,6 +30,8 @@ Rails.application.routes.draw do
       post   "webhooks/mercado_pago",            to: "mercado_pago_webhooks#create"
       get    "events/:slug/:token/photos",       to: "photos#index"
       post   "events/:slug/:token/photos",       to: "photos#create"
+      # "reorder" precisa vir antes de ":id" para não casar como id
+      patch  "events/:slug/:token/photos/reorder", to: "photos#reorder"
       patch  "events/:slug/:token/photos/:id",   to: "photos#update"
       delete "events/:slug/:token/photos/:id",   to: "photos#destroy"
     end

@@ -112,6 +112,16 @@
 
 .galeria-item:hover .galeria-img { transform: scale(1.04); }
 
+/* ── Reordenação por arrastar (admin) ── */
+.galeria-item-draggable { cursor: grab; }
+.galeria-item-draggable:active { cursor: grabbing; }
+
+.galeria-item-dragging {
+  opacity: 0.35;
+  outline: 2px dashed var(--gold);
+  outline-offset: -2px;
+}
+
 /* Caption overlay para visitantes
    Overlays escuros sobre fotos mantêm texto claro,
    independente da paleta clara do site */

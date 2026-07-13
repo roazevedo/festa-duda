@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_08_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_13_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -81,7 +81,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_08_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "category", default: "galeria", null: false
+    t.integer "position"
     t.index ["category"], name: "index_photos_on_category"
+    t.index ["event_id", "category", "position"], name: "index_photos_on_event_id_and_category_and_position"
     t.index ["event_id"], name: "index_photos_on_event_id"
   end
 
