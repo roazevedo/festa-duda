@@ -151,11 +151,8 @@ export default function Galeria() {
 
       {photos.length > 0 && (
         <div className="galeria-grid">
-          {photos.map((photo, i) => (
-            <div
-              key={photo.id}
-              className={'galeria-item' + (i === 0 || i === 3 ? ' galeria-tall' : '')}
-            >
+          {photos.map((photo) => (
+            <div key={photo.id} className="galeria-item">
               <img
                 src={photo.thumb_url}
                 alt={photo.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}

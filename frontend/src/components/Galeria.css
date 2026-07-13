@@ -95,13 +95,11 @@
 
 .galeria-item {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 3/4;
   overflow: hidden;
   background: var(--bg-card);
   border: 1px solid var(--border);
 }
-
-.galeria-item.galeria-tall { aspect-ratio: 3/4; }
 
 .galeria-img {
   width: 100%;
