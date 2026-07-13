@@ -121,3 +121,6 @@ export const updateEvent = (slug, token, data) =>
     method: 'PATCH',
     body: JSON.stringify({ event: data }),
   })
+
+export const deleteEvent = (slug, token) =>
+  apiFetch(`/events/${slug}/${token}`, { method: 'DELETE' })

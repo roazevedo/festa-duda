@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { EventProvider } from '../contexts/EventProvider'
 import { useEvent } from '../contexts/useEvent'
+import { useEventAdmin } from '../contexts/useEventAdmin'
 import AdminBar from '../components/AdminBar'
+import EditorPanel from '../components/EditorPanel'
 import { useAuth } from '../contexts/useAuth'
 import Hero from '../components/Hero'
 import HeroBanner from '../components/HeroBanner'
@@ -16,8 +18,10 @@ import Galeria from '../components/Galeria'
 import Salao from '../components/Salao'
 import Local from '../components/Local'
 import SaveTheDate from '../components/SaveTheDate'
+import PageOrnaments from '../components/PageOrnaments'
 import { getTheme, applyTheme, clearTheme } from '../themes'
-import { isTeatro, sectionEnabled } from '../sections'
+import { isTeatro, sectionEnabled, sectionOrder } from '../sections'
+import { isEventFinished, EVENT_LIFETIME_MONTHS } from '../eventStatus'
 import './EventSite.css'
 
 // ── Template teatro — o site original da Maria Eduarda ──
@@ -72,19 +76,24 @@ function TeatroLayout() {
 }
 
 // ── Template moderno — modular, seções configuráveis no painel ──
-function ModernoLayout({ event }) {
-  const show = (id) => sectionEnabled(event, id)
+const SECTION_COMPONENTS = {
+  save_the_date: SaveTheDate,
+  convite:       Convite,
+  countdown:     Countdown,
+  rsvp:          RSVP,
+  presentes:     Presentes,
+  palavras:      Palavras,
+  galeria:       Galeria,
+  local:         Local,
+}
 
-  const sections = [
-    show('save_the_date') && <SaveTheDate key="save_the_date" />,
-    show('convite')       && <Convite key="convite" />,
-    show('countdown')     && <Countdown key="countdown" />,
-    show('rsvp')          && <RSVP key="rsvp" />,
-    show('presentes')     && <Presentes key="presentes" />,
-    show('palavras')      && <Palavras key="palavras" />,
-    show('galeria')       && <Galeria key="galeria" />,
-    show('local')         && <Local key="local" />,
-  ].filter(Boolean)
+function ModernoLayout({ event }) {
+  const sections = sectionOrder(event)
+    .filter((id) => sectionEnabled(event, id) && SECTION_COMPONENTS[id])
+    .map((id) => {
+      const Section = SECTION_COMPONENTS[id]
+      return <Section key={id} />
+    })
 
   const footerDate = event?.event_date
     ? new Date(event.event_date).toLocaleDateString('pt-BR', {
@@ -94,6 +103,7 @@ function ModernoLayout({ event }) {
 
   return (
     <>
+      <PageOrnaments />
       <HeroBanner />
       {sections.map((section, i) => (
         <div key={section.key}>
@@ -116,6 +126,17 @@ function ModernoLayout({ event }) {
 function EventContent() {
   const { event, loading, error } = useEvent()
   const { user } = useAuth()
+  const isAdmin = useEventAdmin()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // null = segue a URL: ?editar=1 abre o editor para o admin
+  // (link vindo do painel); abrir/fechar manual sobrepõe.
+  const [editing, setEditing] = useState(null)
+  const editorOpen = editing ?? (isAdmin && Boolean(searchParams.get('editar')))
+
+  // Instante capturado na montagem (regra de pureza do render)
+  const [now] = useState(() => Date.now())
 
   // Aplica o tema salvo no evento; ao sair da página, restaura o padrão
   useEffect(() => {
@@ -123,6 +144,11 @@ function EventContent() {
     applyTheme(getTheme(event.settings?.theme))
     return clearTheme
   }, [event])
+
+  const closeEditor = () => {
+    setEditing(false)
+    if (searchParams.get('editar')) setSearchParams({}, { replace: true })
+  }
 
   if (loading) {
     return (
@@ -178,10 +204,63 @@ function EventContent() {
     )
   }
 
+  // Evento finalizado (6 meses após a festa): página encerrada
+  // para convidados; o dono ainda acessa para rever o conteúdo
+  if (isEventFinished(event, now) && !isAdmin) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: '#ece3d0',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '18px',
+        padding: '24px',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: '13px',
+          fontWeight: 700,
+          letterSpacing: '0.4em',
+          color: '#a8842e',
+          textTransform: 'uppercase',
+        }}>
+          Evento encerrado
+        </p>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '17px',
+          color: '#7a6a4d',
+          fontStyle: 'italic',
+          maxWidth: '460px',
+          lineHeight: 1.7,
+        }}>
+          O site de <strong>{event.name}</strong> ficou no ar por{' '}
+          {EVENT_LIFETIME_MONTHS} meses após a festa e foi encerrado.
+          Obrigado a todos que celebraram com a gente!
+        </p>
+      </div>
+    )
+  }
+
   return (
     <>
       <AdminBar />
-      <main style={{ paddingTop: user ? '40px' : '0' }}>
+
+      {/* Editor ao vivo — só para o dono/admin */}
+      {isAdmin && !editorOpen && (
+        <button className="editor-open-btn" onClick={() => setEditing(true)}>
+          ✎ Personalizar site
+        </button>
+      )}
+      {editorOpen && <EditorPanel onClose={closeEditor} />}
+
+      <main
+        className={editorOpen ? 'site-editing' : ''}
+        style={{ paddingTop: user ? '40px' : '0' }}
+      >
         {isTeatro(event) ? <TeatroLayout /> : <ModernoLayout event={event} />}
       </main>
     </>

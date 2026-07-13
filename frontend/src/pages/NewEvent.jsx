@@ -1,13 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createEvent } from '../services/api'
+import { EVENT_TYPES } from '../eventTypes'
 import './NewEvent.css'
-
-const EVENT_TYPES = [
-  { id: 'quinze_anos', label: 'XV Anos',     desc: 'festa de debutante' },
-  { id: 'casamento',   label: 'Casamento',   desc: 'cerimônia e recepção' },
-  { id: 'aniversario', label: 'Aniversário', desc: 'qualquer idade' },
-]
 
 export default function NewEvent() {
   const navigate = useNavigate()
@@ -15,8 +10,7 @@ export default function NewEvent() {
   const [eventType, setEventType] = useState(null)
   const [name, setName]           = useState('')
   const [date, setDate]           = useState('')
-  const [venueName, setVenueName] = useState('')
-  const [venueAddr, setVenueAddr] = useState('')
+  const [time, setTime]           = useState('')
   const [saving, setSaving]       = useState(false)
   const [error, setError]         = useState(null)
 
@@ -27,19 +21,22 @@ export default function NewEvent() {
     // Validação com mensagem — melhor que botão mudo/desabilitado
     if (!eventType)    return setError('Escolha o tipo do evento.')
     if (!name.trim())  return setError('Informe o nome do evento ou aniversariante.')
-    if (!date)         return setError('Informe a data e o horário da festa.')
+    if (!date)         return setError('Informe a data da festa.')
+    if (!time)         return setError('Informe o horário da festa.')
 
     setSaving(true)
     setError(null)
     try {
+      // Local e endereço são definidos depois, no editor do site,
+      // ao ligar a seção "Local da festa"
       const event = await createEvent({
-        event_type:    eventType,
-        name:          name.trim(),
-        event_date:    date,
-        venue_name:    venueName.trim() || null,
-        venue_address: venueAddr.trim() || null,
+        event_type: eventType,
+        name:       name.trim(),
+        // ISO completo com fuso — evita o servidor interpretar como UTC
+        event_date: new Date(`${date}T${time}`).toISOString(),
       })
-      navigate(`/dashboard/evento/${event.slug}/${event.token}`)
+      // Direto para o site do evento com o editor lateral aberto
+      navigate(`/${event.slug}/${event.token}?editar=1`)
     } catch (err) {
       setError(err.message || 'Não foi possível criar o evento.')
       setSaving(false)
@@ -49,6 +46,9 @@ export default function NewEvent() {
   return (
     <div className="ne">
       <header className="ne-header">
+        <button className="ne-logo" onClick={() => navigate('/dashboard')}>
+          Convida<span>.me</span>
+        </button>
         <button className="ne-back" onClick={() => navigate('/dashboard')}>
           ← Painel
         </button>
@@ -103,48 +103,30 @@ export default function NewEvent() {
             </p>
           </div>
 
-          {/* ── Data ── */}
-          <div className="ne-field">
-            <label className="ne-label" htmlFor="ne-date">
-              Data e horário
-            </label>
-            <input
-              id="ne-date"
-              className="ne-input"
-              type="datetime-local"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-
-          {/* ── Local (opcional) ── */}
+          {/* ── Data e horário — campos separados ── */}
           <div className="ne-field-row">
             <div className="ne-field">
-              <label className="ne-label" htmlFor="ne-venue">
-                Local <span className="ne-optional">(opcional)</span>
+              <label className="ne-label" htmlFor="ne-date">
+                Data da festa
               </label>
               <input
-                id="ne-venue"
+                id="ne-date"
                 className="ne-input"
-                type="text"
-                placeholder="Ex: Casa de Festas Elite"
-                value={venueName}
-                onChange={(e) => setVenueName(e.target.value)}
-                maxLength={120}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
               />
             </div>
             <div className="ne-field">
-              <label className="ne-label" htmlFor="ne-addr">
-                Endereço <span className="ne-optional">(opcional)</span>
+              <label className="ne-label" htmlFor="ne-time">
+                Horário
               </label>
               <input
-                id="ne-addr"
+                id="ne-time"
                 className="ne-input"
-                type="text"
-                placeholder="Ex: Rua Vítor Meireles, 485 · Rio de Janeiro"
-                value={venueAddr}
-                onChange={(e) => setVenueAddr(e.target.value)}
-                maxLength={200}
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
               />
             </div>
           </div>

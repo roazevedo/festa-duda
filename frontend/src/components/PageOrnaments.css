@@ -1,0 +1,63 @@
+/* ── Ornamentos laterais — preenchem a margem livre do site ──
+   O conteúdo tem no máximo 1000px; a decoração ocupa o espaço
+   que sobra de cada lado, com um véu de cor ao fundo. */
+.page-ornament {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: calc((100vw - 1060px) / 2);
+  min-width: 110px;
+  max-width: 360px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.page-ornament-left  { left: 0; }
+.page-ornament-right { right: 0; }
+
+/* Véu de cor saindo da borda — dá corpo sem competir com o texto */
+.page-ornament::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--gold) 16%, transparent),
+    transparent
+  );
+}
+
+.page-ornament-right::before {
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--gold) 16%, transparent),
+    transparent
+  );
+}
+
+.ornament-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Lado direito espelhado — os leques abraçam os cantos de fora */
+.page-ornament-right .ornament-svg {
+  transform: scaleX(-1);
+}
+
+/* Com o editor aberto, o site desloca 320px — acompanha */
+.site-editing .page-ornament-left  { left: 320px; }
+.site-editing .page-ornament {
+  width: calc((100vw - 320px - 1060px) / 2);
+}
+
+@media (max-width: 1520px) {
+  .site-editing .page-ornament { display: none; }
+}
+
+/* Some em telas estreitas: o conteúdo precisa da margem */
+@media (max-width: 1240px) {
+  .page-ornament { display: none; }
+}

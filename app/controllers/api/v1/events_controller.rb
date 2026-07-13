@@ -4,7 +4,18 @@ class Api::V1::EventsController < ApplicationController
   before_action :authorize_owner!,   only: [ :update, :destroy ]
 
   # GET /api/v1/events/:slug/:token — público
+  # Evento finalizado (6 meses após a festa): quem não é o dono
+  # recebe só o essencial para a tela de "evento encerrado".
   def show
+    if @event.finished? && !owner_or_admin?
+      return render json: {
+        slug:       @event.slug,
+        name:       @event.name,
+        event_type: @event.event_type,
+        event_date: @event.event_date,
+        settings:   {}
+      }
+    end
     render json: event_json(@event)
   end
 
@@ -50,9 +61,16 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def authorize_owner!
-    unless @event.user == current_user || current_user.admin?
+    unless owner_or_admin?
       render json: { error: "Não autorizado." }, status: :forbidden
     end
+  end
+
+  # Versão sem exigir login — usada no show público, onde
+  # current_user pode ser nil
+  def owner_or_admin?
+    current_user.present? &&
+      (@event.user == current_user || current_user.admin?)
   end
 
   def event_params

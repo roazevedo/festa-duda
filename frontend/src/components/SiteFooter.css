@@ -1,7 +1,11 @@
-/* ── Footer global — presente em todas as páginas ── */
+/* ── Footer global — presente em todas as páginas ──
+   Nos sites de evento, o fundo e o texto seguem as variáveis do
+   tema do evento; .site-footer-brand força a paleta Convida.me
+   nas páginas da plataforma. */
 .site-footer {
   padding: 24px 16px;
   text-align: center;
+  background: var(--bg-dark);
 }
 
 .site-footer-copy {
@@ -10,4 +14,12 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--footer-copy, rgba(0, 0, 0, 0.4));
+}
+
+.site-footer-brand {
+  background: #07051a;
+}
+
+.site-footer-brand .site-footer-copy {
+  color: #6f6395;
 }

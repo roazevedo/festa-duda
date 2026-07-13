@@ -81,54 +81,5 @@
   margin-top: 22px;
 }
 
-.hero-banner-venue {
-  font-size: var(--text-base);
-  font-style: italic;
-  color: var(--text-muted);
-  margin-top: 8px;
-}
-
-/* ── Controles do admin ── */
-.hero-banner-admin {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hero-banner-admin-btn {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #faf6ee;
-  font-family: var(--font-display);
-  font-size: clamp(10px, 1.2vw, 12px);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.hero-banner-admin-btn:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.75);
-}
-
-.hero-banner-admin-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.hero-banner-admin-remove {
-  border-color: rgba(255, 120, 120, 0.5);
-  color: #ffb0a8;
-}
-
-.hero-banner-error {
-  background: rgba(0, 0, 0, 0.7);
-  color: #ffb0a8;
-  font-size: 12px;
-  padding: 8px 12px;
-}
+/* Os controles de capa vivem no editor lateral ("Personalizar
+   site") — o banner em si não tem botões de admin. */

@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
+import { eventTypeLabel } from '../eventTypes'
+import { deleteEvent, getRsvps } from '../services/api'
+import { isEventFinished } from '../eventStatus'
+import { useConfirm } from '../components/useConfirm'
 import './Dashboard.css'
 
 const API = import.meta.env.VITE_API_URL
-
-const EVENT_TYPE_LABEL = {
-  quinze_anos:  'XV Anos',
-  casamento:    'Casamento',
-  aniversario:  'Aniversário',
-}
 
 function formatDate(dateStr) {
   if (!dateStr) return '—'
@@ -35,6 +33,7 @@ export default function Dashboard() {
   const navigate            = useNavigate()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [confirm, confirmModal] = useConfirm()
 
   useEffect(() => {
     const load = async () => {
@@ -62,8 +61,117 @@ export default function Dashboard() {
   const eventUrl = (event) =>
     `${window.location.origin}/${event.slug}/${event.token}`
 
-  const totalMessages = events.reduce((s, e) => s + (e.stats?.messages || 0), 0)
-  const totalGifts    = events.reduce((s, e) => s + (e.stats?.gifts_received || 0), 0)
+  const handleDelete = async (event) => {
+    const ok = await confirm(
+      `Excluir o evento "${event.name}"? O site, as confirmações, as mensagens e a lista de presentes serão apagados de vez.`,
+      'Excluir evento'
+    )
+    if (!ok) return
+    try {
+      await deleteEvent(event.slug, event.token)
+      setEvents((prev) => prev.filter((e) => e.id !== event.id))
+    } catch (err) {
+      alert(err.message || 'Erro ao excluir o evento.')
+    }
+  }
+
+  const totalGifts = events.reduce((s, e) => s + (e.stats?.gifts_received || 0), 0)
+
+  // Ativo = dentro da vigência (até 6 meses após a festa)
+  // (instante capturado na montagem — estável entre re-renders)
+  const [now] = useState(() => Date.now())
+  const activeCount = events.filter((e) => !isEventFinished(e, now)).length
+  const pastCount   = events.length - activeCount
+
+  // ── Exportação da lista de confirmados (PDF para o salão) ──
+  // jsPDF entra por import dinâmico — só é baixado ao exportar
+  const exportGuests = async (event) => {
+    try {
+      const rsvps = await getRsvps(event.slug, event.token)
+      const confirmed = rsvps
+        .filter((r) => r.attending === 'yes')
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+
+      if (confirmed.length === 0) {
+        alert('Nenhum convidado confirmado ainda.')
+        return
+      }
+
+      // Uma linha por pessoa; acompanhantes logo abaixo do titular
+      const rows = []
+      confirmed.forEach((r) => {
+        rows.push([r.name, ''])
+        ;(r.companion_names || []).forEach((c) =>
+          rows.push([c, `acompanhante de ${r.name}`])
+        )
+      })
+
+      const [{ default: JsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ])
+
+      const doc = new JsPDF()
+      const dateStr = event.event_date
+        ? new Date(event.event_date).toLocaleDateString('pt-BR', {
+            day: '2-digit', month: 'long', year: 'numeric',
+          })
+        : null
+
+      // Cabeçalho
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 20, 60)
+      doc.text('Lista de convidados confirmados', 14, 18)
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(11)
+      doc.setTextColor(100)
+      doc.text(
+        `${event.name}${dateStr ? ` — ${dateStr}` : ''}`,
+        14, 25
+      )
+
+      autoTable(doc, {
+        startY: 32,
+        head: [['Nº', 'Nome', 'Observação']],
+        body: rows.map((cols, i) => [i + 1, cols[0], cols[1]]),
+        foot: [[
+          '',
+          `Total: ${rows.length} pessoa${rows.length !== 1 ? 's' : ''}`,
+          '',
+        ]],
+        styles: { font: 'helvetica', fontSize: 10, cellPadding: 2.6 },
+        headStyles: {
+          fillColor: [109, 40, 217], textColor: 255, fontStyle: 'bold',
+        },
+        footStyles: {
+          fillColor: [240, 236, 255], textColor: [40, 30, 90],
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: { fillColor: [246, 243, 255] },
+        columnStyles: {
+          0: { cellWidth: 14, halign: 'center' },
+          1: { cellWidth: 90 },
+        },
+        didDrawPage: (data) => {
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(8)
+          doc.setTextColor(150)
+          doc.text(
+            `Gerado pelo Convida.me em ${new Date().toLocaleDateString('pt-BR')} · página ${data.pageNumber}`,
+            14,
+            doc.internal.pageSize.getHeight() - 8
+          )
+        },
+      })
+
+      doc.save(`confirmados-${event.slug}.pdf`)
+    } catch (err) {
+      console.error('Erro ao exportar PDF:', err)
+      alert(err.message || 'Erro ao exportar a lista de confirmados.')
+    }
+  }
 
   return (
     <div className="dash">
@@ -96,12 +204,16 @@ export default function Dashboard() {
         {/* ── STATS GLOBAIS ── */}
         <div className="dash-stats">
           <div className="dash-stat-card">
-            <p className="dash-stat-value">{events.length}</p>
-            <p className="dash-stat-label">Evento{events.length !== 1 ? 's' : ''}</p>
+            <p className="dash-stat-value">{activeCount}</p>
+            <p className="dash-stat-label">
+              Evento{activeCount !== 1 ? 's' : ''} ativo{activeCount !== 1 ? 's' : ''}
+            </p>
           </div>
           <div className="dash-stat-card">
-            <p className="dash-stat-value">{totalMessages}</p>
-            <p className="dash-stat-label">Mensagens</p>
+            <p className="dash-stat-value">{pastCount}</p>
+            <p className="dash-stat-label">
+              Evento{pastCount !== 1 ? 's' : ''} finalizado{pastCount !== 1 ? 's' : ''}
+            </p>
           </div>
           <div className="dash-stat-card">
             <p className="dash-stat-value dash-stat-money">{formatBRL(totalGifts)}</p>
@@ -132,14 +244,16 @@ export default function Dashboard() {
           )}
 
           <div className="dash-events-grid">
-            {events.map((event) => (
+            {events.map((event) => {
+              const finished = isEventFinished(event, now)
+              return (
               <div key={event.id} className="dash-event-card">
 
                 {/* Cabeçalho do card */}
                 <div className="dash-event-header">
                   <div>
                     <p className="dash-event-type">
-                      {EVENT_TYPE_LABEL[event.event_type] || event.event_type}
+                      {eventTypeLabel(event.event_type)}
                     </p>
                     <h3 className="dash-event-name">{event.name}</h3>
                   </div>
@@ -147,6 +261,14 @@ export default function Dashboard() {
                     <p className="dash-event-date-text">
                       {formatDate(event.event_date)}
                     </p>
+                    <span
+                      className={
+                        'dash-event-badge'
+                        + (finished ? ' dash-badge-finished' : ' dash-badge-active')
+                      }
+                    >
+                      {finished ? 'Evento finalizado' : 'Ativo'}
+                    </span>
                   </div>
                 </div>
 
@@ -172,49 +294,78 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Link do evento */}
-                <div className="dash-event-link-box">
-                  <p className="dash-event-link-label">Link do site</p>
-                  <div className="dash-event-link-row">
-                    <p className="dash-event-link-url">
-                      /{event.slug}/{event.token?.slice(0, 12)}...
-                    </p>
-                    <button
-                      className="dash-copy-btn"
-                      onClick={() => copyToClipboard(eventUrl(event))}
-                      title="Copiar link"
-                    >
-                      ⎘ copiar
-                    </button>
+                {/* Link do evento — some quando a página foi encerrada */}
+                {!finished && (
+                  <div className="dash-event-link-box">
+                    <p className="dash-event-link-label">Link do site</p>
+                    <div className="dash-event-link-row">
+                      <p className="dash-event-link-url">
+                        /{event.slug}/{event.token?.slice(0, 12)}...
+                      </p>
+                      <button
+                        className="dash-copy-btn"
+                        onClick={() => copyToClipboard(eventUrl(event))}
+                        title="Copiar link"
+                      >
+                        ⎘ copiar
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Ações */}
                 <div className="dash-event-actions">
                   <button
                     className="dash-open-btn"
                     onClick={() =>
-                      navigate(`/dashboard/evento/${event.slug}/${event.token}`)
+                      navigate(`/${event.slug}/${event.token}?editar=1`)
                     }
                   >
                     Personalizar
                   </button>
-                  <a
-                    href={eventUrl(event)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="dash-open-btn"
+                  {finished ? (
+                    <button
+                      className="dash-open-btn"
+                      disabled
+                      title="Evento finalizado — a página foi encerrada"
+                    >
+                      Abrir site
+                    </button>
+                  ) : (
+                    <a
+                      href={eventUrl(event)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dash-open-btn"
+                    >
+                      Abrir site
+                    </a>
+                  )}
+                  <button
+                    className="dash-export-btn"
+                    onClick={() => exportGuests(event)}
+                    title="Baixar PDF com os confirmados e acompanhantes"
                   >
-                    Abrir site
-                  </a>
+                    ⇓ Exportar confirmados
+                  </button>
+                  <button
+                    className="dash-delete-btn"
+                    onClick={() => handleDelete(event)}
+                    title="Excluir evento"
+                  >
+                    Excluir
+                  </button>
                 </div>
 
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
       </main>
+
+      {confirmModal}
     </div>
   )
 }

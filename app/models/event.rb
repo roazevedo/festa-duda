@@ -12,8 +12,17 @@ class Event < ApplicationRecord
                          format: { with: /\A[a-z0-9\-]+\z/ }
   validates :name,       presence: true
   validates :event_type, presence: true,
-                         inclusion: { in: %w[quinze_anos casamento aniversario] }
+                         inclusion: { in: %w[quinze_anos casamento aniversario
+                                             cha_de_bebe cha_revelacao bodas_de_ouro] }
   validates :event_date, presence: true
+
+  # Vigência do site: 6 meses após a data da festa (espelha
+  # frontend/src/eventStatus.js — os dois devem andar juntos)
+  LIFETIME = 6.months
+
+  def finished?
+    event_date.present? && event_date + LIFETIME < Time.current
+  end
 
   # Garante que os campos sempre tenham um valor booleano
   validates :rsvp_list_public, inclusion: { in: [ true, false ] }

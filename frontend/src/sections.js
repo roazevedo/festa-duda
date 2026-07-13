@@ -72,6 +72,18 @@ export function isTeatro(event) {
   return event?.settings?.template === 'teatro'
 }
 
+// Ordem das seções no site: settings.section_order quando salvo.
+// Ids desconhecidos são descartados; seções novas (ainda fora da
+// ordem salva) entram no fim, na ordem padrão.
+export function sectionOrder(event) {
+  const ids   = SECTIONS.map((s) => s.id)
+  const saved = event?.settings?.section_order
+  if (!Array.isArray(saved)) return ids
+  const valid   = saved.filter((id) => ids.includes(id))
+  const missing = ids.filter((id) => !valid.includes(id))
+  return [...valid, ...missing]
+}
+
 export function sectionEnabled(event, id) {
   const def = SECTIONS.find((s) => s.id === id)
   const cfg = event?.settings?.sections?.[id]

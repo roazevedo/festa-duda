@@ -3,13 +3,50 @@
    ════════════════════════════════════════════════════════════ */
 
 .ne {
+  /* Paleta Convida.me — telas administrativas têm a cara da
+     plataforma, não do site de um evento. Sobrepõe as variáveis
+     globais herdadas do site. */
+  --bg-dark:       #07051a;
+  --bg-section:    #131034;
+  --bg-card:       #0e0b28;
+  --border:        rgba(139, 92, 246, 0.25);
+  --cream:         #f0ecff;
+  --text-muted:    #9b8cc4;
+  --gold:          #f0c060;
+  --gold-dim:      #a78bfa;
+  --red:           #f87171;
+  --btn-red:       #7c3aed;
+  --btn-red-hover: #8b5cf6;
+  --btn-text:      #ffffff;
+
   min-height: 100vh;
   background: var(--bg-dark);
 }
 
 .ne-header {
-  padding: 20px clamp(20px, 5vw, 48px);
-  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px clamp(20px, 5vw, 48px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.ne-logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.8vw, 18px);
+  letter-spacing: 0.2em;
+  color: #f0ecff;
+  text-transform: uppercase;
+}
+
+.ne-logo span {
+  background: linear-gradient(90deg, #f0c060, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .ne-back {

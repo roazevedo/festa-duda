@@ -1,0 +1,493 @@
+/* ════════════════════════════════════════════════════════════
+   EDITOR PANEL — barra lateral de personalização ao vivo
+   Desktop: coluna fixa à esquerda. Mobile: gaveta na base.
+   Cores fixas (tema claro neutro) para não "dançar" junto com
+   o preview do site.
+   ════════════════════════════════════════════════════════════ */
+
+.editor-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid #e2ddd2;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Cabeçalho ── */
+.editor-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #eee8dc;
+}
+
+.editor-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #2e2417;
+}
+
+.editor-sub {
+  font-size: 12px;
+  font-style: italic;
+  color: #8a7f6c;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.editor-close {
+  background: none;
+  border: 1px solid #e2ddd2;
+  color: #8a7f6c;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.editor-close:hover { color: #2e2417; border-color: #b7ab92; }
+
+/* ── Corpo rolável ── */
+.editor-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.editor-group-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a7f6c;
+  margin-bottom: 10px;
+}
+
+/* ── Temas ── */
+.editor-themes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #faf8f3;
+  border: 1px solid #eee8dc;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.editor-theme-row:hover { border-color: #b7ab92; }
+
+.editor-theme-active {
+  border-color: #a8842e;
+  outline: 1px solid #a8842e;
+}
+
+.editor-theme-dots {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.editor-theme-dots span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.editor-theme-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e2417;
+}
+
+/* ── Banners ── */
+.editor-banners {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.editor-banner-tile {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 2px solid #eee8dc;
+  background: #faf8f3;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  transition: border-color 0.15s;
+}
+
+.editor-banner-tile:hover { border-color: #b7ab92; }
+
+.editor-banner-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.editor-banner-active {
+  border-color: #a8842e;
+  outline: 2px solid #a8842e;
+}
+
+.editor-banner-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-style: italic;
+  color: #8a7f6c;
+  background: linear-gradient(135deg, #f3ecdd, #e4dbc6);
+}
+
+.editor-upload-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: #2e2417;
+  color: #faf6ee;
+  border: none;
+  padding: 11px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.editor-upload-btn:hover:not(:disabled) { background: #453a28; }
+.editor-upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Sub-bloco dentro de um grupo (ex.: o que aparece no banner) */
+.editor-subgroup-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8a7f6c;
+  margin: 16px 0 8px;
+}
+
+.editor-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #2e2417;
+  cursor: pointer;
+}
+
+.editor-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #a8842e;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Decoração das laterais ── */
+.editor-decos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.editor-deco-btn {
+  background: #faf8f3;
+  border: 1px solid #eee8dc;
+  color: #2e2417;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.editor-deco-btn:hover { border-color: #b7ab92; }
+
+.editor-deco-active {
+  border-color: #a8842e;
+  outline: 1px solid #a8842e;
+}
+
+/* ── Seções ── */
+.editor-group-hint {
+  font-size: 11px;
+  font-style: italic;
+  color: #8a7f6c;
+  line-height: 1.5;
+  margin: -4px 0 10px;
+}
+
+.editor-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-section {
+  border: 1px solid #eee8dc;
+  background: #faf8f3;
+  transition: border-color 0.15s;
+}
+
+.editor-section-open { border-color: #b7ab92; }
+
+.editor-section-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+}
+
+.editor-section-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #a8842e;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.editor-section-name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #2e2417;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editor-section-tools {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.editor-section-tools button {
+  background: none;
+  border: 1px solid #e2ddd2;
+  color: #8a7f6c;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.editor-section-tools button:hover:not(:disabled) {
+  color: #2e2417;
+  border-color: #b7ab92;
+}
+
+.editor-section-tools button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ── Campos de formulário genéricos do painel ── */
+.editor-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Campos de título/subtítulo da seção */
+.editor-section-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 9px 10px;
+}
+
+.editor-field span {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a7f6c;
+  margin-bottom: 3px;
+}
+
+.editor-field input {
+  width: 100%;
+  border: 1px solid #e2ddd2;
+  background: #ffffff;
+  padding: 8px 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #2e2417;
+  outline: none;
+}
+
+.editor-field input:focus { border-color: #a8842e; }
+
+.editor-field input::placeholder {
+  color: #b7ab92;
+  font-style: italic;
+}
+
+.editor-field-hint {
+  font-size: 11px;
+  font-style: italic;
+  color: #8a7f6c;
+}
+
+.editor-note {
+  font-size: 12px;
+  font-style: italic;
+  color: #8a7f6c;
+  line-height: 1.5;
+  border: 1px dashed #e2ddd2;
+  padding: 12px;
+}
+
+.editor-note strong { color: #2e2417; }
+
+/* ── Rodapé ── */
+.editor-footer {
+  border-top: 1px solid #eee8dc;
+  padding: 14px 20px;
+}
+
+.editor-feedback {
+  font-size: 12px;
+  font-style: italic;
+  color: #a8842e;
+  margin-bottom: 8px;
+}
+
+.editor-footer-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.editor-discard {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #e2ddd2;
+  color: #8a7f6c;
+  padding: 11px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.editor-discard:hover:not(:disabled) { color: #2e2417; border-color: #b7ab92; }
+
+.editor-save {
+  flex: 1.4;
+  background: #b1554b;
+  border: none;
+  color: #faf4e6;
+  padding: 11px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editor-save:hover:not(:disabled) { background: #bf675d; }
+
+.editor-save:disabled,
+.editor-discard:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Botão flutuante que abre o editor ── */
+.editor-open-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1400;
+  background: #2e2417;
+  color: #faf6ee;
+  border: none;
+  padding: 13px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.editor-open-btn:hover { background: #453a28; }
+
+/* ── Site deslocado enquanto o editor está aberto ── */
+.site-editing {
+  margin-left: 320px;
+}
+
+/* ── Mobile: gaveta na base da tela ── */
+@media (max-width: 760px) {
+  .editor-panel {
+    top: auto;
+    width: 100%;
+    height: 46vh;
+    border-right: none;
+    border-top: 1px solid #e2ddd2;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .site-editing {
+    margin-left: 0;
+    margin-bottom: 46vh;
+  }
+}
