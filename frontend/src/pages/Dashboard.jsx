@@ -199,19 +199,13 @@ export default function Dashboard() {
                   >
                     Personalizar
                   </button>
-                  <button
-                    className="dash-open-btn"
-                    onClick={() => navigate(`/${event.slug}/${event.token}`)}
-                  >
-                    Abrir site
-                  </button>
                   <a
                     href={eventUrl(event)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="dash-external-btn"
+                    className="dash-open-btn"
                   >
-                    ↗ nova aba
+                    Abrir site
                   </a>
                 </div>
 

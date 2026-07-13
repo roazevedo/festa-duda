@@ -4,15 +4,19 @@ import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
+import { useConfirm } from './useConfirm'
+import Lightbox from './Lightbox'
 import './Traje.css'
 
 export default function Traje() {
   const { slug, token } = useEvent()
   const isAdmin         = useEventAdmin()
   const fileRef         = useRef(null)
+  const [confirm, confirmModal] = useConfirm()
 
   const [photos, setPhotos]       = useState([])
   const [uploading, setUploading] = useState(false)
+  const [lightbox, setLightbox]   = useState(null)
 
   useEffect(() => {
     const load = async () => {
@@ -47,13 +51,20 @@ export default function Traje() {
   }
 
   const handleDelete = async (photo) => {
-    if (!window.confirm('Remover esta foto?')) return
+    if (!(await confirm('Remover esta foto?'))) return
     try {
       await deletePhoto(slug, token, photo.id)
       setPhotos((prev) => prev.filter(p => p.id !== photo.id))
+      if (lightbox?.id === photo.id) setLightbox(null)
     } catch (err) {
       console.error('Erro ao remover foto:', err)
     }
+  }
+
+  const lightboxNav = (dir) => {
+    const idx  = photos.findIndex((p) => p.id === lightbox.id)
+    const next = photos[idx + dir]
+    if (next) setLightbox(next)
   }
 
   return (
@@ -134,12 +145,19 @@ export default function Traje() {
                 alt="Referência de traje"
                 className="traje-ref-photo"
                 loading="lazy"
+                onClick={() => setLightbox(photo)}
               />
               {isAdmin && (
-                <div className="traje-overlay">
+                <div
+                  className="traje-overlay"
+                  onClick={() => setLightbox(photo)}
+                >
                   <button
                     className="traje-overlay-remove"
-                    onClick={() => handleDelete(photo)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(photo)
+                    }}
                   >
                     ✕ remover
                   </button>
@@ -181,6 +199,18 @@ export default function Traje() {
         </div>
       )}
 
+      {lightbox && (
+        <Lightbox
+          photo={lightbox}
+          onClose={() => setLightbox(null)}
+          onPrev={() => lightboxNav(-1)}
+          onNext={() => lightboxNav(1)}
+          hasPrev={photos.findIndex((p) => p.id === lightbox.id) > 0}
+          hasNext={photos.findIndex((p) => p.id === lightbox.id) < photos.length - 1}
+        />
+      )}
+
+      {confirmModal}
     </section>
   )
 }

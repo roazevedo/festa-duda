@@ -4,6 +4,7 @@ import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
+import { useConfirm } from './useConfirm'
 import './Convite.css'
 
 const CAPTION_ARTE = 'arte_convite'
@@ -15,6 +16,7 @@ export default function Convite() {
 
   const [arte, setArte]           = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [confirm, confirmModal]   = useConfirm()
 
   useEffect(() => {
     const load = async () => {
@@ -48,7 +50,7 @@ export default function Convite() {
 
   const handleDelete = async () => {
     if (!arte) return
-    if (!window.confirm('Remover a arte do convite?')) return
+    if (!(await confirm('Remover a arte do convite?'))) return
     try {
       await deletePhoto(slug, token, arte.id)
       setArte(null)
@@ -118,6 +120,8 @@ export default function Convite() {
           />
         </div>
       </div>
+
+      {confirmModal}
     </section>
   )
 }

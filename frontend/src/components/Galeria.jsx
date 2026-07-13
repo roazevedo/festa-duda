@@ -5,6 +5,8 @@ import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, updatePhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { isTeatro } from '../sections'
+import { useConfirm } from './useConfirm'
+import Lightbox from './Lightbox'
 import './Galeria.css'
 
 export default function Galeria() {
@@ -19,6 +21,7 @@ export default function Galeria() {
   const [uploadPct, setUploadPct] = useState(0)
   const [uploadCount, setUploadCount] = useState({ done: 0, total: 0 })
   const fileInputRef = useRef(null)
+  const [confirm, confirmModal] = useConfirm()
 
   useEffect(() => {
     const load = async () => {
@@ -65,7 +68,7 @@ export default function Galeria() {
   }
 
   const handleDelete = async (photo) => {
-    if (!window.confirm('Remover esta foto da galeria?')) return
+    if (!(await confirm('Remover esta foto da galeria?'))) return
     try {
       await deletePhoto(slug, token, photo.id)
       setPhotos((prev) => prev.filter((p) => p.id !== photo.id))
@@ -157,7 +160,7 @@ export default function Galeria() {
                 src={photo.thumb_url}
                 alt={photo.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
                 className="galeria-img"
-                onClick={() => !isAdmin && setLightbox(photo)}
+                onClick={() => setLightbox(photo)}
                 loading="lazy"
               />
 
@@ -195,38 +198,18 @@ export default function Galeria() {
 
       {/* Lightbox */}
       {lightbox && (
-        <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
-          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={lightbox.url}
-              alt={lightbox.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
-              className="lightbox-img"
-            />
-            {lightbox.caption && (
-              <p className="lightbox-caption">{lightbox.caption}</p>
-            )}
-            <div className="lightbox-nav">
-              <button
-                className="lightbox-btn"
-                onClick={() => lightboxNav(-1)}
-                disabled={photos.findIndex((p) => p.id === lightbox.id) === 0}
-              >
-                ← anterior
-              </button>
-              <button className="lightbox-close" onClick={() => setLightbox(null)}>
-                fechar
-              </button>
-              <button
-                className="lightbox-btn"
-                onClick={() => lightboxNav(1)}
-                disabled={photos.findIndex((p) => p.id === lightbox.id) === photos.length - 1}
-              >
-                próxima →
-              </button>
-            </div>
-          </div>
-        </div>
+        <Lightbox
+          photo={lightbox}
+          caption={lightbox.caption}
+          onClose={() => setLightbox(null)}
+          onPrev={() => lightboxNav(-1)}
+          onNext={() => lightboxNav(1)}
+          hasPrev={photos.findIndex((p) => p.id === lightbox.id) > 0}
+          hasNext={photos.findIndex((p) => p.id === lightbox.id) < photos.length - 1}
+        />
       )}
+
+      {confirmModal}
     </section>
   )
 }

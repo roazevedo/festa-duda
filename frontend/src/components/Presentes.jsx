@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
+import { useConfirm } from './useConfirm'
 import {
   getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
   getGiftPayments,
@@ -36,6 +37,7 @@ export default function Presentes() {
   const isAdmin         = useEventAdmin()
 
   const [gifts, setGifts]         = useState([])
+  const [confirm, confirmModal]   = useConfirm()
   const [form, setForm]           = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
   const [saving, setSaving]       = useState(false)
@@ -125,7 +127,7 @@ export default function Presentes() {
   }
 
   const handleDelete = async (gift) => {
-    if (!window.confirm(`Remover "${gift.name}" da lista?`)) return
+    if (!(await confirm(`Remover "${gift.name}" da lista?`))) return
     try {
       await deleteGift(slug, token, gift.id)
       setGifts(gifts.filter((g) => g.id !== gift.id))
@@ -300,6 +302,8 @@ export default function Presentes() {
           </div>
         </div>
       )}
+
+      {confirmModal}
     </section>
   )
 }

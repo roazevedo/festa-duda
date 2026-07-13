@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { updateEvent } from '../services/api'
+import { useConfirm } from './useConfirm'
 import './SaveTheDate.css'
 
 // ── Extrai o ID do vídeo de qualquer formato de URL do YouTube ──
@@ -28,6 +29,7 @@ export default function SaveTheDate() {
   const [input, setInput]       = useState('')       // valor digitado pelo admin
   const [saving, setSaving]     = useState(false)
   const [error, setError]       = useState('')
+  const [confirm, confirmModal] = useConfirm()
 
   // Não renderiza nada para convidados se não houver vídeo configurado
   if (!savedId && !isAdmin) return null
@@ -64,7 +66,7 @@ export default function SaveTheDate() {
   }
 
   const handleRemove = async () => {
-    if (!window.confirm('Remover o vídeo do Save the Date?')) return
+    if (!(await confirm('Remover o vídeo do Save the Date?'))) return
     setSaving(true)
     try {
       const restSettings = { ...event.settings }
@@ -164,6 +166,8 @@ export default function SaveTheDate() {
           ⚙ Trocar vídeo
         </button>
       )}
+
+      {confirmModal}
     </section>
   )
 }

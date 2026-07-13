@@ -148,6 +148,7 @@
   object-fit: cover;
   display: block;
   transition: transform 0.35s ease;
+  cursor: pointer;
 }
 
 .traje-ref-admin:hover .traje-ref-photo {
@@ -164,6 +165,7 @@
   justify-content: center;
   transition: background 0.25s;
   z-index: 2;
+  cursor: pointer;
 }
 
 .traje-ref-admin:hover .traje-overlay {

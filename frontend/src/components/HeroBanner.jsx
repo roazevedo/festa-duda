@@ -3,6 +3,7 @@ import { useEvent } from '../contexts/useEvent'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { updateEvent } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
+import { useConfirm } from './useConfirm'
 import './HeroBanner.css'
 
 const EVENT_TYPE_EYEBROW = {
@@ -33,6 +34,7 @@ export default function HeroBanner() {
 
   const [uploading, setUploading] = useState(false)
   const [error, setError]         = useState(null)
+  const [confirm, confirmModal]   = useConfirm()
 
   const bannerUrl = event?.settings?.banner_url
 
@@ -63,7 +65,7 @@ export default function HeroBanner() {
   }
 
   const removeBanner = async () => {
-    if (!window.confirm('Remover a foto de capa?')) return
+    if (!(await confirm('Remover a foto de capa?'))) return
     try {
       await saveBanner(null)
     } catch {
@@ -127,6 +129,8 @@ export default function HeroBanner() {
           {error && <p className="hero-banner-error">{error}</p>}
         </div>
       )}
+
+      {confirmModal}
     </section>
   )
 }
