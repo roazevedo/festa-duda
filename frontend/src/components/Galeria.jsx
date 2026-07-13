@@ -7,6 +7,7 @@ import { uploadToCloudinary } from '../services/cloudinary'
 import { isTeatro } from '../sections'
 import { useConfirm } from './useConfirm'
 import Lightbox from './Lightbox'
+import PhotoOrganizer from './PhotoOrganizer'
 import './Galeria.css'
 
 export default function Galeria() {
@@ -22,7 +23,8 @@ export default function Galeria() {
   const [uploadCount, setUploadCount] = useState({ done: 0, total: 0 })
   const fileInputRef = useRef(null)
   const [confirm, confirmModal] = useConfirm()
-  const [dragId, setDragId] = useState(null)
+  const [organizing, setOrganizing]   = useState(false)
+  const [savingOrder, setSavingOrder] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -94,33 +96,18 @@ export default function Galeria() {
     if (next) setLightbox(next)
   }
 
-  // ── Reordenação por arrastar (admin) ──
-  // Ao passar sobre outra foto durante o arrasto, a lista já é
-  // reorganizada no estado; ao soltar, a ordem é persistida.
-  const handleDragStart = (id) => () => setDragId(id)
-
-  const handleDragOver = (overId) => (e) => {
-    e.preventDefault()
-    if (dragId == null || dragId === overId) return
-    setPhotos((prev) => {
-      const from = prev.findIndex((p) => p.id === dragId)
-      const to   = prev.findIndex((p) => p.id === overId)
-      if (from < 0 || to < 0 || from === to) return prev
-      const next = [...prev]
-      const [moved] = next.splice(from, 1)
-      next.splice(to, 0, moved)
-      return next
-    })
-  }
-
-  const handleDragEnd = async () => {
-    if (dragId == null) return
-    setDragId(null)
+  // Persiste a ordem definida no modal de organização
+  const saveOrder = async (ordered) => {
+    setSavingOrder(true)
     try {
-      await reorderPhotos(slug, token, photos.map((p) => p.id))
+      await reorderPhotos(slug, token, ordered.map((p) => p.id))
+      setPhotos(ordered)
+      setOrganizing(false)
     } catch (err) {
       console.error('Erro ao salvar a ordem:', err)
-      alert('Não foi possível salvar a nova ordem. Recarregue a página e tente de novo.')
+      alert('Não foi possível salvar a nova ordem. Tente novamente.')
+    } finally {
+      setSavingOrder(false)
     }
   }
 
@@ -168,9 +155,17 @@ export default function Galeria() {
           )}
 
           <p className="galeria-upload-hint">
-            Selecione uma ou várias fotos · JPG, PNG, WEBP · arraste as
-            fotos para mudar a ordem
+            Selecione uma ou várias fotos · JPG, PNG, WEBP
           </p>
+
+          {photos.length > 1 && !uploading && (
+            <button
+              className="galeria-organize-btn"
+              onClick={() => setOrganizing(true)}
+            >
+              ⇅ Editar organização das fotos
+            </button>
+          )}
         </div>
       )}
 
@@ -187,26 +182,13 @@ export default function Galeria() {
       {photos.length > 0 && (
         <div className="galeria-grid">
           {photos.map((photo) => (
-            <div
-              key={photo.id}
-              className={
-                'galeria-item'
-                + (isAdmin ? ' galeria-item-draggable' : '')
-                + (dragId === photo.id ? ' galeria-item-dragging' : '')
-              }
-              draggable={isAdmin}
-              onDragStart={isAdmin ? handleDragStart(photo.id) : undefined}
-              onDragOver={isAdmin ? handleDragOver(photo.id) : undefined}
-              onDragEnd={isAdmin ? handleDragEnd : undefined}
-              onDrop={(e) => e.preventDefault()}
-            >
+            <div key={photo.id} className="galeria-item">
               <img
                 src={photo.thumb_url}
                 alt={photo.caption || (teatro ? 'Foto da trajetória' : 'Foto da galeria')}
                 className="galeria-img"
                 onClick={() => setLightbox(photo)}
                 loading="lazy"
-                draggable={false}
               />
 
               {/* Overlay admin com legenda e delete */}
@@ -251,6 +233,16 @@ export default function Galeria() {
           onNext={() => lightboxNav(1)}
           hasPrev={photos.findIndex((p) => p.id === lightbox.id) > 0}
           hasNext={photos.findIndex((p) => p.id === lightbox.id) < photos.length - 1}
+        />
+      )}
+
+      {/* Modal de organização — arrastar e soltar as miniaturas */}
+      {organizing && (
+        <PhotoOrganizer
+          photos={photos}
+          saving={savingOrder}
+          onSave={saveOrder}
+          onClose={() => setOrganizing(false)}
         />
       )}
 
