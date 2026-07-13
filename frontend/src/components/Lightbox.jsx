@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import './Lightbox.css'
 
 // Modal que expande uma foto em tamanho grande — usado pela
-// Galeria (Trajetória) e pelo Traje. Fecha com Esc ou clique
-// fora; navega com as setas do teclado.
+// Galeria (Trajetória), pelo Traje e pelo Convite. Fecha com Esc
+// ou clique fora; com onPrev/onNext, navega com as setas do teclado.
 export default function Lightbox({
   photo,
   caption,
@@ -16,8 +16,8 @@ export default function Lightbox({
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft' && hasPrev) onPrev()
-      if (e.key === 'ArrowRight' && hasNext) onNext()
+      if (e.key === 'ArrowLeft' && hasPrev) onPrev?.()
+      if (e.key === 'ArrowRight' && hasNext) onNext?.()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -33,23 +33,27 @@ export default function Lightbox({
         />
         {caption && <p className="lightbox-caption">{caption}</p>}
         <div className="lightbox-nav">
-          <button
-            className="lightbox-btn"
-            onClick={onPrev}
-            disabled={!hasPrev}
-          >
-            ← anterior
-          </button>
+          {onPrev && (
+            <button
+              className="lightbox-btn"
+              onClick={onPrev}
+              disabled={!hasPrev}
+            >
+              ← anterior
+            </button>
+          )}
           <button className="lightbox-close" onClick={onClose}>
             fechar
           </button>
-          <button
-            className="lightbox-btn"
-            onClick={onNext}
-            disabled={!hasNext}
-          >
-            próxima →
-          </button>
+          {onNext && (
+            <button
+              className="lightbox-btn"
+              onClick={onNext}
+              disabled={!hasNext}
+            >
+              próxima →
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@
   display: block;
   width: 100%;
   height: auto;
+  cursor: pointer; /* clique amplia no lightbox */
 }
 
 .convite-arte-placeholder {

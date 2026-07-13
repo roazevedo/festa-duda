@@ -5,6 +5,7 @@ import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { useConfirm } from './useConfirm'
+import Lightbox from './Lightbox'
 import './Convite.css'
 
 const CAPTION_ARTE = 'arte_convite'
@@ -16,6 +17,7 @@ export default function Convite() {
 
   const [arte, setArte]           = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [expanded, setExpanded]   = useState(false)
   const [confirm, confirmModal]   = useConfirm()
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function Convite() {
               src={arte.url}
               alt="Convite"
               className="convite-arte-img"
+              onClick={(e) => { e.stopPropagation(); setExpanded(true) }}
             />
           ) : uploading ? (
             <div className="ticket-uploading">
@@ -120,6 +123,10 @@ export default function Convite() {
           />
         </div>
       </div>
+
+      {expanded && arte && (
+        <Lightbox photo={arte} onClose={() => setExpanded(false)} />
+      )}
 
       {confirmModal}
     </section>
