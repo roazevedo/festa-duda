@@ -40,6 +40,28 @@ RSpec.describe Rsvp, type: :model do
     end
   end
 
+  describe 'companion_children' do
+    it 'pode ser vazio' do
+      expect(build(:rsvp, companion_children: [])).to be_valid
+    end
+
+    it 'aceita lista de booleans' do
+      expect(build(:rsvp, companion_children: [true, false])).to be_valid
+    end
+
+    it 'rejeita valores que não sejam boolean' do
+      rsvp = build(:rsvp, companion_children: ['sim'])
+      expect(rsvp).not_to be_valid
+      expect(rsvp.errors[:companion_children]).to be_present
+    end
+
+    it 'rejeita lista acima do limite de acompanhantes' do
+      rsvp = build(:rsvp, companion_children: [true] * (Rsvp::MAX_COMPANIONS + 1))
+      expect(rsvp).not_to be_valid
+      expect(rsvp.errors[:companion_children]).to be_present
+    end
+  end
+
   describe 'restriction' do
     it 'pode ser nulo' do
       expect(build(:rsvp, restriction: nil)).to be_valid

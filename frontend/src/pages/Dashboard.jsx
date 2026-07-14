@@ -97,13 +97,22 @@ export default function Dashboard() {
         return
       }
 
-      // Uma linha por pessoa; acompanhantes logo abaixo do titular
+      // Uma linha numerada por adulto; acompanhantes logo abaixo do titular.
+      // Crianças abaixo de 8 anos vão na linha do titular, sem número
+      // próprio e fora do total.
       const rows = []
+      let childrenTotal = 0
       confirmed.forEach((r) => {
-        rows.push([r.name, ''])
-        ;(r.companion_names || []).forEach((c) =>
-          rows.push([c, `acompanhante de ${r.name}`])
-        )
+        const names    = r.companion_names || []
+        const children = names.filter((_, i) => r.companion_children?.[i])
+        const adults   = names.filter((_, i) => !r.companion_children?.[i])
+        childrenTotal += children.length
+
+        const childNote = children.length
+          ? `com criança${children.length > 1 ? 's' : ''} abaixo de 8 anos: ${children.join(', ')}`
+          : ''
+        rows.push([r.name, childNote])
+        adults.forEach((c) => rows.push([c, `acompanhante de ${r.name}`]))
       })
 
       const [{ default: JsPDF }, { default: autoTable }] = await Promise.all([
@@ -139,7 +148,9 @@ export default function Dashboard() {
         foot: [[
           '',
           `Total: ${rows.length} pessoa${rows.length !== 1 ? 's' : ''}`,
-          '',
+          childrenTotal > 0
+            ? `+ ${childrenTotal} criança${childrenTotal !== 1 ? 's' : ''} abaixo de 8 anos`
+            : '',
         ]],
         styles: { font: 'helvetica', fontSize: 10, cellPadding: 2.6 },
         headStyles: {

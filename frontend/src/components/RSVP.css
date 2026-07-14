@@ -91,6 +91,12 @@
   margin-bottom: 32px;
 }
 
+/* Aviso de bebidas alcoólicas (template teatro) — em vermelho, sem assinatura */
+.rsvp-quote--aviso,
+.rsvp-quote--aviso strong {
+  color: var(--red);
+}
+
 .rsvp-quote cite {
   display: block;
   font-size: var(--text-sm);
@@ -158,6 +164,25 @@
   margin-bottom: 4px;
 }
 
+/* Checkbox "criança abaixo de 8 anos" de cada acompanhante */
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.form-checkbox input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--red);
+  cursor: pointer;
+}
+
 /* Lista de confirmados — admin only */
 .confirmed-item {
   display: flex;
@@ -185,12 +210,6 @@
   font-style: italic;
 }
 
-/* Aviso de bebidas alcoólicas — abaixo do formulário (template teatro) */
-.rsvp-aviso {
-  margin-top: clamp(28px, 4vw, 48px);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  color: var(--text-muted);
-  line-height: 1.7;
-  text-align: center;
+.confirmed-child {
+  color: var(--gold-dim);
 }

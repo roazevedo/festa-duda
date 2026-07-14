@@ -21,7 +21,8 @@ class Api::V1::RsvpsController < Api::V1::EventResourcesController
   def rsvp_params
     params.require(:rsvp).permit(
       :name, :guests, :attending, :restriction,
-      companion_names: []   # ← array de nomes dos acompanhantes
+      companion_names: [],     # ← array de nomes dos acompanhantes
+      companion_children: []   # ← booleans alinhados: criança abaixo de 8 anos
     )
   end
 
@@ -32,7 +33,8 @@ class Api::V1::RsvpsController < Api::V1::EventResourcesController
       guests:           rsvp.guests,
       attending:        rsvp.attending,
       restriction:      rsvp.restriction,
-      companion_names:  rsvp.companion_names || [],
+      companion_names:     rsvp.companion_names || [],
+      companion_children:  rsvp.companion_children || [],
       created_at:       rsvp.created_at
     }
   end

@@ -11,10 +11,10 @@ export default function RSVP() {
   const isAdmin         = useEventAdmin()
   const teatro          = isTeatro(event)
 
-  const [form, setForm] = useState({
-    name: '', guests: '0', attending: 'yes'
-  })
-  const [companionNames, setCompanionNames] = useState([])
+  // Sem campo de presença: enviar o formulário já significa confirmar
+  const [form, setForm] = useState({ name: '', guests: '0' })
+  const [companionNames, setCompanionNames]       = useState([])
+  const [companionChildren, setCompanionChildren] = useState([])
   const [submitted, setSubmitted]           = useState(false)
   const [list, setList]                     = useState([])
   const [loading, setLoading]               = useState(true)
@@ -42,12 +42,17 @@ export default function RSVP() {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
 
-    // Quando o número de acompanhantes muda, ajusta o array de nomes
+    // Quando o número de acompanhantes muda, ajusta os arrays
     if (name === 'guests') {
       const count = parseInt(value) || 0
       setCompanionNames((prev) => {
         const next = [...prev]
         while (next.length < count) next.push('')
+        return next.slice(0, count)
+      })
+      setCompanionChildren((prev) => {
+        const next = [...prev]
+        while (next.length < count) next.push(false)
         return next.slice(0, count)
       })
     }
@@ -61,16 +66,29 @@ export default function RSVP() {
     })
   }
 
+  const handleCompanionChild = (index, checked) => {
+    setCompanionChildren((prev) => {
+      const next = [...prev]
+      next[index] = checked
+      return next
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.name.trim()) return
     setSending(true)
     try {
+      // Filtra os dois arrays juntos para manter o alinhamento por índice
+      const companions = companionNames
+        .map((n, i) => ({ name: n.trim(), child: !!companionChildren[i] }))
+        .filter((c) => c.name)
       const newRsvp = await createRsvp(slug, token, {
-        name:            form.name,
-        guests:          parseInt(form.guests),
-        attending:       form.attending,
-        companion_names: companionNames.filter(n => n.trim()),
+        name:               form.name,
+        guests:             parseInt(form.guests),
+        attending:          'yes',
+        companion_names:    companions.map((c) => c.name),
+        companion_children: companions.map((c) => c.child),
       })
       setList((prev) => [newRsvp, ...prev])
       setSubmitted(true)
@@ -83,8 +101,9 @@ export default function RSVP() {
 
   const resetForm = () => {
     setSubmitted(false)
-    setForm({ name: '', guests: '0', attending: 'yes' })
+    setForm({ name: '', guests: '0' })
     setCompanionNames([])
+    setCompanionChildren([])
   }
 
   const confirmed      = list.filter((r) => r.attending === 'yes')
@@ -115,19 +134,6 @@ export default function RSVP() {
                   placeholder="como consta no convite"
                   required
                 />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">presença</label>
-                <select
-                  className="form-input"
-                  name="attending"
-                  value={form.attending}
-                  onChange={handleChange}
-                >
-                  <option value="yes">Estarei na plateia</option>
-                  <option value="no">Não poderei comparecer</option>
-                </select>
               </div>
 
               <div className="form-group">
@@ -162,6 +168,14 @@ export default function RSVP() {
                         onChange={(e) => handleCompanionName(i, e.target.value)}
                         placeholder="nome completo"
                       />
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={!!companionChildren[i]}
+                          onChange={(e) => handleCompanionChild(i, e.target.checked)}
+                        />
+                        criança abaixo de 8 anos
+                      </label>
                     </div>
                   ))}
                 </div>
@@ -192,13 +206,12 @@ export default function RSVP() {
         </div>
 
         <div className="rsvp-info-side">
-          <blockquote className="rsvp-quote">
+          <blockquote className={`rsvp-quote${teatro ? ' rsvp-quote--aviso' : ''}`}>
             {teatro ? (
               <>
-                "Cada nome confirmado é uma cadeira no salão e um lugar
-                à mesa. A casa pede gentileza na resposta para que tudo
-                esteja em seu lugar quando as luzes se acenderem."
-                <cite>— a família</cite>
+                <strong>Não haverá bebidas alcoólicas no evento.</strong>{' '}
+                Não será permitida a entrada ou o consumo de bebidas
+                alcoólicas trazidas externamente. Agradecemos a compreensão.
               </>
             ) : (
               <>
@@ -224,6 +237,9 @@ export default function RSVP() {
                         {r.companion_names.map((cn, i) => (
                           <span key={i} className="confirmed-companion">
                             + {cn}
+                            {r.companion_children?.[i] && (
+                              <em className="confirmed-child"> · criança -8</em>
+                            )}
                           </span>
                         ))}
                       </div>
@@ -236,13 +252,6 @@ export default function RSVP() {
         </div>
       </div>
 
-      {teatro && (
-        <p className="rsvp-aviso aviso-destaque">
-          <strong>Não haverá bebidas alcoólicas no evento.</strong>{' '}
-          Não será permitida a entrada ou o consumo de bebidas alcoólicas
-          trazidas externamente. Agradecemos a compreensão.
-        </p>
-      )}
     </section>
   )
 }
