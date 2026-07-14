@@ -2,22 +2,24 @@ import { useState, useEffect, useRef } from 'react'
 import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
-import { getPhotos, createPhoto, deletePhoto } from '../services/api'
+import { getPhotos, createPhoto, deletePhoto, updateEvent } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { useConfirm } from './useConfirm'
 import Lightbox from './Lightbox'
+import InviteCreator from './InviteCreator'
 import './Convite.css'
 
 const CAPTION_ARTE = 'arte_convite'
 
 export default function Convite() {
-  const { slug, token } = useEvent()
+  const { slug, token, event, setEvent } = useEvent()
   const isAdmin         = useEventAdmin()
   const arteRef         = useRef(null)
 
   const [arte, setArte]           = useState(null)
   const [uploading, setUploading] = useState(false)
   const [expanded, setExpanded]   = useState(false)
+  const [creating, setCreating]   = useState(false)
   const [confirm, confirmModal]   = useConfirm()
 
   useEffect(() => {
@@ -59,6 +61,24 @@ export default function Convite() {
     } catch (err) {
       console.error('Erro ao remover foto:', err)
     }
+  }
+
+  // Publica a arte gerada pelo criador de convite: sobe o PNG,
+  // substitui a arte atual e guarda a configuração para reabrir
+  const publishInvite = async (blob, inviteCfg) => {
+    const file = new File([blob], `convite-${slug}.png`, { type: 'image/png' })
+    const cloudData = await uploadToCloudinary(file, 'festa-duda/convite')
+    if (arte) await deletePhoto(slug, token, arte.id)
+    const created = await createPhoto(slug, token, {
+      ...cloudData,
+      caption:  CAPTION_ARTE,
+      category: 'convite',
+    })
+    setArte(created)
+    const updated = await updateEvent(slug, token, {
+      settings: { ...event.settings, invite: inviteCfg },
+    })
+    setEvent(updated)
   }
 
   return (
@@ -122,10 +142,33 @@ export default function Convite() {
             }}
           />
         </div>
+
+        {/* Criador de convite — além do upload, para quem não tem arte */}
+        {isAdmin && (
+          <div className="convite-admin-actions">
+            <button
+              className="convite-create-btn"
+              onClick={() => setCreating(true)}
+            >
+              ✨ Criar convite
+            </button>
+            <p className="convite-admin-hint">
+              monte a arte com foto, textos, cores e QR code do site —
+              ou clique no quadro para enviar um convite pronto
+            </p>
+          </div>
+        )}
       </div>
 
       {expanded && arte && (
         <Lightbox photo={arte} onClose={() => setExpanded(false)} />
+      )}
+
+      {creating && (
+        <InviteCreator
+          onPublish={publishInvite}
+          onClose={() => setCreating(false)}
+        />
       )}
 
       {confirmModal}
