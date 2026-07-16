@@ -7,8 +7,10 @@
 # Após editar, aplique com:  rails catalog:sync
 # (em produção: fly ssh console -C "bin/rails catalog:sync")
 #
-# image_url: URL completa no Cloudinary (pasta convida.me/catalogo).
+# image_url: URL completa no Cloudinary (pasta festa-duda/catalogo).
 # Pode ficar em branco — o frontend usa um fallback sem foto.
+# Os comentários "# foto:" registram a origem e a licença de cada
+# imagem (todas CC0 ou domínio público, sem exigência de crédito).
 # ════════════════════════════════════════════════════════════
 
 quinze_anos:
@@ -17,41 +19,57 @@ quinze_anos:
     description: Uma ajuda para brilhar na valsa como merece
     price: 300.0
     category: producao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/vestido-dos-sonhos.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/3303966/free-photo-image-wedding-dress-art-lace
   - key: sapato-de-princesa
     name: Sapato de princesa
     description: O par perfeito para o ritual da troca de sapatos
     price: 180.0
     category: producao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/sapato-de-princesa.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5925001/photo-image-public-domain-red-fashion
   - key: make-e-cabelo
     name: Make e cabelo da debutante
     description: Produção completa para a noite de gala
     price: 250.0
     category: producao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/make-e-cabelo.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/makeup-brush-PZ0Z7K0JRR
   - key: ensaio-fotografico
     name: Ensaio fotográfico
     description: Memórias dos quinze para a vida inteira
     price: 350.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/ensaio-fotografico.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/cannon-camera-2B9F6338EB
   - key: pista-de-valsa
     name: Iluminação da pista de valsa
     description: Para o momento mais esperado da noite não passar despercebido
     price: 200.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/pista-de-valsa.jpg
+    # foto: pdm · flickr · https://www.flickr.com/photos/193845755@N03/51901492151
   - key: viagem-de-quinze
     name: Vaquinha da viagem de 15 anos
     description: Disney que nos aguarde
     price: 400.0
     category: viagem
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/viagem-de-quinze.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/airplane-window-SMQZZEBTJZ
   - key: day-spa
     name: Day spa da aniversariante
     description: Porque organizar uma festa dessas cansa
     price: 150.0
     category: mimos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/day-spa.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5919562/image-public-domain-free-candle
   - key: primeiro-perfume
     name: O primeiro perfume importado
     description: Todo capítulo novo merece uma fragrância própria
     price: 280.0
     category: mimos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/primeiro-perfume.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/8812090/perfume
 
 casamento:
   - key: upgrade-executiva
@@ -59,46 +77,64 @@ casamento:
     description: Porque a lua de mel começa no embarque
     price: 350.0
     category: lua_de_mel
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/upgrade-executiva.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/airplane-seats-WFYZCWVLBC
   - key: diaria-resort
     name: Uma diária no resort
     description: Café na cama incluso (esperamos)
     price: 500.0
     category: lua_de_mel
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/diaria-resort.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/6031481/photo-image-public-domain-tropical-beach
   - key: jantar-romantico
     name: Jantar romântico na lua de mel
     description: À luz de velas, sem olhar o preço do vinho
     price: 200.0
     category: lua_de_mel
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/jantar-romantico.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5948525/free-public-domain-cc0-photo
   - key: passeio-de-barco
     name: Passeio de barco ao pôr do sol
     description: O cenário perfeito para a foto que vira quadro
     price: 250.0
     category: lua_de_mel
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/passeio-de-barco.jpg
+    # foto: cc0 · flickr · https://www.flickr.com/photos/148714304@N03/37099082525
   - key: jogo-de-panelas
     name: Jogo de panelas
     description: Que prometemos usar mais que o delivery
     price: 180.0
     category: casa_nova
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/jogo-de-panelas.jpg
+    # foto: public domain · wikimedia · https://commons.wikimedia.org/wiki/File:Cooking_pots.jpg
   - key: robo-aspirador
     name: Robô aspirador
     description: O terceiro elemento do casamento
     price: 400.0
     category: casa_nova
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/robo-aspirador.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/robot-vacuum-VJCXHQGRVO
   - key: adega-do-casal
     name: Primeira garrafa da adega do casal
     description: Para abrir só em ocasião muito especial (ou terça-feira)
     price: 120.0
     category: casa_nova
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/adega-do-casal.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/6027874/wine-bottles-free-public-domain-cc0-photo
   - key: seguro-buque
     name: Seguro contra arremesso de buquê
     description: Proteja-se — a mira da noiva é imprevisível
     price: 80.0
     category: divertidos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/seguro-buque.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/3283410/free-photo-image-wedding-dress-bouquet
   - key: terapia-moveis
     name: Terapia pós-montagem de móveis
     description: A primeira grande prova do casamento
     price: 100.0
     category: divertidos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/terapia-moveis.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/tools-hammer-6K150QNG2N
 
 aniversario:
   - key: bolo-dos-sonhos
@@ -106,31 +142,43 @@ aniversario:
     description: A estrela da mesa (e das fotos)
     price: 150.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/bolo-dos-sonhos.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5969531/birthday-cake-candles
   - key: cota-churrasco
     name: Cota do churrasco
     description: Carne, carvão e alegria garantida
     price: 100.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/cota-churrasco.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5908246/image-light-public-domain-nature
   - key: decoracao
     name: Decoração da festa
     description: Balões, luzes e aquele capricho
     price: 200.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/decoracao.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5906074/photo-image-light-public-domain-celebration
   - key: dj-da-noite
     name: DJ da noite
     description: Para a pista não parar
     price: 250.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/dj-da-noite.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5917076/image-aesthetic-public-domain-technology
   - key: presente-surpresa
     name: Vaquinha do presente surpresa
     description: Aquele desejo antigo que ninguém compra sozinho
     price: 300.0
     category: mimos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/presente-surpresa.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/christmas-holiday-N48V8SK5K3
   - key: happy-hour
     name: Happy hour pós-festa
     description: Porque aniversário bom dura mais de um dia
     price: 120.0
     category: mimos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/happy-hour.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/mojito-cocktail-4178415E1A
 
 cha_de_bebe:
   - key: cota-fraldas
@@ -138,26 +186,36 @@ cha_de_bebe:
     description: Nunca são demais — palavra de quem já passou por isso
     price: 80.0
     category: cuidados
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/cota-fraldas.jpg
+    # foto: public domain · wikimedia · https://commons.wikimedia.org/wiki/File:Disposablediaper.JPG
   - key: carrinho-de-bebe
     name: Cota do carrinho de bebê
     description: O primeiro carro do bebê
     price: 400.0
     category: enxoval
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/carrinho-de-bebe.jpg
+    # foto: cc0 · flickr · https://www.flickr.com/photos/89918055@N05/54594198528
   - key: bercinho
     name: Cota do berço
     description: Onde os melhores sonhos vão morar
     price: 350.0
     category: quartinho
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/bercinho.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/6051660/free-public-domain-cc0-photo
   - key: bodies-e-macacoes
     name: Bodies e macacões
     description: Roupinhas para crescer trocando
     price: 120.0
     category: enxoval
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/bodies-e-macacoes.jpg
+    # foto: cc0 · wikimedia · https://commons.wikimedia.org/wiki/File:Lace_bodysuits_among_other_items_for_newborn_photography_-_20241116.jpg
   - key: baba-eletronica
     name: Babá eletrônica
     description: Para os pais dormirem (quase) tranquilos
     price: 250.0
     category: cuidados
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/baba-eletronica.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/happy-baby-6UCQGZ6Q0W
   - key: cadeirinha-carro
     name: Cadeirinha para o carro
     description: Segurança para os primeiros passeios
@@ -168,6 +226,8 @@ cha_de_bebe:
     description: Café, pomada e paciência em dobro
     price: 100.0
     category: divertidos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/kit-sobrevivencia.jpg
+    # foto: cc0 · flickr · https://www.flickr.com/photos/132795455@N08/19265315782
 
 cha_revelacao:
   - key: bolo-revelacao
@@ -175,31 +235,43 @@ cha_revelacao:
     description: O recheio guarda o segredo
     price: 180.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/bolo-revelacao.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/happy-birthday-ITDXH9PPW6
   - key: fumaca-colorida
     name: Fumaça colorida
     description: Rosa ou azul? O céu vai contar
     price: 100.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/fumaca-colorida.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/3286849/free-photo-image-abstract-desert-nature-background
   - key: decoracao-em-dobro
     name: Decoração em dobro
     description: Rosa e azul até o grande momento
     price: 200.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/decoracao-em-dobro.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/wall-inside-D7XN8BXAH7
   - key: filmagem-do-momento
     name: Filmagem do momento da revelação
     description: A reação que vai ser revista mil vezes
     price: 300.0
     category: festa
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/filmagem-do-momento.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/videographer-cameraman-OQT16Q7SG7
   - key: aposta-time-rosa
     name: Aposta no time rosa
     description: Confiança total no palpite
     price: 50.0
     category: divertidos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/aposta-time-rosa.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/pink-balloon-Z46FSVZ4TJ
   - key: aposta-time-azul
     name: Aposta no time azul
     description: Confiança total no palpite
     price: 50.0
     category: divertidos
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/aposta-time-azul.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/3282257/free-photo-image-blue-smoke-bomb-background-adventure
 
 bodas_de_ouro:
   - key: renovacao-aliancas
@@ -207,23 +279,33 @@ bodas_de_ouro:
     description: Cinquenta anos merecem um novo brilho
     price: 400.0
     category: celebracao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/renovacao-aliancas.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5925647/gold-wedding-rings-free-public-domain-cc0-photo
   - key: viagem-comemorativa
     name: Viagem dos 50 anos
     description: A lua de mel que se repete
     price: 500.0
     category: celebracao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/viagem-comemorativa.jpg
+    # foto: cc0 · stocksnap · https://stocksnap.io/photo/senior-couple-SZAKISHIN7
   - key: album-de-familia
     name: Álbum de fotos da família
     description: Meio século de histórias em páginas douradas
     price: 200.0
     category: memorias
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/album-de-familia.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5923483/photo-image-book-public-domain-vintage
   - key: jantar-em-familia
     name: Jantar em família
     description: Todos à mesa, como nos velhos tempos
     price: 250.0
     category: celebracao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/jantar-em-familia.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5927754/photo-image-background-public-domain-food
   - key: brinde-de-ouro
     name: Espumante para o brinde de ouro
     description: À altura da ocasião
     price: 120.0
     category: celebracao
+    image_url: https://res.cloudinary.com/dnntixnor/image/upload/w_800,h_500,c_fill,q_auto,f_auto/festa-duda/catalogo/brinde-de-ouro.jpg
+    # foto: cc0 · rawpixel · https://www.rawpixel.com/image/5927536/photo-image-new-year-public-domain-hand
