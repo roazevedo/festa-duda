@@ -1,3 +1,9 @@
+# Catálogo de presentes sugeridos — sincroniza db/gift_catalog.yml
+# com a tabela catalog_gifts (idempotente; também disponível como
+# `rails catalog:sync`).
+CatalogGift.sync_from_file!
+puts "Catálogo de presentes: #{CatalogGift.count} itens."
+
 # O admin inicial é criado a partir de variáveis de ambiente — nunca
 # deixe email/senha reais neste arquivo, pois ele fica versionado.
 #

@@ -1,0 +1,229 @@
+# ════════════════════════════════════════════════════════════
+# CATÁLOGO DE PRESENTES SUGERIDOS
+# Fonte da verdade do catálogo, agrupado por tipo de evento
+# (ids validados em app/models/event.rb). A ordem da lista vira
+# a posição de exibição.
+#
+# Após editar, aplique com:  rails catalog:sync
+# (em produção: fly ssh console -C "bin/rails catalog:sync")
+#
+# image_url: URL completa no Cloudinary (pasta convida.me/catalogo).
+# Pode ficar em branco — o frontend usa um fallback sem foto.
+# ════════════════════════════════════════════════════════════
+
+quinze_anos:
+  - key: vestido-dos-sonhos
+    name: Vestido dos sonhos
+    description: Uma ajuda para brilhar na valsa como merece
+    price: 300.0
+    category: producao
+  - key: sapato-de-princesa
+    name: Sapato de princesa
+    description: O par perfeito para o ritual da troca de sapatos
+    price: 180.0
+    category: producao
+  - key: make-e-cabelo
+    name: Make e cabelo da debutante
+    description: Produção completa para a noite de gala
+    price: 250.0
+    category: producao
+  - key: ensaio-fotografico
+    name: Ensaio fotográfico
+    description: Memórias dos quinze para a vida inteira
+    price: 350.0
+    category: festa
+  - key: pista-de-valsa
+    name: Iluminação da pista de valsa
+    description: Para o momento mais esperado da noite não passar despercebido
+    price: 200.0
+    category: festa
+  - key: viagem-de-quinze
+    name: Vaquinha da viagem de 15 anos
+    description: Disney que nos aguarde
+    price: 400.0
+    category: viagem
+  - key: day-spa
+    name: Day spa da aniversariante
+    description: Porque organizar uma festa dessas cansa
+    price: 150.0
+    category: mimos
+  - key: primeiro-perfume
+    name: O primeiro perfume importado
+    description: Todo capítulo novo merece uma fragrância própria
+    price: 280.0
+    category: mimos
+
+casamento:
+  - key: upgrade-executiva
+    name: Upgrade para classe executiva
+    description: Porque a lua de mel começa no embarque
+    price: 350.0
+    category: lua_de_mel
+  - key: diaria-resort
+    name: Uma diária no resort
+    description: Café na cama incluso (esperamos)
+    price: 500.0
+    category: lua_de_mel
+  - key: jantar-romantico
+    name: Jantar romântico na lua de mel
+    description: À luz de velas, sem olhar o preço do vinho
+    price: 200.0
+    category: lua_de_mel
+  - key: passeio-de-barco
+    name: Passeio de barco ao pôr do sol
+    description: O cenário perfeito para a foto que vira quadro
+    price: 250.0
+    category: lua_de_mel
+  - key: jogo-de-panelas
+    name: Jogo de panelas
+    description: Que prometemos usar mais que o delivery
+    price: 180.0
+    category: casa_nova
+  - key: robo-aspirador
+    name: Robô aspirador
+    description: O terceiro elemento do casamento
+    price: 400.0
+    category: casa_nova
+  - key: adega-do-casal
+    name: Primeira garrafa da adega do casal
+    description: Para abrir só em ocasião muito especial (ou terça-feira)
+    price: 120.0
+    category: casa_nova
+  - key: seguro-buque
+    name: Seguro contra arremesso de buquê
+    description: Proteja-se — a mira da noiva é imprevisível
+    price: 80.0
+    category: divertidos
+  - key: terapia-moveis
+    name: Terapia pós-montagem de móveis
+    description: A primeira grande prova do casamento
+    price: 100.0
+    category: divertidos
+
+aniversario:
+  - key: bolo-dos-sonhos
+    name: O bolo dos sonhos
+    description: A estrela da mesa (e das fotos)
+    price: 150.0
+    category: festa
+  - key: cota-churrasco
+    name: Cota do churrasco
+    description: Carne, carvão e alegria garantida
+    price: 100.0
+    category: festa
+  - key: decoracao
+    name: Decoração da festa
+    description: Balões, luzes e aquele capricho
+    price: 200.0
+    category: festa
+  - key: dj-da-noite
+    name: DJ da noite
+    description: Para a pista não parar
+    price: 250.0
+    category: festa
+  - key: presente-surpresa
+    name: Vaquinha do presente surpresa
+    description: Aquele desejo antigo que ninguém compra sozinho
+    price: 300.0
+    category: mimos
+  - key: happy-hour
+    name: Happy hour pós-festa
+    description: Porque aniversário bom dura mais de um dia
+    price: 120.0
+    category: mimos
+
+cha_de_bebe:
+  - key: cota-fraldas
+    name: Cota de fraldas
+    description: Nunca são demais — palavra de quem já passou por isso
+    price: 80.0
+    category: cuidados
+  - key: carrinho-de-bebe
+    name: Cota do carrinho de bebê
+    description: O primeiro carro do bebê
+    price: 400.0
+    category: enxoval
+  - key: bercinho
+    name: Cota do berço
+    description: Onde os melhores sonhos vão morar
+    price: 350.0
+    category: quartinho
+  - key: bodies-e-macacoes
+    name: Bodies e macacões
+    description: Roupinhas para crescer trocando
+    price: 120.0
+    category: enxoval
+  - key: baba-eletronica
+    name: Babá eletrônica
+    description: Para os pais dormirem (quase) tranquilos
+    price: 250.0
+    category: cuidados
+  - key: cadeirinha-carro
+    name: Cadeirinha para o carro
+    description: Segurança para os primeiros passeios
+    price: 300.0
+    category: enxoval
+  - key: kit-sobrevivencia
+    name: Kit sobrevivência dos pais
+    description: Café, pomada e paciência em dobro
+    price: 100.0
+    category: divertidos
+
+cha_revelacao:
+  - key: bolo-revelacao
+    name: O bolo da revelação
+    description: O recheio guarda o segredo
+    price: 180.0
+    category: festa
+  - key: fumaca-colorida
+    name: Fumaça colorida
+    description: Rosa ou azul? O céu vai contar
+    price: 100.0
+    category: festa
+  - key: decoracao-em-dobro
+    name: Decoração em dobro
+    description: Rosa e azul até o grande momento
+    price: 200.0
+    category: festa
+  - key: filmagem-do-momento
+    name: Filmagem do momento da revelação
+    description: A reação que vai ser revista mil vezes
+    price: 300.0
+    category: festa
+  - key: aposta-time-rosa
+    name: Aposta no time rosa
+    description: Confiança total no palpite
+    price: 50.0
+    category: divertidos
+  - key: aposta-time-azul
+    name: Aposta no time azul
+    description: Confiança total no palpite
+    price: 50.0
+    category: divertidos
+
+bodas_de_ouro:
+  - key: renovacao-aliancas
+    name: Renovação das alianças
+    description: Cinquenta anos merecem um novo brilho
+    price: 400.0
+    category: celebracao
+  - key: viagem-comemorativa
+    name: Viagem dos 50 anos
+    description: A lua de mel que se repete
+    price: 500.0
+    category: celebracao
+  - key: album-de-familia
+    name: Álbum de fotos da família
+    description: Meio século de histórias em páginas douradas
+    price: 200.0
+    category: memorias
+  - key: jantar-em-familia
+    name: Jantar em família
+    description: Todos à mesa, como nos velhos tempos
+    price: 250.0
+    category: celebracao
+  - key: brinde-de-ouro
+    name: Espumante para o brinde de ouro
+    description: À altura da ocasião
+    price: 120.0
+    category: celebracao

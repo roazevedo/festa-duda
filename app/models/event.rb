@@ -11,9 +11,12 @@ class Event < ApplicationRecord
   validates :slug,       presence: true, uniqueness: true,
                          format: { with: /\A[a-z0-9\-]+\z/ }
   validates :name,       presence: true
-  validates :event_type, presence: true,
-                         inclusion: { in: %w[quinze_anos casamento aniversario
-                                             cha_de_bebe cha_revelacao bodas_de_ouro] }
+
+  # Espelha frontend/src/eventTypes.js — os dois devem andar juntos
+  TYPES = %w[quinze_anos casamento aniversario
+             cha_de_bebe cha_revelacao bodas_de_ouro].freeze
+
+  validates :event_type, presence: true, inclusion: { in: TYPES }
   validates :event_date, presence: true
 
   # Vigência do site: 6 meses após a data da festa (espelha

@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_14_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_16_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "catalog_gifts", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "event_type", null: false
+    t.string "name", null: false
+    t.string "description"
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.string "category"
+    t.string "image_url"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type", "key"], name: "index_catalog_gifts_on_event_type_and_key", unique: true
+    t.index ["event_type", "position"], name: "index_catalog_gifts_on_event_type_and_position"
+  end
 
   create_table "events", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -52,6 +67,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_000000) do
     t.decimal "price", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "image_url"
     t.index ["event_id"], name: "index_gifts_on_event_id"
   end
 

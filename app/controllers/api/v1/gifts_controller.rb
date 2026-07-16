@@ -40,7 +40,7 @@ class Api::V1::GiftsController < Api::V1::EventResourcesController
   end
 
   def gift_params
-    params.require(:gift).permit(:name, :description, :price)
+    params.require(:gift).permit(:name, :description, :price, :image_url)
   end
 
   def gift_json(gift)
@@ -49,6 +49,7 @@ class Api::V1::GiftsController < Api::V1::EventResourcesController
       name:        gift.name,
       description: gift.description,
       price:       gift.price.to_f,
+      image_url:   gift.image_url,
       created_at:  gift.created_at
     }
   end
