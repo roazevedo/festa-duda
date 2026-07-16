@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SectionHeading from './SectionHeading'
+import GiftCatalogModal from './GiftCatalogModal'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { useConfirm } from './useConfirm'
@@ -33,8 +34,8 @@ const formatPrice = (value) =>
   Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 
 export default function Presentes() {
-  const { slug, token } = useEvent()
-  const isAdmin         = useEventAdmin()
+  const { event, slug, token } = useEvent()
+  const isAdmin                = useEventAdmin()
 
   const [gifts, setGifts]         = useState([])
   const [confirm, confirmModal]   = useConfirm()
@@ -44,6 +45,7 @@ export default function Presentes() {
   const [payingId, setPayingId]   = useState(null)
   const [feedback, setFeedback]   = useState(null)
   const [payments, setPayments]   = useState(null)
+  const [catalogOpen, setCatalogOpen] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -138,6 +140,18 @@ export default function Presentes() {
     }
   }
 
+  // Snapshot do item do catálogo: o Gift do evento nasce com uma
+  // cópia dos campos — mudanças futuras no catálogo não o afetam
+  const handlePickFromCatalog = async (item) => {
+    const created = await createGift(slug, token, {
+      name:        item.name,
+      description: item.description || '',
+      price:       item.price,
+      image_url:   item.image_url || '',
+    })
+    setGifts((prev) => [...prev, created])
+  }
+
   const handlePay = async (gift) => {
     setPayingId(gift.id)
     try {
@@ -222,6 +236,15 @@ export default function Presentes() {
                 cancelar
               </button>
             )}
+            {!editingId && (
+              <button
+                className="gifts-admin-cancel"
+                type="button"
+                onClick={() => setCatalogOpen(true)}
+              >
+                escolher do catálogo
+              </button>
+            )}
           </div>
         </form>
       )}
@@ -231,6 +254,14 @@ export default function Presentes() {
           <div className="gifts-table">
             {gifts.map((gift, i) => (
               <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
+                {gift.image_url && (
+                  <img
+                    className="gift-thumb"
+                    src={gift.image_url}
+                    alt={gift.name}
+                    loading="lazy"
+                  />
+                )}
                 <div className="gift-info">
                   <div className="gift-top">
                     <span className="gift-num">{String(i + 1).padStart(2, '0')}</span>
@@ -301,6 +332,15 @@ export default function Presentes() {
             ))}
           </div>
         </div>
+      )}
+
+      {catalogOpen && (
+        <GiftCatalogModal
+          eventType={event?.event_type}
+          existingNames={new Set(gifts.map((g) => g.name.toLowerCase()))}
+          onPick={handlePickFromCatalog}
+          onClose={() => setCatalogOpen(false)}
+        />
       )}
 
       {confirmModal}

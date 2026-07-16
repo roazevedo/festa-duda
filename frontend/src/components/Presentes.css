@@ -44,6 +44,15 @@
   flex: 1;
 }
 
+/* Miniatura do presente (itens vindos do catálogo ou com foto) */
+.gift-thumb {
+  width: clamp(56px, 8vw, 72px);
+  height: clamp(56px, 8vw, 72px);
+  object-fit: cover;
+  border: 1px solid var(--gold-dim);
+  flex-shrink: 0;
+}
+
 .gift-top {
   display: flex;
   align-items: baseline;

@@ -96,6 +96,10 @@ export const createGiftCheckout = (slug, token, id) =>
 export const getGiftPayments = (slug, token) =>
   apiFetch(`/events/${slug}/${token}/gift_payments`)
 
+// ── Catálogo de presentes (sugestões, público) ───────────────
+export const getGiftCatalog = (eventType) =>
+  apiFetch(`/gift_catalog?event_type=${encodeURIComponent(eventType)}`)
+
 // ── Cloudinary (upload signed) ───────────────────────────────
 export const getCloudinarySignature = (folder) =>
   apiFetch('/cloudinary/signature', {
