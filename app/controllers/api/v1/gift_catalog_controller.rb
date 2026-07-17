@@ -4,7 +4,9 @@ class Api::V1::GiftCatalogController < ApplicationController
   def index
     items = CatalogGift.all
     if params[:event_type].present?
-      items = items.for_event_type(params[:event_type])
+      # Sugestões do tipo de evento + as gerais (válidas para todos);
+      # o frontend separa os dois grupos pelo event_type de cada item.
+      items = items.where(event_type: [params[:event_type], "geral"])
     end
     items = items.order(:event_type, :position, :id)
 

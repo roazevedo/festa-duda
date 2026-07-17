@@ -9,9 +9,14 @@
 class CatalogGift < ApplicationRecord
   CATALOG_FILE = Rails.root.join("db/gift_catalog.yml")
 
+  # "geral" agrupa sugestões válidas para qualquer tipo de evento
+  # (produtos, viagens, experiências); os demais escopos são os
+  # tipos de evento e guardam os itens exclusivos de cada um.
+  SCOPES = (%w[geral] + Event::TYPES).freeze
+
   validates :key,        presence: true, uniqueness: { scope: :event_type },
                          format: { with: /\A[a-z0-9\-]+\z/ }
-  validates :event_type, presence: true, inclusion: { in: Event::TYPES }
+  validates :event_type, presence: true, inclusion: { in: SCOPES }
   validates :name,       presence: true
   validates :price,      presence: true,
                          numericality: { greater_than: 0 }

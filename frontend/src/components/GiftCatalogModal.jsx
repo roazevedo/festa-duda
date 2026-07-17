@@ -3,10 +3,12 @@ import { getGiftCatalog } from '../services/api'
 import './GiftCatalogModal.css'
 
 // ════════════════════════════════════════════════════════════
-// CATÁLOGO DE PRESENTES — modal com sugestões prontas por tipo
-// de evento (GET /api/v1/gift_catalog). Ao adicionar, o pai cria
-// o Gift do evento copiando os campos (snapshot) — a lista não
-// muda se o catálogo for atualizado depois.
+// CATÁLOGO DE PRESENTES — modal com sugestões prontas
+// (GET /api/v1/gift_catalog). O catálogo é único para toda a
+// plataforma: a mesma lista aparece para qualquer evento e o
+// organizador decide o que combina com a festa dele. Ao
+// adicionar, o pai cria o Gift do evento copiando os campos
+// (snapshot) — a lista não muda se o catálogo for atualizado.
 // ════════════════════════════════════════════════════════════
 
 const formatPrice = (value) =>
@@ -67,6 +69,39 @@ export default function GiftCatalogModal({ eventType, existingNames, onPick, onC
     }
   }
 
+  const renderCard = (item) => {
+    const added = isAdded(item)
+    return (
+      <div key={`${item.event_type}-${item.id}`} className="catalog-card">
+        <div className="catalog-card-media">
+          {item.image_url ? (
+            <img src={item.image_url} alt={item.name} loading="lazy" />
+          ) : (
+            <span className="catalog-card-fallback">🎁</span>
+          )}
+        </div>
+        <div className="catalog-card-body">
+          <p className="catalog-card-name">{item.name}</p>
+          {item.description && (
+            <p className="catalog-card-desc">{item.description}</p>
+          )}
+          <p className="catalog-card-price">R$ {formatPrice(item.price)}</p>
+        </div>
+        <button
+          className={'catalog-card-add' + (added ? ' catalog-card-added' : '')}
+          onClick={handleAdd(item)}
+          disabled={added || addingKey !== null}
+        >
+          {added
+            ? 'na lista ✓'
+            : addingKey === item.id
+              ? 'adicionando...'
+              : 'adicionar'}
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="catalog-overlay" onClick={onClose}>
       <div className="catalog-box" onClick={(e) => e.stopPropagation()}>
@@ -104,49 +139,18 @@ export default function GiftCatalogModal({ eventType, existingNames, onPick, onC
           </div>
         )}
 
-        <div className="catalog-grid">
+        <div className="catalog-body">
           {error && <p className="catalog-status">{error}</p>}
           {!error && items === null && (
             <p className="catalog-status">carregando sugestões...</p>
           )}
           {!error && items !== null && visible.length === 0 && (
             <p className="catalog-status">
-              ainda não temos sugestões para este tipo de evento —
-              cadastre presentes pelo formulário.
+              nenhuma sugestão por aqui — cadastre presentes pelo formulário.
             </p>
           )}
-          {visible.map((item) => {
-            const added = isAdded(item)
-            return (
-              <div key={item.id} className="catalog-card">
-                <div className="catalog-card-media">
-                  {item.image_url ? (
-                    <img src={item.image_url} alt={item.name} loading="lazy" />
-                  ) : (
-                    <span className="catalog-card-fallback">🎁</span>
-                  )}
-                </div>
-                <div className="catalog-card-body">
-                  <p className="catalog-card-name">{item.name}</p>
-                  {item.description && (
-                    <p className="catalog-card-desc">{item.description}</p>
-                  )}
-                  <p className="catalog-card-price">R$ {formatPrice(item.price)}</p>
-                </div>
-                <button
-                  className={'catalog-card-add' + (added ? ' catalog-card-added' : '')}
-                  onClick={handleAdd(item)}
-                  disabled={added || addingKey !== null}
-                >
-                  {added
-                    ? 'na lista ✓'
-                    : addingKey === item.id
-                      ? 'adicionando...'
-                      : 'adicionar'}
-                </button>
-              </div>
-            )
-          })}
+
+          <div className="catalog-grid">{visible.map(renderCard)}</div>
         </div>
 
       </div>

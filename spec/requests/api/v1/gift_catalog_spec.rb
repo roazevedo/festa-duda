@@ -7,23 +7,26 @@ RSpec.describe 'Api::V1::GiftCatalog', type: :request do
     create(:catalog_gift, key: 'adega',  event_type: 'casamento',   name: 'Adega',  position: 1)
     create(:catalog_gift, key: 'panela', event_type: 'casamento',   name: 'Panela', position: 0)
     create(:catalog_gift, key: 'valsa',  event_type: 'quinze_anos', name: 'Valsa',  position: 0)
+    create(:catalog_gift, key: 'iphone', event_type: 'geral',       name: 'iPhone', position: 0)
   end
 
   it 'é público e retorna o catálogo completo' do
     get url
     expect(response).to have_http_status(:ok)
-    expect(JSON.parse(response.body).length).to eq(3)
+    expect(JSON.parse(response.body).length).to eq(4)
   end
 
-  it 'filtra por event_type e ordena por posição' do
+  it 'filtra por event_type incluindo as sugestões gerais' do
     get url, params: { event_type: 'casamento' }
     body = JSON.parse(response.body)
-    expect(body.map { |i| i['id'] }).to eq(%w[panela adega])
+    expect(body.map { |i| i['id'] }).to eq(%w[panela adega iphone])
   end
 
-  it 'retorna lista vazia para event_type sem itens' do
+  it 'retorna só as sugestões gerais para event_type sem exclusivos' do
     get url, params: { event_type: 'bodas_de_ouro' }
-    expect(JSON.parse(response.body)).to eq([])
+    body = JSON.parse(response.body)
+    expect(body.map { |i| i['id'] }).to eq(%w[iphone])
+    expect(body.first['event_type']).to eq('geral')
   end
 
   it 'serializa os campos esperados com preço numérico' do

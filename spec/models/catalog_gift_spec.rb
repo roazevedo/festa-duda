@@ -21,6 +21,10 @@ RSpec.describe CatalogGift, type: :model do
       expect(build(:catalog_gift, event_type: 'formatura')).not_to be_valid
     end
 
+    it 'aceita o escopo geral (sugestões para qualquer evento)' do
+      expect(build(:catalog_gift, event_type: 'geral')).to be_valid
+    end
+
     it 'rejeita key duplicada dentro do mesmo event_type' do
       create(:catalog_gift, key: 'adega', event_type: 'casamento')
       expect(build(:catalog_gift, key: 'adega', event_type: 'casamento')).not_to be_valid
@@ -85,10 +89,8 @@ RSpec.describe CatalogGift, type: :model do
     it 'sincroniza o catálogo real do repositório sem erros' do
       described_class.sync_from_file!
       expect(described_class.count).to be > 0
-      Event::TYPES.each do |type|
-        expect(described_class.for_event_type(type).count).to be > 0,
-          "esperava itens de catálogo para #{type}"
-      end
+      # o catálogo é único para a plataforma: tudo vive no escopo geral
+      expect(described_class.for_event_type('geral').count).to eq(described_class.count)
     end
   end
 end
