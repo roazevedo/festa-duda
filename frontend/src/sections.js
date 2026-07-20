@@ -60,6 +60,13 @@ export const SECTIONS = [
     header: { title: 'Galeria de Fotos', subtitle: 'momentos para guardar' },
   },
   {
+    id: 'traje',
+    label: 'Traje / dress code',
+    description: 'orientação de traje com fotos de referência',
+    defaultEnabled: false,
+    header: { title: 'O Traje', subtitle: 'como se vestir para a ocasião' },
+  },
+  {
     id: 'local',
     label: 'Local da festa',
     description: 'endereço e como chegar',

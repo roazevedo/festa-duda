@@ -5,6 +5,7 @@ import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, updatePhoto, deletePhoto, reorderPhotos } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { isTeatro } from '../sections'
+import { planLimit } from '../plans'
 import { useConfirm } from './useConfirm'
 import Lightbox from './Lightbox'
 import PhotoOrganizer from './PhotoOrganizer'
@@ -40,9 +41,25 @@ export default function Galeria() {
     load()
   }, [slug, token])
 
+  // Limite de fotos da galeria no plano grátis (null = ilimitado)
+  const photoLimit = planLimit(event, 'photos')
+  const atLimit    = photoLimit != null && photos.length >= photoLimit
+
   const handleFiles = async (files) => {
     if (!files || files.length === 0) return
-    const arr = Array.from(files)
+    let arr = Array.from(files)
+
+    if (photoLimit != null) {
+      const remaining = photoLimit - photos.length
+      if (arr.length > remaining) {
+        alert(
+          `O plano Grátis permite até ${photoLimit} fotos na galeria — ` +
+          `${remaining > 0 ? `enviando apenas ${remaining}` : 'limite atingido'}.`
+        )
+        arr = arr.slice(0, Math.max(remaining, 0))
+      }
+      if (arr.length === 0) return
+    }
     setUploading(true)
     setUploadCount({ done: 0, total: arr.length })
     setUploadPct(0)
@@ -136,6 +153,8 @@ export default function Galeria() {
             <button
               className="galeria-upload-btn"
               onClick={() => fileInputRef.current?.click()}
+              disabled={atLimit}
+              title={atLimit ? 'Limite de fotos do plano Grátis atingido' : undefined}
             >
               <span className="galeria-upload-icon">+</span>
               {teatro ? 'Adicionar Fotos à Trajetória' : 'Adicionar Fotos'}
@@ -155,7 +174,12 @@ export default function Galeria() {
           )}
 
           <p className="galeria-upload-hint">
-            Selecione uma ou várias fotos · JPG, PNG, WEBP
+            {photoLimit != null
+              ? `${photos.length} de ${photoLimit} fotos do plano Grátis` +
+                (atLimit
+                  ? ' · limite atingido — o plano Completo libera fotos ilimitadas'
+                  : ' · JPG, PNG, WEBP')
+              : 'Selecione uma ou várias fotos · JPG, PNG, WEBP'}
           </p>
 
           {photos.length > 1 && !uploading && (

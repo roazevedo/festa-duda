@@ -367,3 +367,12 @@
 .gifts-wrapper {
   position: relative;
 }
+
+/* Contador de presentes do plano grátis */
+.gifts-plan-hint {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: -8px;
+}

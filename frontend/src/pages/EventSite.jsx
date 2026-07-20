@@ -21,7 +21,8 @@ import SaveTheDate from '../components/SaveTheDate'
 import PageOrnaments from '../components/PageOrnaments'
 import { getTheme, applyTheme, clearTheme } from '../themes'
 import { isTeatro, sectionEnabled, sectionOrder } from '../sections'
-import { isEventFinished, EVENT_LIFETIME_MONTHS } from '../eventStatus'
+import { isFreePlan, sectionLocked } from '../plans'
+import { isEventFinished, eventLifetimeMonths } from '../eventStatus'
 import './EventSite.css'
 
 // ── Template teatro — o site original da Maria Eduarda ──
@@ -84,12 +85,16 @@ const SECTION_COMPONENTS = {
   presentes:     Presentes,
   palavras:      Palavras,
   galeria:       Galeria,
+  traje:         Traje,
   local:         Local,
 }
 
 function ModernoLayout({ event }) {
   const sections = sectionOrder(event)
-    .filter((id) => sectionEnabled(event, id) && SECTION_COMPONENTS[id])
+    .filter((id) =>
+      sectionEnabled(event, id)
+      && !sectionLocked(event, id)
+      && SECTION_COMPONENTS[id])
     .map((id) => {
       const Section = SECTION_COMPONENTS[id]
       return <Section key={id} />
@@ -117,10 +122,23 @@ function ModernoLayout({ event }) {
           <p className="footer-act">{event?.name}</p>
           {footerDate && <p className="footer-bis">{footerDate}</p>}
           <p className="footer-sub">esperamos por você.</p>
+          {/* Marca da plataforma — sai nos planos pagos */}
+          {isFreePlan(event) && (
+            <a className="footer-brand" href="/" target="_blank" rel="noopener noreferrer">
+              criado com <strong>Convida.me</strong>
+            </a>
+          )}
         </div>
       </footer>
     </>
   )
+}
+
+// Retorno do Checkout Pro do upgrade (back_urls: ?plano=...)
+const PLAN_FEEDBACK = {
+  sucesso:  { tone: 'ok',    text: 'Pagamento aprovado! Assim que o Mercado Pago confirmar, seu evento passa para o plano Completo.' },
+  pendente: { tone: 'warn',  text: 'Pagamento em processamento — o upgrade será aplicado assim que for confirmado.' },
+  erro:     { tone: 'error', text: 'O pagamento não foi concluído. Você pode tentar de novo pelo painel.' },
 }
 
 function EventContent() {
@@ -129,6 +147,17 @@ function EventContent() {
   const isAdmin = useEventAdmin()
 
   const [searchParams, setSearchParams] = useSearchParams()
+
+  // Captura o status do upgrade uma única vez e limpa a URL
+  const [planFeedback, setPlanFeedback] = useState(
+    () => PLAN_FEEDBACK[new URLSearchParams(window.location.search).get('plano')] || null
+  )
+  useEffect(() => {
+    if (!searchParams.get('plano')) return
+    const params = new URLSearchParams(searchParams)
+    params.delete('plano')
+    setSearchParams(params, { replace: true })
+  }, [searchParams, setSearchParams])
 
   // null = segue a URL: ?editar=1 abre o editor para o admin
   // (link vindo do painel); abrir/fechar manual sobrepõe.
@@ -204,7 +233,7 @@ function EventContent() {
     )
   }
 
-  // Evento finalizado (6 meses após a festa): página encerrada
+  // Evento finalizado (vigência do plano após a festa): página encerrada
   // para convidados; o dono ainda acessa para rever o conteúdo
   if (isEventFinished(event, now) && !isAdmin) {
     return (
@@ -238,7 +267,7 @@ function EventContent() {
           lineHeight: 1.7,
         }}>
           O site de <strong>{event.name}</strong> ficou no ar por{' '}
-          {EVENT_LIFETIME_MONTHS} meses após a festa e foi encerrado.
+          {eventLifetimeMonths(event)} meses após a festa e foi encerrado.
           Obrigado a todos que celebraram com a gente!
         </p>
       </div>
@@ -248,6 +277,19 @@ function EventContent() {
   return (
     <>
       <AdminBar />
+
+      {planFeedback && (
+        <div className={`plan-feedback plan-feedback-${planFeedback.tone}`}>
+          <span>{planFeedback.text}</span>
+          <button
+            className="plan-feedback-close"
+            onClick={() => setPlanFeedback(null)}
+            title="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Editor ao vivo — só para o dono/admin */}
       {isAdmin && !editorOpen && (

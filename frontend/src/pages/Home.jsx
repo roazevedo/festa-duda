@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
+import { ATELIE_CONTACT } from '../plans'
 import './Home.css'
 
 const FEATURES = [
@@ -35,6 +36,74 @@ const FEATURES = [
   },
 ]
 
+// ── Planos — espelha src/plans.js (limites) com o texto de venda ──
+const PRICING = [
+  {
+    id: 'gratis',
+    name: 'Grátis',
+    price: 'R$ 0',
+    period: 'para sempre',
+    tagline: 'para começar agora',
+    bullets: [
+      'Convite, contagem regressiva, RSVP, mural e local',
+      'Traje / dress code com fotos de referência',
+      '5 temas de cores',
+      'Lista de presentes com até 10 itens',
+      'Galeria com até 20 fotos',
+      'Site no ar por 3 meses após a festa',
+    ],
+    cta: 'Começar grátis',
+  },
+  {
+    id: 'completo',
+    name: 'Completo',
+    price: 'R$ 149,90',
+    period: 'por evento',
+    tagline: 'tudo liberado para a sua festa',
+    highlight: true,
+    bullets: [
+      'Tudo do plano Grátis',
+      'Save the Date em vídeo',
+      'Todos os temas de cores',
+      'Lista de presentes e galeria ilimitadas',
+      'Sem a marca Convida.me no rodapé',
+      'Exportação da lista de confirmados',
+      'Site no ar por 12 meses após a festa',
+      'Suporte por WhatsApp',
+    ],
+    cta: 'Criar meu evento',
+  },
+  {
+    id: 'atelie',
+    name: 'Ateliê',
+    price: 'R$ 997',
+    period: 'projeto exclusivo',
+    tagline: 'uma página criada a quatro mãos',
+    bullets: [
+      'Tudo do plano Completo',
+      'Tema criado do zero para a sua festa',
+      'Animações e seções sob medida',
+      'Contato direto com quem desenvolve a página',
+    ],
+    cta: 'Falar com o ateliê',
+  },
+]
+
+// Tabela comparativa — ✓ / — / texto
+const COMPARISON = [
+  ['Convite, contagem, RSVP, mural e local', '✓', '✓', '✓'],
+  ['Traje / dress code',                     '✓', '✓', '✓'],
+  ['Save the Date (vídeo)',                  '—', '✓', '✓'],
+  ['Temas de cores',                         '5 temas', 'todos', 'criado do zero'],
+  ['Lista de presentes',                     '10 itens', 'ilimitada', 'ilimitada'],
+  ['Galeria de fotos',                       '20 fotos', 'ilimitada', 'ilimitada'],
+  ['Marca no rodapé',                        'sim', 'não', 'não'],
+  ['Exportar confirmados',                   '—', '✓', '✓'],
+  ['Site no ar após a festa',                '3 meses', '12 meses', '12 meses'],
+  ['Suporte',                                '—', 'WhatsApp', 'contato direto'],
+  ['Animações sob medida',                   '—', '—', '✓'],
+]
+
 const STEPS = [
   { num: 'I',   title: 'Crie o evento',     desc: 'Cadastre as informações da celebração: data, local, tipo de evento e tema visual.' },
   { num: 'II',  title: 'Personalize',        desc: 'Adicione fotos, lista de presentes e detalhes do traje. Tudo pelo painel admin.' },
@@ -44,6 +113,16 @@ const STEPS = [
 export default function Home() {
   const navigate = useNavigate()
   const { user } = useAuth()
+
+  // Funil: todo CTA leva à escolha do plano; o cadastro só aparece
+  // depois que a pessoa escolhe (e o pagamento, depois do cadastro)
+  const scrollToPlanos = () =>
+    document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' })
+
+  const choosePlan = (planId) => {
+    const dest = `/dashboard/novo?plano=${planId}`
+    navigate(user ? dest : `/login?mode=signup&next=${encodeURIComponent(dest)}`)
+  }
 
   return (
     <div className="landing">
@@ -69,7 +148,7 @@ export default function Home() {
                 </button>
                 <button
                   className="landing-nav-btn landing-nav-btn-primary"
-                  onClick={() => navigate('/login')}
+                  onClick={scrollToPlanos}
                 >
                   Começar agora
                 </button>
@@ -93,22 +172,14 @@ export default function Home() {
           </h1>
 
           <p className="landing-hero-sub">
-            Crie um site elegante e completo para o seu 15 anos, casamento
-            ou aniversário. RSVP, galeria, presentes e muito mais — tudo em
+            Crie um site elegante e completo para casamento, 15 anos,
+            aniversário, formatura, evento corporativo ou qualquer outra
+            celebração. RSVP, galeria, presentes e muito mais — tudo em
             uma página com o seu link exclusivo.
           </p>
 
           <div className="landing-hero-btns">
-            <button
-              className="landing-btn-primary"
-              onClick={() =>
-                navigate(
-                  user
-                    ? '/dashboard/novo'
-                    : '/login?mode=signup&next=/dashboard/novo'
-                )
-              }
-            >
+            <button className="landing-btn-primary" onClick={scrollToPlanos}>
               Criar meu evento
             </button>
             <button
@@ -136,9 +207,9 @@ export default function Home() {
               stroke="url(#grad1)" strokeWidth="0.8" opacity="0.3" />
             <circle cx="100" cy="130" r="28"
               stroke="#8b5cf6" strokeWidth="0.5" opacity="0.2" />
-            <text x="100" y="138" textAnchor="middle"
-              fill="url(#grad1)" fontSize="22"
-              fontFamily="serif" opacity="0.6">XV</text>
+            <text x="100" y="139" textAnchor="middle"
+              fill="url(#grad1)" fontSize="24"
+              fontFamily="serif" opacity="0.6">✦</text>
             {/* Cantos decorativos */}
             <path d="M1 1 L20 1 M1 1 L1 20" stroke="#f0c060" strokeWidth="1.5" opacity="0.7"/>
             <path d="M199 1 L180 1 M199 1 L199 20" stroke="#f0c060" strokeWidth="1.5" opacity="0.7"/>
@@ -190,6 +261,86 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PLANOS ── */}
+      <section className="landing-pricing" id="planos">
+        <div className="landing-section-inner">
+          <p className="landing-section-eyebrow">planos</p>
+          <h2 className="landing-section-title">
+            Um plano para cada celebração
+          </h2>
+
+          <div className="landing-plans">
+            {PRICING.map((p) => (
+              <div
+                key={p.id}
+                className={
+                  'landing-plan-card'
+                  + (p.highlight ? ' landing-plan-highlight' : '')
+                }
+              >
+                {p.highlight && (
+                  <span className="landing-plan-flag">mais escolhido</span>
+                )}
+                <p className="landing-plan-name">{p.name}</p>
+                <p className="landing-plan-price">{p.price}</p>
+                <p className="landing-plan-period">{p.period}</p>
+                <p className="landing-plan-tagline">{p.tagline}</p>
+                <ul className="landing-plan-bullets">
+                  {p.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+                {p.id === 'atelie' ? (
+                  <a className="landing-plan-cta" href={ATELIE_CONTACT}>
+                    {p.cta}
+                  </a>
+                ) : (
+                  <button
+                    className={
+                      'landing-plan-cta'
+                      + (p.highlight ? ' landing-plan-cta-primary' : '')
+                    }
+                    onClick={() => choosePlan(p.id)}
+                  >
+                    {p.cta}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Ferramentas por plano */}
+          <div className="landing-compare">
+            <p className="landing-compare-title">Ferramentas por plano</p>
+            <table className="landing-compare-table">
+              <thead>
+                <tr>
+                  <th />
+                  <th>Grátis</th>
+                  <th>Completo</th>
+                  <th>Ateliê</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON.map(([label, ...cols]) => (
+                  <tr key={label}>
+                    <td>{label}</td>
+                    {cols.map((c, i) => (
+                      <td
+                        key={i}
+                        className={c === '✓' ? 'landing-compare-yes' : ''}
+                      >
+                        {c}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="landing-cta">
         <div className="landing-section-inner landing-cta-inner">
@@ -199,7 +350,10 @@ export default function Home() {
           <p className="landing-cta-sub">
             Configure o site do seu evento em poucos minutos.
           </p>
-          <button className="landing-btn-primary" onClick={() => navigate('/login')}>
+          <button
+            className="landing-btn-primary"
+            onClick={user ? () => navigate('/dashboard') : scrollToPlanos}
+          >
             {user ? 'Ir para o painel' : 'Começar agora'}
           </button>
         </div>

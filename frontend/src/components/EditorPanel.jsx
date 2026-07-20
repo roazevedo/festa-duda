@@ -4,6 +4,7 @@ import { updateEvent } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { THEMES, DEFAULT_THEME_ID } from '../themes'
 import { SECTIONS, sectionEnabled, sectionOrder, isTeatro } from '../sections'
+import { isFreePlan, themeLocked, sectionLocked } from '../plans'
 import { BANNER_PRESETS } from '../banners'
 import { DECORATIONS, decorationOf } from '../decorations'
 import { useConfirm } from './useConfirm'
@@ -218,25 +219,38 @@ export default function EditorPanel({ onClose }) {
         {/* ── Tema (cores) ── */}
         <div className="editor-group">
           <p className="editor-group-title">Tema de cores</p>
+          {isFreePlan(event) && (
+            <p className="editor-group-hint">
+              o plano Grátis inclui 5 temas — os demais fazem parte do
+              plano Completo
+            </p>
+          )}
           <div className="editor-themes">
-            {THEMES.map((t) => (
-              <button
-                key={t.id}
-                className={
-                  'editor-theme-row'
-                  + (themeId === t.id ? ' editor-theme-active' : '')
-                }
-                onClick={() => patchSettings({ theme: t.id })}
-              >
-                <span className="editor-theme-dots">
-                  <span style={{ background: t.vars['--bg-dark'] }} />
-                  <span style={{ background: t.vars['--red'] }} />
-                  <span style={{ background: t.vars['--gold'] }} />
-                  <span style={{ background: t.vars['--btn-red'] }} />
-                </span>
-                <span className="editor-theme-name">{t.name}</span>
-              </button>
-            ))}
+            {THEMES.map((t) => {
+              const locked = themeLocked(event, t.id)
+              return (
+                <button
+                  key={t.id}
+                  className={
+                    'editor-theme-row'
+                    + (themeId === t.id ? ' editor-theme-active' : '')
+                    + (locked ? ' editor-theme-locked' : '')
+                  }
+                  disabled={locked}
+                  title={locked ? 'Disponível no plano Completo' : undefined}
+                  onClick={() => !locked && patchSettings({ theme: t.id })}
+                >
+                  <span className="editor-theme-dots">
+                    <span style={{ background: t.vars['--bg-dark'] }} />
+                    <span style={{ background: t.vars['--red'] }} />
+                    <span style={{ background: t.vars['--gold'] }} />
+                    <span style={{ background: t.vars['--btn-red'] }} />
+                  </span>
+                  <span className="editor-theme-name">{t.name}</span>
+                  {locked && <span className="editor-lock-tag">Completo</span>}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -362,25 +376,33 @@ export default function EditorPanel({ onClose }) {
               {order.map((id, i) => {
                 const s = SECTIONS.find((sec) => sec.id === id)
                 if (!s) return null
-                const cfg  = event.settings?.sections?.[id] || {}
-                const open = openSection === id
+                const cfg    = event.settings?.sections?.[id] || {}
+                const open   = openSection === id
+                const locked = sectionLocked(event, id)
                 return (
                   <div
                     key={id}
-                    className={'editor-section' + (open ? ' editor-section-open' : '')}
+                    className={
+                      'editor-section'
+                      + (open ? ' editor-section-open' : '')
+                      + (locked ? ' editor-section-locked' : '')
+                    }
                   >
                     <div className="editor-section-row">
                       <input
                         type="checkbox"
-                        checked={sectionEnabled(event, id)}
-                        onChange={() => toggleSection(id)}
+                        checked={!locked && sectionEnabled(event, id)}
+                        disabled={locked}
+                        onChange={() => !locked && toggleSection(id)}
                       />
                       <button
                         className="editor-section-name"
-                        onClick={() => toggleSection(id)}
+                        title={locked ? 'Disponível no plano Completo' : undefined}
+                        onClick={() => !locked && toggleSection(id)}
                       >
                         {s.label}
                       </button>
+                      {locked && <span className="editor-lock-tag">Completo</span>}
                       <div className="editor-section-tools">
                         <button
                           onClick={() => moveSection(id, -1)}

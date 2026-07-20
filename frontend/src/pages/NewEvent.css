@@ -214,3 +214,37 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Banner do plano escolhido na home ── */
+.ne-plan-banner {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: 14px 18px;
+  margin-bottom: 32px;
+  margin-top: -12px;
+}
+
+.ne-plan-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.ne-plan-price {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--cream);
+}
+
+.ne-plan-note {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-muted);
+}

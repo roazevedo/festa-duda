@@ -18,7 +18,7 @@ RSpec.describe CatalogGift, type: :model do
     end
 
     it 'rejeita event_type fora da lista' do
-      expect(build(:catalog_gift, event_type: 'formatura')).not_to be_valid
+      expect(build(:catalog_gift, event_type: 'churrasco')).not_to be_valid
     end
 
     it 'aceita o escopo geral (sugestões para qualquer evento)' do

@@ -105,6 +105,29 @@
   outline: 1px solid #a8842e;
 }
 
+/* ── Recursos travados pelo plano ── */
+.editor-theme-locked,
+.editor-section-locked .editor-section-name {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-theme-locked:hover { border-color: #eee8dc; }
+
+.editor-lock-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a6d1d;
+  background: #f5eedc;
+  border: 1px solid #e3d5ae;
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
 .editor-theme-dots {
   display: flex;
   gap: 4px;

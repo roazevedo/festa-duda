@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import AtoHeader from './AtoHeader'
+import SectionHeading from './SectionHeading'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getPhotos, createPhoto, deletePhoto } from '../services/api'
 import { uploadToCloudinary } from '../services/cloudinary'
+import { isTeatro } from '../sections'
 import { useConfirm } from './useConfirm'
 import Lightbox from './Lightbox'
 import './Traje.css'
 
 export default function Traje() {
-  const { slug, token } = useEvent()
+  const { event, slug, token } = useEvent()
   const isAdmin         = useEventAdmin()
+  const teatro          = isTeatro(event)
   const fileRef         = useRef(null)
   const [confirm, confirmModal] = useConfirm()
 
@@ -69,12 +72,19 @@ export default function Traje() {
 
   return (
     <section className="section">
-      <AtoHeader
-        number="VI"
-        title="O Traje"
-        subtitle="social completo · uma releitura dos anos 20"
-      />
+      {teatro ? (
+        <AtoHeader
+          number="VI"
+          title="O Traje"
+          subtitle="social completo · uma releitura dos anos 20"
+        />
+      ) : (
+        <SectionHeading id="traje" />
+      )}
 
+      {/* Cards de traje do site original — exclusivos do teatro;
+          nos modulares o título/subtítulo da seção contam o dress code */}
+      {teatro && (
       <div className="traje-top">
         <div className="traje-card">
           <p className="traje-card-eyebrow">TRAJE</p>
@@ -131,6 +141,14 @@ export default function Traje() {
           )}
         </div>
       </div>
+      )}
+
+      {!teatro && isAdmin && (
+        <p className="traje-admin-hint" style={{ textAlign: 'center' }}>
+          ⚙ Edite o título e o subtítulo desta seção no painel Personalizar ·
+          use o card com "+" para adicionar fotos de referência.
+        </p>
+      )}
 
       {/* Galeria de referências — quantas fotos o admin quiser */}
       {(photos.length > 0 || isAdmin) && (

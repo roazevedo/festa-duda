@@ -13,6 +13,18 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
 
   def create
     photo = @event.photos.build(photo_params)
+
+    # Limite do plano vale para a galeria; as demais categorias
+    # (traje, convite, save the date) têm poucas fotos por natureza
+    limit = @event.plan_limits[:photos]
+    if photo.category == "galeria" && limit &&
+       @event.photos.where(category: "galeria").count >= limit
+      return render json: {
+        errors: [ "O plano Grátis permite até #{limit} fotos na galeria. " \
+                  "Faça upgrade para o plano Completo e envie quantas quiser." ]
+      }, status: :unprocessable_entity
+    end
+
     # Nova foto entra no fim do álbum da sua categoria
     photo.position =
       (@event.photos.where(category: photo.category).maximum(:position) || -1) + 1

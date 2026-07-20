@@ -96,6 +96,13 @@ export const createGiftCheckout = (slug, token, id) =>
 export const getGiftPayments = (slug, token) =>
   apiFetch(`/events/${slug}/${token}/gift_payments`)
 
+// ── Upgrade de plano (Checkout Pro, só o dono) ───────────────
+export const createPlanCheckout = (slug, token, plan) =>
+  apiFetch(`/events/${slug}/${token}/plan_checkout`, {
+    method: 'POST',
+    body: JSON.stringify({ plan }),
+  })
+
 // ── Catálogo de presentes (sugestões, público) ───────────────
 export const getGiftCatalog = (eventType) =>
   apiFetch(`/gift_catalog?event_type=${encodeURIComponent(eventType)}`)

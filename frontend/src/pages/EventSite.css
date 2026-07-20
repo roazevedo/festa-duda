@@ -76,6 +76,53 @@
   margin-top: 4px;
 }
 
+/* Marca da plataforma no plano grátis */
+.footer-brand {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+.footer-brand strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.footer-brand:hover {
+  opacity: 1;
+}
+
 @media (max-width: 480px) {
   .footer-fan { width: clamp(100px, 28vw, 140px); }
 }
+
+/* ── Aviso de retorno do pagamento do upgrade ── */
+.plan-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 18px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  text-align: center;
+}
+
+.plan-feedback-ok    { background: #e6f4e6; color: #245c2b; }
+.plan-feedback-warn  { background: #faf3dc; color: #6d5a12; }
+.plan-feedback-error { background: #f9e5e2; color: #7c2417; }
+
+.plan-feedback-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.plan-feedback-close:hover { opacity: 1; }

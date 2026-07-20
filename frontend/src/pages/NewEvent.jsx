@@ -1,11 +1,18 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { createEvent } from '../services/api'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { createEvent, createPlanCheckout } from '../services/api'
 import { EVENT_TYPES } from '../eventTypes'
+import { PLANS } from '../plans'
 import './NewEvent.css'
 
 export default function NewEvent() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  // Plano escolhido na home (?plano=completo) — o evento nasce
+  // grátis e o upgrade é cobrado logo após o cadastro
+  const chosenPlan = PLANS.find((p) => p.id === searchParams.get('plano')) || null
+  const paidPlan   = chosenPlan && chosenPlan.id === 'completo'
 
   const [eventType, setEventType] = useState(null)
   const [name, setName]           = useState('')
@@ -35,6 +42,24 @@ export default function NewEvent() {
         // ISO completo com fuso — evita o servidor interpretar como UTC
         event_date: new Date(`${date}T${time}`).toISOString(),
       })
+
+      // Plano pago: segue direto para o Checkout Pro; o plano é
+      // aplicado pelo webhook quando o MP aprovar o pagamento
+      if (paidPlan) {
+        try {
+          const { init_point } =
+            await createPlanCheckout(event.slug, event.token, chosenPlan.id)
+          window.location.assign(init_point)
+          return
+        } catch (err) {
+          alert(
+            (err.message || 'Erro ao iniciar o pagamento.') +
+            ' Seu evento foi criado no plano Grátis — você pode fazer o ' +
+            'upgrade a qualquer momento pelo painel.'
+          )
+        }
+      }
+
       // Direto para o site do evento com o editor lateral aberto
       navigate(`/${event.slug}/${event.token}?editar=1`)
     } catch (err) {
@@ -60,6 +85,18 @@ export default function NewEvent() {
           Conte o básico — o site do seu evento nasce pronto e você
           personaliza tudo depois.
         </p>
+
+        {chosenPlan && (
+          <div className="ne-plan-banner">
+            <span className="ne-plan-name">Plano {chosenPlan.name}</span>
+            <span className="ne-plan-price">{chosenPlan.priceLabel}</span>
+            <span className="ne-plan-note">
+              {paidPlan
+                ? 'após criar o evento, você segue para o pagamento seguro via Mercado Pago'
+                : 'sem custo — faça upgrade quando quiser'}
+            </span>
+          </div>
+        )}
 
         <form className="ne-form" onSubmit={handleSubmit}>
 
@@ -134,7 +171,9 @@ export default function NewEvent() {
           {error && <p className="ne-error">{error}</p>}
 
           <button className="ne-submit" type="submit" disabled={saving}>
-            {saving ? 'Criando...' : 'Criar meu evento'}
+            {saving
+              ? 'Criando...'
+              : paidPlan ? 'Criar evento e ir para o pagamento' : 'Criar meu evento'}
           </button>
 
         </form>

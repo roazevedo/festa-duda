@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
 import { eventTypeLabel } from '../eventTypes'
-import { deleteEvent, getRsvps } from '../services/api'
+import { deleteEvent, getRsvps, createPlanCheckout } from '../services/api'
 import { isEventFinished } from '../eventStatus'
+import { planOf, planAllows } from '../plans'
 import { useConfirm } from '../components/useConfirm'
 import './Dashboard.css'
 
@@ -77,6 +78,21 @@ export default function Dashboard() {
 
   const totalGifts = events.reduce((s, e) => s + (e.stats?.gifts_received || 0), 0)
 
+  // Upgrade para o plano Completo — Checkout Pro do Mercado Pago;
+  // o plano é aplicado pelo webhook quando o pagamento for aprovado
+  const [upgradingId, setUpgradingId] = useState(null)
+  const handleUpgrade = async (event) => {
+    setUpgradingId(event.id)
+    try {
+      const { init_point } =
+        await createPlanCheckout(event.slug, event.token, 'completo')
+      window.location.assign(init_point)
+    } catch (err) {
+      alert(err.message || 'Erro ao iniciar o pagamento. Tente novamente.')
+      setUpgradingId(null)
+    }
+  }
+
   // Ativo = dentro da vigência (até 6 meses após a festa)
   // (instante capturado na montagem — estável entre re-renders)
   const [now] = useState(() => Date.now())
@@ -84,8 +100,9 @@ export default function Dashboard() {
   const pastCount   = events.length - activeCount
 
   // ── Exportação da lista de confirmados (PDF para o salão) ──
-  // jsPDF entra por import dinâmico — só é baixado ao exportar
+  // Disponível nos planos pagos; jsPDF entra por import dinâmico
   const exportGuests = async (event) => {
+    if (!planAllows(event, 'export')) return
     try {
       const rsvps = await getRsvps(event.slug, event.token)
       const confirmed = rsvps
@@ -265,6 +282,9 @@ export default function Dashboard() {
                   <div>
                     <p className="dash-event-type">
                       {eventTypeLabel(event.event_type)}
+                      <span className={`dash-plan-badge dash-plan-${planOf(event).id}`}>
+                        {planOf(event).name}
+                      </span>
                     </p>
                     <h3 className="dash-event-name">{event.name}</h3>
                   </div>
@@ -352,10 +372,25 @@ export default function Dashboard() {
                       Abrir site
                     </a>
                   )}
+                  {planOf(event).id === 'gratis' && !finished && (
+                    <button
+                      className="dash-upgrade-btn"
+                      onClick={() => handleUpgrade(event)}
+                      disabled={upgradingId !== null}
+                      title="Liberar tudo com o plano Completo — R$ 149,90"
+                    >
+                      {upgradingId === event.id
+                        ? 'Abrindo pagamento...'
+                        : '★ Fazer upgrade — R$ 149,90'}
+                    </button>
+                  )}
                   <button
                     className="dash-export-btn"
                     onClick={() => exportGuests(event)}
-                    title="Baixar PDF com os confirmados e acompanhantes"
+                    disabled={!planAllows(event, 'export')}
+                    title={planAllows(event, 'export')
+                      ? 'Baixar PDF com os confirmados e acompanhantes'
+                      : 'Disponível no plano Completo'}
                   >
                     ⇓ Exportar confirmados
                   </button>

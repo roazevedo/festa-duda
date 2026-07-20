@@ -9,7 +9,7 @@ class Api::V1::MercadoPagoWebhooksController < ApplicationController
     return head :ok unless payment_id
 
     mp_payment = MercadoPagoService.fetch_payment(payment_id)
-    payment    = GiftPayment.find_by(id: mp_payment["external_reference"])
+    payment    = find_payment(mp_payment["external_reference"])
     return head :ok unless payment
 
     status = mp_payment["status"]
@@ -25,6 +25,12 @@ class Api::V1::MercadoPagoWebhooksController < ApplicationController
       mp_payment_id: mp_payment["id"].to_s,
       payer_email:   mp_payment.dig("payer", "email")
     )
+
+    # Upgrade de plano aprovado: aplica o plano comprado no evento
+    if payment.is_a?(PlanPayment) && status == "approved"
+      payment.event.update!(plan: payment.plan)
+    end
+
     head :ok
   rescue MercadoPagoService::Error => e
     # 500 faz o MP reenviar a notificação mais tarde
@@ -33,6 +39,16 @@ class Api::V1::MercadoPagoWebhooksController < ApplicationController
   end
 
   private
+
+  # external_reference "plan:<id>" → upgrade de plano;
+  # id puro → pagamento de presente (formato original)
+  def find_payment(reference)
+    if reference.to_s.start_with?("plan:")
+      PlanPayment.find_by(id: reference.delete_prefix("plan:"))
+    else
+      GiftPayment.find_by(id: reference)
+    end
+  end
 
   # O MP envia formatos diferentes conforme a versão da notificação:
   #   body JSON:    { "type": "payment", "data": { "id": "123" } }

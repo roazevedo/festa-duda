@@ -8,6 +8,7 @@ import {
   getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
   getGiftPayments,
 } from '../services/api'
+import { planLimit } from '../plans'
 import './Presentes.css'
 
 const EMPTY_FORM = { name: '', description: '', price: '' }
@@ -86,6 +87,10 @@ export default function Presentes() {
     )
   }, [])
 
+  // Limite de presentes no plano grátis (null = ilimitado)
+  const giftLimit = planLimit(event, 'gifts')
+  const atLimit   = giftLimit != null && gifts.length >= giftLimit
+
   const handleChange = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value })
 
@@ -105,6 +110,7 @@ export default function Presentes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!editingId && atLimit) return
     setSaving(true)
     try {
       const data = {
@@ -228,7 +234,14 @@ export default function Presentes() {
             </div>
           </div>
           <div className="gifts-admin-actions">
-            <button className="gifts-admin-submit" type="submit" disabled={saving}>
+            <button
+              className="gifts-admin-submit"
+              type="submit"
+              disabled={saving || (!editingId && atLimit)}
+              title={!editingId && atLimit
+                ? 'Limite de presentes do plano Grátis atingido'
+                : undefined}
+            >
               {saving ? 'salvando...' : editingId ? 'salvar alterações' : 'adicionar'}
             </button>
             {editingId && (
@@ -241,11 +254,22 @@ export default function Presentes() {
                 className="gifts-admin-cancel"
                 type="button"
                 onClick={() => setCatalogOpen(true)}
+                disabled={atLimit}
+                title={atLimit
+                  ? 'Limite de presentes do plano Grátis atingido'
+                  : undefined}
               >
                 escolher do catálogo
               </button>
             )}
           </div>
+          {giftLimit != null && (
+            <p className="gifts-plan-hint">
+              {gifts.length} de {giftLimit} presentes do plano Grátis
+              {atLimit &&
+                ' · limite atingido — o plano Completo libera a lista ilimitada'}
+            </p>
+          )}
         </form>
       )}
 

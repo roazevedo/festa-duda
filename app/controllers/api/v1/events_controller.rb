@@ -74,7 +74,7 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(
+    permitted = params.require(:event).permit(
       :slug,
       :name,
       :event_type,
@@ -85,6 +85,12 @@ class Api::V1::EventsController < ApplicationController
       :messages_public,
       settings: {}
     )
+    # Plano só muda pela mão do admin (upgrade ainda é manual,
+    # após a confirmação do pagamento)
+    if current_user&.admin? && params[:event][:plan].present?
+      permitted[:plan] = params[:event][:plan]
+    end
+    permitted
   end
 
   def event_json(event)
@@ -96,6 +102,7 @@ class Api::V1::EventsController < ApplicationController
       name:             event.name,
       event_type:       event.event_type,
       event_date:       event.event_date,
+      plan:             event.plan,
       venue_name:       event.venue_name,
       venue_address:    event.venue_address,
       rsvp_list_public: event.rsvp_list_public,

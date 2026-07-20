@@ -508,3 +508,66 @@
   .dash-events-grid { grid-template-columns: 1fr; }
   .dash-user-email  { display: none; }
 }
+
+/* ── Selo do plano no card do evento ── */
+.dash-plan-badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  vertical-align: middle;
+}
+
+.dash-plan-gratis {
+  color: #a8b3c4;
+  border: 1px solid rgba(168, 179, 196, 0.35);
+}
+
+.dash-plan-completo {
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.45);
+}
+
+.dash-plan-atelie {
+  color: #f0c060;
+  border: 1px solid rgba(240, 192, 96, 0.45);
+}
+
+.dash-export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dash-export-btn:disabled:hover {
+  background: transparent;
+  border-color: rgba(139, 92, 246, 0.35);
+  color: #c4b5fd;
+}
+
+/* ── Botão de upgrade de plano ── */
+.dash-upgrade-btn {
+  flex: 1 1 100%;
+  background: linear-gradient(90deg, rgba(240, 192, 96, 0.14), rgba(139, 92, 246, 0.14));
+  border: 1px solid rgba(240, 192, 96, 0.45);
+  color: #fde68a;
+  font-family: var(--font-display);
+  font-size: clamp(9px, 1.1vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dash-upgrade-btn:hover:not(:disabled) {
+  border-color: #f0c060;
+  background: rgba(240, 192, 96, 0.2);
+  color: #fff7d6;
+}
+
+.dash-upgrade-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
