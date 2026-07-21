@@ -45,6 +45,12 @@ class Event < ApplicationRecord
 
   validates :plan, presence: true, inclusion: { in: PLANS }
   validate  :settings_respect_plan
+  validate  :settings_within_size_limit
+
+  # settings é jsonb livre (permit(settings: {})); sem teto, um payload
+  # de vários MB seria aceito, gravado e reenviado a cada carregamento
+  # do evento. 256 KB é folgado para as configurações reais do site.
+  MAX_SETTINGS_BYTES = 256 * 1024
 
   def plan_limits
     PLAN_LIMITS.fetch(plan) { PLAN_LIMITS["gratis"] }
@@ -86,6 +92,14 @@ class Event < ApplicationRecord
 
     if settings.dig("sections", "save_the_date", "enabled")
       errors.add(:base, "A seção Save the Date está disponível a partir do plano Completo.")
+    end
+  end
+
+  def settings_within_size_limit
+    return if settings.blank?
+
+    if settings.to_json.bytesize > MAX_SETTINGS_BYTES
+      errors.add(:base, "As configurações do site excederam o tamanho máximo permitido.")
     end
   end
 

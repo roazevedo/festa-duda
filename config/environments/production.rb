@@ -99,4 +99,15 @@ Rails.application.configure do
   config.hosts.concat(allowed_hosts) if allowed_hosts.any?
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Sem REDIS_URL, o logout por inatividade (SessionActivity) e os
+  # contadores do Rack::Attack ficam em memória por processo — não são
+  # compartilhados entre workers/dynos, enfraquecendo o brute-force
+  # throttle e tornando a expiração de sessão inconsistente. Avisamos no
+  # boot para que o deploy de produção configure o Redis.
+  unless ENV["REDIS_URL"].present?
+    warn "[SEGURANÇA] REDIS_URL ausente: SessionActivity e Rack::Attack " \
+         "usarão store em memória (por processo). Rate-limit e expiração " \
+         "de sessão ficam inconsistentes em deploy multi-processo/dyno."
+  end
 end

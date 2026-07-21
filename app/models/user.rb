@@ -6,6 +6,10 @@ class User < ApplicationRecord
          :jwt_authenticatable,
          jwt_revocation_strategy: JwtDenylist
 
+  # Teto de eventos por conta — barra criação massiva no plano grátis
+  # via API. Admins (operação da plataforma) não têm limite.
+  MAX_EVENTS = 100
+
   has_many :events, dependent: :destroy
   # Pagamentos de plano de novos eventos (existem antes do evento).
   # Nullify preserva o histórico financeiro se a conta for removida.

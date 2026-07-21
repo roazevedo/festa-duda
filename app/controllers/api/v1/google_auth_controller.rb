@@ -34,8 +34,13 @@ class Api::V1::GoogleAuthController < ApplicationController
   private
 
   def verify_google_token(credential)
-    uri      = URI("#{GOOGLE_TOKEN_INFO_URL}?#{URI.encode_www_form(id_token: credential)}")
-    response = Net::HTTP.get_response(uri)
+    uri  = URI("#{GOOGLE_TOKEN_INFO_URL}?#{URI.encode_www_form(id_token: credential)}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl      = true
+    http.open_timeout = 5
+    http.read_timeout = 5
+
+    response = http.get(uri.request_uri)
     return nil unless response.is_a?(Net::HTTPSuccess)
 
     payload   = JSON.parse(response.body)

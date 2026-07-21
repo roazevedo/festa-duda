@@ -27,6 +27,12 @@ class Api::V1::EventsController < ApplicationController
 
   # POST /api/v1/events
   def create
+    if !current_user.admin? && current_user.events.count >= User::MAX_EVENTS
+      return render json: {
+        errors: [ "Limite de #{User::MAX_EVENTS} eventos por conta atingido." ]
+      }, status: :unprocessable_entity
+    end
+
     event = current_user.events.build(event_params)
     if event.save
       render json: event_json(event), status: :created

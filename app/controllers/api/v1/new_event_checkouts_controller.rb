@@ -84,6 +84,14 @@ class Api::V1::NewEventCheckoutsController < ApplicationController
     return unless mp_id && MercadoPagoService.configured?
 
     mp = MercadoPagoService.fetch_payment(mp_id)
+
+    # O pagamento consultado TEM que ser este plan_payment. Sem esta
+    # checagem, qualquer id de pagamento aprovado da conta MP (ex.: um
+    # presente de R$ 0,01) aprovaria o plano pago. O external_reference é
+    # a fonte de verdade devolvida pelo MP — mesmo padrão do webhook.
+    return unless mp["external_reference"] == payment.external_reference
+    return unless mp["transaction_amount"].to_f >= payment.amount.to_f
+
     return unless PlanPayment::STATUSES.include?(mp["status"])
 
     payment.update!(

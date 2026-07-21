@@ -138,6 +138,27 @@ RSpec.describe 'Api::V1::Events', type: :request do
       end
     end
 
+    context 'no limite de eventos por conta' do
+      it 'recusa criação acima do teto para não-admin' do
+        stub_const('User::MAX_EVENTS', 1)
+        create(:event, user: user)
+
+        expect {
+          post '/api/v1/events', params: valid_params, headers: auth_headers(user)
+        }.not_to change(Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'não limita admin' do
+        stub_const('User::MAX_EVENTS', 1)
+        # admin já tem 1 evento (let! event)
+        expect {
+          post '/api/v1/events', params: valid_params, headers: auth_headers(admin)
+        }.to change(Event, :count).by(1)
+      end
+    end
+
     context 'com dados inválidos' do
       it 'retorna 422 com erros' do
         post '/api/v1/events',

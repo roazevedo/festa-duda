@@ -80,5 +80,27 @@ RSpec.describe 'Api::V1::Rsvps', type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context 'anti double-submit' do
+      it 'colapsa dois envios idênticos em segundos' do
+        params = { rsvp: { name: 'Bia', guests: 1, attending: 'yes', restriction: 'Sem glúten' } }
+        expect {
+          post url, params: params
+          post url, params: params
+        }.to change(Rsvp, :count).by(1)
+        expect(response).to have_http_status(:created)
+      end
+    end
+
+    context 'evento já encerrado' do
+      let(:event) { create(:event, event_date: 1.year.ago, plan: 'gratis') }
+
+      it 'recusa novo RSVP com 422' do
+        expect {
+          post url, params: { rsvp: { name: 'Tarde', guests: 0, attending: 'yes' } }
+        }.not_to change(Rsvp, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 end

@@ -21,4 +21,14 @@ class Api::V1::EventResourcesController < ApplicationController
   def admin_viewing?
     current_user.present? && (current_user.admin? || @event.user == current_user)
   end
+
+  # Evento encerrado (meses após a festa) não recebe mais interações de
+  # convidado — RSVP, recado ou presente. O frontend já esconde os
+  # formulários; isto fecha a porta para quem chama a API direto.
+  def reject_if_finished!
+    if @event.finished?
+      render json: { error: "Este evento já foi encerrado." },
+             status: :unprocessable_entity
+    end
+  end
 end

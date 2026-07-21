@@ -2,6 +2,8 @@
 # Endpoint público — convidados não têm login; o slug+token do evento
 # já limita quem chega até aqui.
 class Api::V1::GiftCheckoutsController < Api::V1::EventResourcesController
+  before_action :reject_if_finished!, only: [ :create ]
+
   def create
     gift = @event.gifts.find(params[:id])
 

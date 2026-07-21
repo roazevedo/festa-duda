@@ -3,6 +3,11 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
   before_action :authorize_owner!,   only: [ :create, :update, :destroy, :reorder ]
   before_action :set_photo,          only: [ :update, :destroy ]
   ALLOWED_CATEGORIES = %w[galeria traje save_the_date convite].freeze
+  # Teto absoluto para as categorias que NÃO são a galeria. O limite do
+  # plano só conta a galeria; sem este teto, um usuário poderia subir
+  # fotos ilimitadas em traje/convite/save_the_date via API, furando a
+  # cota do plano e inflando o armazenamento.
+  MAX_SECONDARY_CATEGORY_PHOTOS = 30
 
   def index
     photos = @event.photos
@@ -13,22 +18,32 @@ class Api::V1::PhotosController < Api::V1::EventResourcesController
 
   def create
     photo = @event.photos.build(photo_params)
-
-    # Limite do plano vale para a galeria; as demais categorias
-    # (traje, convite, save the date) têm poucas fotos por natureza
     limit = @event.plan_limits[:photos]
-    if photo.category == "galeria" && limit &&
-       @event.photos.where(category: "galeria").count >= limit
-      return render json: {
-        errors: [ "O plano Grátis permite até #{limit} fotos na galeria. " \
-                  "Faça upgrade para o plano Completo e envie quantas quiser." ]
-      }, status: :unprocessable_entity
+    error = nil
+
+    # Lock na linha do evento serializa criações concorrentes: a checagem
+    # de cota, o teto de categoria e o cálculo de posição ficam atômicos.
+    @event.with_lock do
+      count = @event.photos.where(category: photo.category).count
+
+      # Limite do plano vale para a galeria; as demais categorias
+      # (traje, convite, save the date) têm poucas fotos por natureza
+      if photo.category == "galeria" && limit && count >= limit
+        error = "O plano Grátis permite até #{limit} fotos na galeria. " \
+                "Faça upgrade para o plano Completo e envie quantas quiser."
+      elsif photo.category != "galeria" && count >= MAX_SECONDARY_CATEGORY_PHOTOS
+        error = "Limite de #{MAX_SECONDARY_CATEGORY_PHOTOS} fotos nesta seção atingido."
+      else
+        # Nova foto entra no fim do álbum da sua categoria
+        photo.position =
+          (@event.photos.where(category: photo.category).maximum(:position) || -1) + 1
+        photo.save
+      end
     end
 
-    # Nova foto entra no fim do álbum da sua categoria
-    photo.position =
-      (@event.photos.where(category: photo.category).maximum(:position) || -1) + 1
-    if photo.save
+    if error
+      render json: { errors: [ error ] }, status: :unprocessable_entity
+    elsif photo.persisted?
       render json: photo_json(photo), status: :created
     else
       render json: { errors: photo.errors.full_messages },

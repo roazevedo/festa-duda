@@ -51,6 +51,14 @@ class Rack::Attack
     end
   end
 
+  ### Throttle na assinatura de upload Cloudinary — qualquer conta logada
+  ### pode pedir assinaturas; limita o abuso de custo/armazenamento ###
+  throttle("cloudinary signature by ip", limit: 30, period: 1.minute) do |req|
+    if req.post? && req.path == "/api/v1/cloudinary/signature"
+      req.ip
+    end
+  end
+
   ### Throttle no webhook do MP — cada notificação dispara uma consulta
   ### nossa à API do MP; limita o potencial de amplificação ###
   throttle("mp webhook by ip", limit: 60, period: 1.minute) do |req|

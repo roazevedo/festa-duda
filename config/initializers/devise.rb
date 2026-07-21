@@ -325,6 +325,12 @@ Devise.setup do |config|
       [ "POST", %r{^/api/v1/auth/google$} ]
     ]
     # jwt.revocation_requests = [ [ 'DELETE', %r{^/api/v1/logout$} ] ]
-    jwt.expiration_time = 30.days.to_i
+    #
+    # Expiração "dura" do token. A expiração de segurança do dia a dia é o
+    # logout por inatividade (SessionActivity, 30 min); porém, sem REDIS_URL,
+    # esse store fica em memória por processo e não é confiável em deploy
+    # multi-processo/dyno. Mantemos a janela dura curta para limitar a
+    # exposição de um token vazado nesse cenário.
+    jwt.expiration_time = 7.days.to_i
   end
 end

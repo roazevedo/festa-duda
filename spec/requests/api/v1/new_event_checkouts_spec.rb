@@ -85,6 +85,7 @@ RSpec.describe 'Api::V1::NewEventCheckouts', type: :request do
         .to_return(status: 200,
           body: { id: id, status: status,
                   external_reference: payment.external_reference,
+                  transaction_amount: payment.amount.to_f,
                   payer: { email: 'edinho@email.com' } }.to_json,
           headers: { 'Content-Type' => 'application/json' })
     end
@@ -133,6 +134,27 @@ RSpec.describe 'Api::V1::NewEventCheckouts', type: :request do
           params: { reference: payment.external_reference, payment_id: '557' },
           headers: auth_headers(user)
       }.not_to change(Event, :count)
+    end
+
+    it 'não aprova o plano com um pagamento de OUTRO recurso (bypass)' do
+      # Pagamento aprovado real da conta MP, mas de outro recurso
+      # (ex.: um presente barato): external_reference não bate.
+      stub_request(:get, 'https://api.mercadopago.com/v1/payments/999')
+        .to_return(status: 200,
+          body: { id: 999, status: 'approved',
+                  external_reference: '42', # id de gift_payment, não "plan:X"
+                  transaction_amount: 0.5,
+                  payer: { email: 'atacante@email.com' } }.to_json,
+          headers: { 'Content-Type' => 'application/json' })
+
+      expect {
+        post '/api/v1/plan_checkouts/confirm',
+          params: { reference: payment.external_reference, payment_id: '999' },
+          headers: auth_headers(user)
+      }.not_to change(Event, :count)
+
+      expect(payment.reload.status).not_to eq('approved')
+      expect(payment.event).to be_nil
     end
   end
 end
