@@ -6,6 +6,7 @@ import { deleteEvent, getRsvps, createPlanCheckout } from '../services/api'
 import { isEventFinished } from '../eventStatus'
 import { planOf, planAllows } from '../plans'
 import { useConfirm } from '../components/useConfirm'
+import PlanPickerModal from '../components/PlanPickerModal'
 import './Dashboard.css'
 
 const API = import.meta.env.VITE_API_URL
@@ -34,7 +35,13 @@ export default function Dashboard() {
   const navigate            = useNavigate()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showPlans, setShowPlans] = useState(false)
   const [confirm, confirmModal] = useConfirm()
+
+  const choosePlan = (planId) => {
+    setShowPlans(false)
+    navigate(`/dashboard/novo?plano=${planId}`)
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -255,7 +262,7 @@ export default function Dashboard() {
             <h2 className="dash-section-title">Meus eventos</h2>
             <button
               className="dash-new-btn"
-              onClick={() => navigate('/dashboard/novo')}
+              onClick={() => setShowPlans(true)}
             >
               + Novo evento
             </button>
@@ -268,6 +275,12 @@ export default function Dashboard() {
           {!loading && events.length === 0 && (
             <div className="dash-empty">
               <p className="dash-empty-text">Nenhum evento criado ainda.</p>
+              <button
+                className="dash-new-btn"
+                onClick={() => setShowPlans(true)}
+              >
+                + Criar meu primeiro evento
+              </button>
             </div>
           )}
 
@@ -407,6 +420,13 @@ export default function Dashboard() {
         </div>
 
       </main>
+
+      {showPlans && (
+        <PlanPickerModal
+          onClose={() => setShowPlans(false)}
+          onChoose={choosePlan}
+        />
+      )}
 
       {confirmModal}
     </div>

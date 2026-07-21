@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/useAuth'
-import { ATELIE_CONTACT } from '../plans'
+import { ATELIE_CONTACT, PLAN_CARDS } from '../plans'
 import './Home.css'
 
 const FEATURES = [
@@ -36,58 +36,8 @@ const FEATURES = [
   },
 ]
 
-// ── Planos — espelha src/plans.js (limites) com o texto de venda ──
-const PRICING = [
-  {
-    id: 'gratis',
-    name: 'Grátis',
-    price: 'R$ 0',
-    period: 'para sempre',
-    tagline: 'para começar agora',
-    bullets: [
-      'Convite, contagem regressiva, RSVP, mural e local',
-      'Traje / dress code com fotos de referência',
-      '5 temas de cores',
-      'Lista de presentes com até 10 itens',
-      'Galeria com até 20 fotos',
-      'Site no ar por 3 meses após a festa',
-    ],
-    cta: 'Começar grátis',
-  },
-  {
-    id: 'completo',
-    name: 'Completo',
-    price: 'R$ 149,90',
-    period: 'por evento',
-    tagline: 'tudo liberado para a sua festa',
-    highlight: true,
-    bullets: [
-      'Tudo do plano Grátis',
-      'Save the Date em vídeo',
-      'Todos os temas de cores',
-      'Lista de presentes e galeria ilimitadas',
-      'Sem a marca Convida.me no rodapé',
-      'Exportação da lista de confirmados',
-      'Site no ar por 12 meses após a festa',
-      'Suporte por WhatsApp',
-    ],
-    cta: 'Criar meu evento',
-  },
-  {
-    id: 'atelie',
-    name: 'Ateliê',
-    price: 'R$ 997',
-    period: 'projeto exclusivo',
-    tagline: 'uma página criada a quatro mãos',
-    bullets: [
-      'Tudo do plano Completo',
-      'Tema criado do zero para a sua festa',
-      'Animações e seções sob medida',
-      'Contato direto com quem desenvolve a página',
-    ],
-    cta: 'Falar com o ateliê',
-  },
-]
+// Planos: texto de venda em src/plans.js (PLAN_CARDS), compartilhado
+// com o modal de escolha de plano do painel.
 
 // Tabela comparativa — ✓ / — / texto
 const COMPARISON = [
@@ -270,7 +220,7 @@ export default function Home() {
           </h2>
 
           <div className="landing-plans">
-            {PRICING.map((p) => (
+            {PLAN_CARDS.map((p) => (
               <div
                 key={p.id}
                 className={

@@ -1,0 +1,182 @@
+/* Modal de escolha de plano — paleta índigo + ouro da plataforma */
+.planpick-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(3, 2, 12, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 48px);
+  overflow-y: auto;
+}
+
+.planpick {
+  --pp-violet:    #8b5cf6;
+  --pp-violet-lt: #a78bfa;
+  --pp-gold:      #f0c060;
+  --pp-border:    rgba(139, 92, 246, 0.22);
+
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  background: #0b0821;
+  border: 1px solid var(--pp-border);
+  border-radius: 16px;
+  padding: clamp(26px, 4vw, 40px);
+  color: #f0ecff;
+}
+
+.planpick-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #9b8cc4;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+.planpick-close:hover { color: #f0ecff; }
+
+.planpick-head {
+  text-align: center;
+  margin-bottom: clamp(22px, 3vw, 34px);
+}
+.planpick-eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--pp-gold);
+  margin: 0 0 8px;
+}
+.planpick-title {
+  font-family: var(--font-title);
+  font-size: clamp(20px, 3vw, 30px);
+  color: #fff;
+  margin: 0 0 6px;
+}
+.planpick-sub {
+  color: #9b8cc4;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.planpick-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .planpick-cards { grid-template-columns: 1fr; }
+}
+
+.planpick-card {
+  display: flex;
+  flex-direction: column;
+  background: #120e30;
+  border: 1px solid var(--pp-border);
+  border-radius: 12px;
+  padding: 24px 20px 22px;
+  position: relative;
+}
+.planpick-card-pop {
+  border-color: var(--pp-violet);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.25);
+}
+.planpick-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--pp-violet), #6d28d9);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.planpick-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--pp-gold);
+  margin: 0 0 10px;
+}
+.planpick-price {
+  font-family: var(--font-title);
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.planpick-price span {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #9b8cc4;
+  font-weight: 400;
+  margin-top: 2px;
+}
+.planpick-tagline {
+  color: #c9bff0;
+  font-size: 0.85rem;
+  margin: 10px 0 16px;
+}
+.planpick-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.planpick-bullets li {
+  font-size: 0.84rem;
+  color: #d6cff0;
+  line-height: 1.4;
+  padding-left: 18px;
+  position: relative;
+}
+.planpick-bullets li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--pp-violet-lt);
+}
+
+.planpick-cta {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--pp-border);
+  background: transparent;
+  color: #f0ecff;
+  transition: all 0.2s;
+}
+.planpick-cta:hover { border-color: var(--pp-violet-lt); }
+.planpick-cta-pop {
+  background: linear-gradient(135deg, var(--pp-violet), #6d28d9);
+  border-color: var(--pp-violet);
+  color: #fff;
+}
+.planpick-cta-pop:hover {
+  background: linear-gradient(135deg, var(--pp-violet-lt), var(--pp-violet));
+}

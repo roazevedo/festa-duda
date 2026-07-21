@@ -47,6 +47,60 @@ export const PLANS = [
   },
 ]
 
+// Texto de venda dos planos (nome, preço, tagline, bullets, CTA).
+// Usado na seção de planos da home e no modal de escolha do painel.
+export const PLAN_CARDS = [
+  {
+    id: 'gratis',
+    name: 'Grátis',
+    price: 'R$ 0',
+    period: 'para sempre',
+    tagline: 'para começar agora',
+    bullets: [
+      'Convite, contagem regressiva, RSVP, mural e local',
+      'Traje / dress code com fotos de referência',
+      '5 temas de cores',
+      'Lista de presentes com até 10 itens',
+      'Galeria com até 20 fotos',
+      'Site no ar por 3 meses após a festa',
+    ],
+    cta: 'Começar grátis',
+  },
+  {
+    id: 'completo',
+    name: 'Completo',
+    price: 'R$ 149,90',
+    period: 'por evento',
+    tagline: 'tudo liberado para a sua festa',
+    highlight: true,
+    bullets: [
+      'Tudo do plano Grátis',
+      'Save the Date em vídeo',
+      'Todos os temas de cores',
+      'Lista de presentes e galeria ilimitadas',
+      'Sem a marca Convida.me no rodapé',
+      'Exportação da lista de confirmados',
+      'Site no ar por 12 meses após a festa',
+      'Suporte por WhatsApp',
+    ],
+    cta: 'Criar meu evento',
+  },
+  {
+    id: 'atelie',
+    name: 'Ateliê',
+    price: 'R$ 997',
+    period: 'projeto exclusivo',
+    tagline: 'uma página criada a quatro mãos',
+    bullets: [
+      'Tudo do plano Completo',
+      'Tema criado do zero para a sua festa',
+      'Animações e seções sob medida',
+      'Contato direto com quem desenvolve a página',
+    ],
+    cta: 'Falar com o ateliê',
+  },
+]
+
 // Temas de cores liberados no plano grátis — as 5 paletas versáteis;
 // as temáticas (chá de bebê, revelação, bodas...) são do Completo.
 // Espelha FREE_THEMES em app/models/event.rb.
