@@ -1,0 +1,90 @@
+/* Retorno do pagamento — paleta índigo + ouro da plataforma */
+.payret {
+  --p-bg:        #07051a;
+  --p-border:    rgba(139, 92, 246, 0.22);
+  --p-violet:    #8b5cf6;
+  --p-violet-lt: #a78bfa;
+  --p-gold:      #f0c060;
+  --p-text:      #f0ecff;
+  --p-muted:     #9b8cc4;
+
+  min-height: 100vh;
+  background: var(--p-bg);
+  color: var(--p-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.payret-box {
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  background: #0e0b28;
+  border: 1px solid var(--p-border);
+  border-radius: 14px;
+  padding: clamp(28px, 5vw, 44px);
+}
+
+.payret-title {
+  font-family: var(--font-title);
+  font-size: clamp(20px, 3vw, 26px);
+  color: var(--p-text);
+  margin: 12px 0 10px;
+}
+
+.payret-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #d6cff0;
+  margin: 0 0 22px;
+}
+
+.payret-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payret-btn {
+  font-family: var(--font-display);
+  font-size: clamp(10px, 1.1vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--p-border);
+  background: transparent;
+  color: var(--p-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.payret-btn:hover {
+  border-color: var(--p-violet-lt);
+  color: var(--p-text);
+}
+
+.payret-btn-primary {
+  background: linear-gradient(135deg, var(--p-violet), #6d28d9);
+  border-color: var(--p-violet);
+  color: #fff;
+}
+.payret-btn-primary:hover {
+  background: linear-gradient(135deg, var(--p-violet-lt), var(--p-violet));
+  color: #fff;
+}
+
+.payret-spinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 6px;
+  border: 3px solid var(--p-border);
+  border-top-color: var(--p-gold);
+  border-radius: 50%;
+  animation: payret-spin 0.8s linear infinite;
+}
+
+@keyframes payret-spin {
+  to { transform: rotate(360deg); }
+}

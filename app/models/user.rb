@@ -7,6 +7,9 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtDenylist
 
   has_many :events, dependent: :destroy
+  # Pagamentos de plano de novos eventos (existem antes do evento).
+  # Nullify preserva o histórico financeiro se a conta for removida.
+  has_many :plan_payments, dependent: :nullify
 
   # Permite senha em branco para usuários OAuth (a senha é gerada aleatoriamente)
   # O Devise :validatable exige password, mas para Google podemos deixar sem validação

@@ -80,6 +80,35 @@ class MercadoPagoService
     request(Net::HTTP::Post, "/checkout/preferences", body)
   end
 
+  # Preferência de um NOVO evento pago — o evento ainda não existe,
+  # então o retorno leva a uma página de confirmação (/pagamento/retorno)
+  # e, se falhar, de volta à criação do evento.
+  def self.create_new_event_preference(payment:, base_url:)
+    body = {
+      items: [ {
+        id:          payment.plan,
+        title:       "Convida.me — Plano #{payment.plan.capitalize}: #{payment.event_name}",
+        description: "Site do evento no plano #{payment.plan.capitalize}",
+        quantity:    1,
+        currency_id: "BRL",
+        unit_price:  payment.amount.to_f
+      } ],
+      external_reference: payment.external_reference,
+      back_urls: {
+        success: "#{base_url}/pagamento/retorno",
+        pending: "#{base_url}/pagamento/retorno",
+        failure: "#{base_url}/dashboard/novo?plano=completo"
+      }
+    }
+
+    unless local_url?(base_url)
+      body[:auto_return]      = "approved"
+      body[:notification_url] = "#{base_url}/api/v1/webhooks/mercado_pago"
+    end
+
+    request(Net::HTTP::Post, "/checkout/preferences", body)
+  end
+
   # Busca um pagamento direto na API do MP — fonte de verdade do
   # webhook (o payload da notificação não é confiável por si só).
   def self.fetch_payment(payment_id)

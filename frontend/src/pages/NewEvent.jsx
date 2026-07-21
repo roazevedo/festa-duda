@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { createEvent, createPlanCheckout } from '../services/api'
+import { createEvent, createNewEventCheckout } from '../services/api'
 import { EVENT_TYPES } from '../eventTypes'
 import { PLANS } from '../plans'
 import { saveDraft, loadDraft, clearDraft } from '../utils/draftStorage'
+import { useConfirm } from '../components/useConfirm'
 import './NewEvent.css'
 
 const DRAFT_KEY = 'new-event'
@@ -26,6 +27,7 @@ export default function NewEvent() {
   const [restored, setRestored]   = useState(Boolean(draft))
   const [saving, setSaving]       = useState(false)
   const [error, setError]         = useState(null)
+  const [confirm, confirmModal]   = useConfirm()
 
   // Salva o que já foi preenchido para não perder ao sair e voltar
   useEffect(() => {
@@ -53,38 +55,49 @@ export default function NewEvent() {
     if (!date)         return setError('Informe a data da festa.')
     if (!time)         return setError('Informe o horário da festa.')
 
+    // ISO completo com fuso — evita o servidor interpretar como UTC
+    const eventDate = new Date(`${date}T${time}`).toISOString()
+
+    // ── Plano pago: NÃO cria o evento agora ──
+    // Vai ao pagamento; o evento nasce só quando o MP aprovar (o
+    // rascunho fica salvo para o usuário retomar se voltar sem pagar).
+    if (paidPlan) {
+      const ok = await confirm(
+        'Você vai para o pagamento seguro do Mercado Pago. Seu evento é ' +
+        'criado assim que o pagamento for confirmado. Se voltar sem pagar, ' +
+        'nada é cobrado e seus dados ficam salvos aqui.',
+        'Ir para o pagamento'
+      )
+      if (!ok) return
+
+      setSaving(true)
+      setError(null)
+      try {
+        const { init_point } = await createNewEventCheckout({
+          plan:       chosenPlan.id,
+          event_type: eventType,
+          name:       name.trim(),
+          event_date: eventDate,
+        })
+        window.location.assign(init_point)
+      } catch (err) {
+        setError(err.message || 'Não foi possível iniciar o pagamento.')
+        setSaving(false)
+      }
+      return
+    }
+
+    // ── Plano grátis: cria o evento no clique ──
     setSaving(true)
     setError(null)
     try {
-      // Local e endereço são definidos depois, no editor do site,
-      // ao ligar a seção "Local da festa"
+      // Local e endereço são definidos depois, no editor do site
       const event = await createEvent({
         event_type: eventType,
         name:       name.trim(),
-        // ISO completo com fuso — evita o servidor interpretar como UTC
-        event_date: new Date(`${date}T${time}`).toISOString(),
+        event_date: eventDate,
       })
-
-      // Evento criado: o rascunho já cumpriu seu papel
       clearDraft(DRAFT_KEY)
-
-      // Plano pago: segue direto para o Checkout Pro; o plano é
-      // aplicado pelo webhook quando o MP aprovar o pagamento
-      if (paidPlan) {
-        try {
-          const { init_point } =
-            await createPlanCheckout(event.slug, event.token, chosenPlan.id)
-          window.location.assign(init_point)
-          return
-        } catch (err) {
-          alert(
-            (err.message || 'Erro ao iniciar o pagamento.') +
-            ' Seu evento foi criado no plano Grátis — você pode fazer o ' +
-            'upgrade a qualquer momento pelo painel.'
-          )
-        }
-      }
-
       // Direto para o site do evento com o editor lateral aberto
       navigate(`/${event.slug}/${event.token}?editar=1`)
     } catch (err) {
@@ -204,12 +217,14 @@ export default function NewEvent() {
 
           <button className="ne-submit" type="submit" disabled={saving}>
             {saving
-              ? 'Criando...'
-              : paidPlan ? 'Criar evento e ir para o pagamento' : 'Criar meu evento'}
+              ? (paidPlan ? 'Redirecionando...' : 'Criando...')
+              : paidPlan ? 'Ir para o pagamento' : 'Criar meu evento'}
           </button>
 
         </form>
       </main>
+
+      {confirmModal}
     </div>
   )
 }

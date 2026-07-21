@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_19_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -105,7 +105,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_19_000001) do
   end
 
   create_table "plan_payments", force: :cascade do |t|
-    t.bigint "event_id", null: false
+    t.bigint "event_id"
     t.string "plan", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
     t.string "status", default: "pending", null: false
@@ -114,9 +114,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_19_000001) do
     t.string "payer_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.string "event_type"
+    t.string "event_name"
+    t.datetime "event_date"
     t.index ["event_id"], name: "index_plan_payments_on_event_id"
     t.index ["mp_payment_id"], name: "index_plan_payments_on_mp_payment_id", unique: true
     t.index ["status"], name: "index_plan_payments_on_status"
+    t.index ["user_id"], name: "index_plan_payments_on_user_id"
   end
 
   create_table "rsvps", force: :cascade do |t|
@@ -155,5 +160,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_19_000001) do
   add_foreign_key "messages", "events"
   add_foreign_key "photos", "events"
   add_foreign_key "plan_payments", "events"
+  add_foreign_key "plan_payments", "users"
   add_foreign_key "rsvps", "events"
 end

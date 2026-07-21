@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import NewEvent from './pages/NewEvent'
 import EventSite from './pages/EventSite'
 import Privacy from './pages/Privacy'
+import PaymentReturn from './pages/PaymentReturn'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 
@@ -56,6 +57,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <NewEvent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pagamento/retorno"
+        element={
+          <ProtectedRoute>
+            <PaymentReturn />
           </ProtectedRoute>
         }
       />

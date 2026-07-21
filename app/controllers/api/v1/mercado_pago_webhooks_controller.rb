@@ -26,10 +26,9 @@ class Api::V1::MercadoPagoWebhooksController < ApplicationController
       payer_email:   mp_payment.dig("payer", "email")
     )
 
-    # Upgrade de plano aprovado: aplica o plano comprado no evento
-    if payment.is_a?(PlanPayment) && status == "approved"
-      payment.event.update!(plan: payment.plan)
-    end
+    # Pagamento de plano aprovado: faz o upgrade do evento existente
+    # ou cria o novo evento pago (idempotente)
+    payment.apply_approved_effect! if payment.is_a?(PlanPayment)
 
     head :ok
   rescue MercadoPagoService::Error => e

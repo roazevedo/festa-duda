@@ -103,6 +103,22 @@ export const createPlanCheckout = (slug, token, plan) =>
     body: JSON.stringify({ plan }),
   })
 
+// ── Checkout de NOVO evento pago ─────────────────────────────
+// O evento não é criado agora; nasce só quando o pagamento é aprovado.
+export const createNewEventCheckout = (data) =>
+  apiFetch('/plan_checkouts', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+
+// Confirma o pagamento na volta do Mercado Pago e cria o evento se
+// aprovado (idempotente). `reference` = external_reference (plan:ID).
+export const confirmPlanCheckout = (reference, paymentId) =>
+  apiFetch('/plan_checkouts/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ reference, payment_id: paymentId }),
+  })
+
 // ── Catálogo de presentes (sugestões, público) ───────────────
 export const getGiftCatalog = (eventType) =>
   apiFetch(`/gift_catalog?event_type=${encodeURIComponent(eventType)}`)
