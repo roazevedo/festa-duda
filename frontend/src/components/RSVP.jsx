@@ -4,6 +4,7 @@ import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getRsvps, createRsvp } from '../services/api'
 import { isTeatro } from '../sections'
+import { saveDraft, loadDraft, clearDraft } from '../utils/draftStorage'
 import './RSVP.css'
 
 export default function RSVP() {
@@ -11,14 +12,30 @@ export default function RSVP() {
   const isAdmin         = useEventAdmin()
   const teatro          = isTeatro(event)
 
+  // Rascunho por evento — o convidado não perde o que preencheu
+  // se sair e voltar (some após 24h)
+  const draftKey = `rsvp:${slug}`
+  const [draft] = useState(() => loadDraft(draftKey))
+
   // Sem campo de presença: enviar o formulário já significa confirmar
-  const [form, setForm] = useState({ name: '', guests: '0' })
-  const [companionNames, setCompanionNames]       = useState([])
-  const [companionChildren, setCompanionChildren] = useState([])
+  const [form, setForm] = useState(draft?.form || { name: '', guests: '0' })
+  const [companionNames, setCompanionNames]       = useState(draft?.companionNames || [])
+  const [companionChildren, setCompanionChildren] = useState(draft?.companionChildren || [])
+  const [restored, setRestored]             = useState(Boolean(draft))
   const [submitted, setSubmitted]           = useState(false)
   const [list, setList]                     = useState([])
   const [loading, setLoading]               = useState(true)
   const [sending, setSending]               = useState(false)
+
+  // Guarda o que está sendo preenchido enquanto não foi enviado
+  useEffect(() => {
+    if (submitted) return
+    const filling =
+      form.name.trim() || form.guests !== '0' || companionNames.some(Boolean)
+    if (filling) {
+      saveDraft(draftKey, { form, companionNames, companionChildren })
+    }
+  }, [form, companionNames, companionChildren, submitted, draftKey])
 
   // Carrega confirmações — a API retorna 403 para não-admins (lista privada)
   useEffect(() => {
@@ -92,6 +109,8 @@ export default function RSVP() {
       })
       setList((prev) => [newRsvp, ...prev])
       setSubmitted(true)
+      setRestored(false)
+      clearDraft(draftKey)
     } catch (err) {
       console.error('Erro ao enviar RSVP:', err)
     } finally {
@@ -104,6 +123,14 @@ export default function RSVP() {
     setForm({ name: '', guests: '0' })
     setCompanionNames([])
     setCompanionChildren([])
+  }
+
+  const clearRestored = () => {
+    clearDraft(draftKey)
+    setForm({ name: '', guests: '0' })
+    setCompanionNames([])
+    setCompanionChildren([])
+    setRestored(false)
   }
 
   const confirmed      = list.filter((r) => r.attending === 'yes')
@@ -122,6 +149,13 @@ export default function RSVP() {
         <div className="rsvp-form-side">
           {!submitted ? (
             <form className="rsvp-form" onSubmit={handleSubmit}>
+
+              {restored && (
+                <div className="rsvp-restored">
+                  <span>Recuperamos o que você tinha começado a preencher.</span>
+                  <button type="button" onClick={clearRestored}>Limpar</button>
+                </div>
+              )}
 
               <div className="form-group">
                 <label className="form-label">seu nome</label>

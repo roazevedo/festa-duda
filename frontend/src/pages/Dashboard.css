@@ -219,7 +219,11 @@
 /* ── EVENTOS GRID ── */
 .dash-events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  /* Largura controlada: cards entre 400 e 460px — largos o bastante
+     para o rótulo do tipo e a data caberem na linha, sem esticar até
+     a largura toda quando há poucos eventos. */
+  grid-template-columns: repeat(auto-fill, minmax(400px, 460px));
+  justify-content: start;
   gap: clamp(12px, 2vw, 20px);
 }
 
@@ -252,22 +256,41 @@
 .dash-event-card:hover::before { opacity: 1; }
 
 .dash-event-header {
-  padding: clamp(16px, 2vw, 24px);
+  padding: clamp(22px, 2.6vw, 30px) clamp(20px, 2.4vw, 28px) clamp(18px, 2vw, 24px);
   border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vw, 18px);
+}
+
+/* Linha 1: tipo do evento (esq.) e data (dir.) */
+.dash-event-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+/* Linha 2: nome (esq.) e selo de status (dir.), alinhados no topo */
+.dash-event-header-main {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
 }
 
 .dash-event-type {
   font-family: var(--font-display);
   font-size: clamp(8px, 1vw, 10px);
-  letter-spacing: 0.4em;
+  letter-spacing: 0.3em;
   color: #f0c060;
   text-transform: uppercase;
-  margin-bottom: 6px;
   opacity: 0.8;
+  /* cede espaço para a data não ser cortada em cards estreitos */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dash-event-name {
@@ -276,6 +299,9 @@
   color: #f0ecff;
   font-weight: 700;
   font-style: italic;
+  /* ocupa o espaço da linha e empurra o selo para a direita */
+  flex: 1;
+  min-width: 0;
   /* Altura fixa de duas linhas — nomes curtos ou compostos
      ocupam o mesmo espaço e os cards ficam alinhados */
   line-height: 1.25;
@@ -292,20 +318,14 @@
 .dash-event-date-text {
   font-family: var(--font-display);
   font-size: clamp(9px, 1vw, 11px);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   color: #9b8cc4;
-  text-align: right;
   white-space: nowrap;
+  /* a data nunca é cortada — o rótulo do tipo é quem cede espaço */
+  flex-shrink: 0;
 }
 
 /* ── Badge de status do evento ── */
-.dash-event-date {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
 .dash-event-badge {
   font-family: var(--font-display);
   font-size: clamp(8px, 0.9vw, 10px);
@@ -314,6 +334,7 @@
   text-transform: uppercase;
   padding: 4px 10px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .dash-badge-active {
@@ -507,32 +528,6 @@
   .dash-stats       { grid-template-columns: repeat(2, 1fr); }
   .dash-events-grid { grid-template-columns: 1fr; }
   .dash-user-email  { display: none; }
-}
-
-/* ── Selo do plano no card do evento ── */
-.dash-plan-badge {
-  display: inline-block;
-  margin-left: 10px;
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-size: 8px;
-  letter-spacing: 0.2em;
-  vertical-align: middle;
-}
-
-.dash-plan-gratis {
-  color: #a8b3c4;
-  border: 1px solid rgba(168, 179, 196, 0.35);
-}
-
-.dash-plan-completo {
-  color: #c4b5fd;
-  border: 1px solid rgba(139, 92, 246, 0.45);
-}
-
-.dash-plan-atelie {
-  color: #f0c060;
-  border: 1px solid rgba(240, 192, 96, 0.45);
 }
 
 .dash-export-btn:disabled {

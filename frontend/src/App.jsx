@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import NewEvent from './pages/NewEvent'
 import EventSite from './pages/EventSite'
+import Privacy from './pages/Privacy'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 
@@ -37,8 +38,9 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Pública */}
-      <Route path="/"      element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/"            element={<Home />} />
+      <Route path="/login"       element={<Login />} />
+      <Route path="/privacidade" element={<Privacy />} />
 
       {/* Protegida */}
       <Route

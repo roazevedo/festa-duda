@@ -16,10 +16,24 @@
   color: var(--footer-copy, rgba(0, 0, 0, 0.4));
 }
 
+.site-footer-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-size: clamp(10px, 1.1vw, 12px);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--footer-copy, rgba(0, 0, 0, 0.4));
+  text-decoration: underline;
+  opacity: 0.85;
+}
+.site-footer-link:hover { opacity: 1; }
+
 .site-footer-brand {
   background: #07051a;
 }
 
-.site-footer-brand .site-footer-copy {
+.site-footer-brand .site-footer-copy,
+.site-footer-brand .site-footer-link {
   color: #6f6395;
 }

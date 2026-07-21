@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useEvent } from '../contexts/useEvent'
 import { updateEvent } from '../services/api'
+import { saveDraft, loadDraft, clearDraft } from '../utils/draftStorage'
 import { uploadToCloudinary } from '../services/cloudinary'
 import { THEMES, DEFAULT_THEME_ID } from '../themes'
 import { SECTIONS, sectionEnabled, sectionOrder, isTeatro } from '../sections'
@@ -20,8 +21,8 @@ function toLocalInput(iso) {
 }
 
 // Campos do evento que o editor pode alterar — usados para
-// detectar mudanças e para montar o PATCH do salvar
-const snapshot = (ev) => JSON.stringify({
+// detectar mudanças, montar o PATCH do salvar e guardar o rascunho
+const editableFields = (ev) => ({
   settings:         ev?.settings || {},
   name:             ev?.name || '',
   event_date:       ev?.event_date || '',
@@ -30,6 +31,8 @@ const snapshot = (ev) => JSON.stringify({
   rsvp_list_public: Boolean(ev?.rsvp_list_public),
   messages_public:  Boolean(ev?.messages_public),
 })
+
+const snapshot = (ev) => JSON.stringify(editableFields(ev))
 
 // ════════════════════════════════════════════════════════════
 // EDITOR AO VIVO — barra lateral esquerda de personalização.
@@ -49,11 +52,36 @@ export default function EditorPanel({ onClose }) {
   const [confirm, confirmModal]     = useConfirm()
   const fileRef = useRef(null)
 
+  // Rascunho de edições não salvas — restaurável ao reabrir o editor
+  // (some após 24h). Só oferece se o rascunho diferir do que veio do
+  // servidor, para não sobrescrever dados mais novos sem o dono querer.
+  const draftKey = `editor:${slug}`
+  const [pendingDraft, setPendingDraft] = useState(() => {
+    const d = loadDraft(draftKey)
+    if (!d) return null
+    return JSON.stringify(d) !== snapshot(event) ? d : null
+  })
+
   const teatro  = isTeatro(event)
   const themeId = event?.settings?.theme || DEFAULT_THEME_ID
   const banner  = event?.settings?.banner_url || null
 
   const dirty = snapshot(event) !== snapshot(saved)
+
+  // Enquanto houver edições não salvas, mantém o rascunho no navegador
+  useEffect(() => {
+    if (dirty) saveDraft(draftKey, editableFields(event))
+  }, [event, dirty, draftKey])
+
+  const restoreDraft = () => {
+    setEvent({ ...event, ...pendingDraft })
+    setPendingDraft(null)
+  }
+
+  const dismissDraft = () => {
+    clearDraft(draftKey)
+    setPendingDraft(null)
+  }
 
   const flash = (msg) => {
     setFeedback(msg)
@@ -147,6 +175,7 @@ export default function EditorPanel({ onClose }) {
       })
       setEvent(updated)
       setSaved(updated)
+      clearDraft(draftKey)
       flash('Alterações salvas!')
     } catch {
       flash('Erro ao salvar. Tente novamente.')
@@ -155,7 +184,10 @@ export default function EditorPanel({ onClose }) {
     }
   }
 
-  const discard = () => setEvent(saved)
+  const discard = () => {
+    setEvent(saved)
+    clearDraft(draftKey)
+  }
 
   const close = async () => {
     if (dirty) {
@@ -181,6 +213,20 @@ export default function EditorPanel({ onClose }) {
       </div>
 
       <div className="editor-body">
+
+        {pendingDraft && (
+          <div className="editor-draft-note">
+            <p>Você tem alterações não salvas de antes. Quer restaurá-las?</p>
+            <div className="editor-draft-actions">
+              <button className="editor-draft-restore" onClick={restoreDraft}>
+                Restaurar
+              </button>
+              <button className="editor-draft-dismiss" onClick={dismissDraft}>
+                Descartar
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── Dados do evento ── */}
         <div className="editor-group">

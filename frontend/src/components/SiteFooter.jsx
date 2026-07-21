@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import './SiteFooter.css'
 
 // Footer global. Nas páginas da plataforma (home, login, painel)
@@ -10,11 +10,15 @@ export default function SiteFooter() {
   const isPlatform =
     pathname === '/' ||
     pathname.startsWith('/login') ||
-    pathname.startsWith('/dashboard')
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/privacidade')
 
   return (
     <footer className={'site-footer' + (isPlatform ? ' site-footer-brand' : '')}>
       <p className="site-footer-copy">© Convida.me 2026</p>
+      <Link className="site-footer-link" to="/privacidade">
+        Política de Privacidade
+      </Link>
     </footer>
   )
 }

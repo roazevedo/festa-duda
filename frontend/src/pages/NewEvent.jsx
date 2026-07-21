@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { createEvent, createPlanCheckout } from '../services/api'
 import { EVENT_TYPES } from '../eventTypes'
 import { PLANS } from '../plans'
+import { saveDraft, loadDraft, clearDraft } from '../utils/draftStorage'
 import './NewEvent.css'
+
+const DRAFT_KEY = 'new-event'
 
 export default function NewEvent() {
   const navigate = useNavigate()
@@ -14,12 +17,31 @@ export default function NewEvent() {
   const chosenPlan = PLANS.find((p) => p.id === searchParams.get('plano')) || null
   const paidPlan   = chosenPlan && chosenPlan.id === 'completo'
 
-  const [eventType, setEventType] = useState(null)
-  const [name, setName]           = useState('')
-  const [date, setDate]           = useState('')
-  const [time, setTime]           = useState('')
+  // Rascunho salvo antes de o usuário sair (some após 24h)
+  const [draft] = useState(() => loadDraft(DRAFT_KEY))
+  const [eventType, setEventType] = useState(draft?.eventType ?? null)
+  const [name, setName]           = useState(draft?.name ?? '')
+  const [date, setDate]           = useState(draft?.date ?? '')
+  const [time, setTime]           = useState(draft?.time ?? '')
+  const [restored, setRestored]   = useState(Boolean(draft))
   const [saving, setSaving]       = useState(false)
   const [error, setError]         = useState(null)
+
+  // Salva o que já foi preenchido para não perder ao sair e voltar
+  useEffect(() => {
+    if (eventType || name || date || time) {
+      saveDraft(DRAFT_KEY, { eventType, name, date, time })
+    }
+  }, [eventType, name, date, time])
+
+  const clearRestored = () => {
+    clearDraft(DRAFT_KEY)
+    setEventType(null)
+    setName('')
+    setDate('')
+    setTime('')
+    setRestored(false)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -42,6 +64,9 @@ export default function NewEvent() {
         // ISO completo com fuso — evita o servidor interpretar como UTC
         event_date: new Date(`${date}T${time}`).toISOString(),
       })
+
+      // Evento criado: o rascunho já cumpriu seu papel
+      clearDraft(DRAFT_KEY)
 
       // Plano pago: segue direto para o Checkout Pro; o plano é
       // aplicado pelo webhook quando o MP aprovar o pagamento
@@ -95,6 +120,13 @@ export default function NewEvent() {
                 ? 'após criar o evento, você segue para o pagamento seguro via Mercado Pago'
                 : 'sem custo — faça upgrade quando quiser'}
             </span>
+          </div>
+        )}
+
+        {restored && (
+          <div className="ne-restored">
+            <span>Recuperamos o que você tinha começado a preencher.</span>
+            <button type="button" onClick={clearRestored}>Começar do zero</button>
           </div>
         )}
 

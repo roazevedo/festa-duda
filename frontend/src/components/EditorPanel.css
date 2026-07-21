@@ -514,3 +514,29 @@
     margin-bottom: 46vh;
   }
 }
+
+/* Aviso de edições não salvas recuperadas (persistência local, 24h) */
+.editor-draft-note {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.85rem;
+  background: #f5eedc;
+  border: 1px solid #e4dbc6;
+  border-radius: 8px;
+}
+.editor-draft-note p {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  color: #4a3d29;
+}
+.editor-draft-actions { display: flex; gap: 0.5rem; }
+.editor-draft-restore,
+.editor-draft-dismiss {
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.editor-draft-restore { background: #2e2417; color: #faf8f3; }
+.editor-draft-restore:hover { background: #453a28; }
+.editor-draft-dismiss { background: none; color: #8a795a; text-decoration: underline; }

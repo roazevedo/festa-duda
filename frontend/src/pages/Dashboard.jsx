@@ -279,19 +279,16 @@ export default function Dashboard() {
 
                 {/* Cabeçalho do card */}
                 <div className="dash-event-header">
-                  <div>
+                  <div className="dash-event-header-top">
                     <p className="dash-event-type">
                       {eventTypeLabel(event.event_type)}
-                      <span className={`dash-plan-badge dash-plan-${planOf(event).id}`}>
-                        {planOf(event).name}
-                      </span>
                     </p>
-                    <h3 className="dash-event-name">{event.name}</h3>
-                  </div>
-                  <div className="dash-event-date">
                     <p className="dash-event-date-text">
                       {formatDate(event.event_date)}
                     </p>
+                  </div>
+                  <div className="dash-event-header-main">
+                    <h3 className="dash-event-name">{event.name}</h3>
                     <span
                       className={
                         'dash-event-badge'

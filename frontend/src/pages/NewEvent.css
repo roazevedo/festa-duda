@@ -248,3 +248,30 @@
   font-style: italic;
   color: var(--text-muted);
 }
+
+/* Aviso de rascunho recuperado (persistência local, some após 24h) */
+.ne-restored {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--cream);
+  font-size: 0.9rem;
+}
+.ne-restored button {
+  background: none;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ne-restored button:hover { border-color: var(--gold); }
