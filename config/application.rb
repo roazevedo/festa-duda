@@ -1,5 +1,6 @@
 require_relative "boot"
 require_relative "../lib/security_headers_middleware"
+require_relative "../lib/canonical_host_middleware"
 
 require "rails/all"
 
@@ -35,5 +36,13 @@ module FestaDuda
 
     config.middleware.use Rack::Attack
     config.middleware.unshift SecurityHeadersMiddleware
+
+    # Redireciona hosts não-canônicos (ex.: convida-me.fly.dev) para o
+    # domínio oficial. Inerte quando CANONICAL_HOST/APP_HOST não existem
+    # (dev/test). Fica logo dentro do SecurityHeaders, então o 301 também
+    # sai com os headers de segurança.
+    canonical_host = ENV["CANONICAL_HOST"].presence || ENV["APP_HOST"]
+    config.middleware.insert_after SecurityHeadersMiddleware,
+                                   CanonicalHostMiddleware, canonical_host
   end
 end
