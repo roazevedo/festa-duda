@@ -94,6 +94,7 @@ Rails.application.configure do
   # <app>.fly.dev; para domínio próprio, defina APP_HOST (ex: "convida.me")
   # com `fly secrets set APP_HOST=convida.me`.
   allowed_hosts = [ ENV["APP_HOST"] ]
+  allowed_hosts << "www.#{ENV['APP_HOST']}" if ENV["APP_HOST"].present?
   allowed_hosts << "#{ENV['FLY_APP_NAME']}.fly.dev" if ENV["FLY_APP_NAME"].present?
   allowed_hosts = allowed_hosts.compact_blank
   config.hosts.concat(allowed_hosts) if allowed_hosts.any?
