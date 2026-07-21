@@ -32,12 +32,15 @@ RSpec.describe 'Api::V1::CloudinarySignatures', type: :request do
       body = JSON.parse(response.body)
 
       expected = Digest::SHA1.hexdigest(
-        "folder=festa-duda/galeria&timestamp=#{body['timestamp']}" \
+        "allowed_formats=#{body['allowed_formats']}" \
+        "&folder=festa-duda/galeria&timestamp=#{body['timestamp']}" \
         "&upload_preset=#{body['upload_preset']}test-secret"
       )
-      expect(body['signature']).to  eq(expected)
-      expect(body['api_key']).to    eq('test-key')
-      expect(body['cloud_name']).to eq(Photo::CLOUD_NAME)
+      expect(body['signature']).to        eq(expected)
+      expect(body['api_key']).to          eq('test-key')
+      expect(body['allowed_formats']).to  include('jpg', 'png', 'webp')
+      expect(body['allowed_formats']).not_to include('pdf')
+      expect(body['cloud_name']).to       eq(Photo::CLOUD_NAME)
     end
 
     it 'usa a pasta padrão quando nenhuma é informada' do

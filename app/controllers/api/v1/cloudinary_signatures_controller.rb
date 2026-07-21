@@ -8,6 +8,11 @@ require "digest"
 # foto a um evento continua restrito ao dono/admin (PhotosController).
 class Api::V1::CloudinarySignaturesController < Api::V1::BaseController
   ALLOWED_FOLDERS = %r{\Afesta-duda(/[a-z_]+)?\z}
+  # Formatos aceitos — vão ASSINADOS junto com o resto, então o Cloudinary
+  # rejeita no servidor qualquer arquivo que não seja imagem, mesmo que
+  # alguém chame a API de upload direto (inclusive /raw/upload). O frontend
+  # devolve exatamente este valor no upload; se mudar aqui, muda lá também.
+  ALLOWED_FORMATS = "jpg,jpeg,png,webp,gif,heic,heif,avif".freeze
 
   def create
     folder = params[:folder].presence || "festa-duda"
@@ -28,16 +33,18 @@ class Api::V1::CloudinarySignaturesController < Api::V1::BaseController
     # Assinatura = SHA1 dos parâmetros em ordem alfabética + api_secret.
     # O frontend deve enviar exatamente estes parâmetros (além de file,
     # api_key e signature), senão o Cloudinary rejeita.
-    to_sign   = "folder=#{folder}&timestamp=#{timestamp}&upload_preset=#{preset}"
+    to_sign   = "allowed_formats=#{ALLOWED_FORMATS}&folder=#{folder}" \
+                "&timestamp=#{timestamp}&upload_preset=#{preset}"
     signature = Digest::SHA1.hexdigest("#{to_sign}#{api_secret}")
 
     render json: {
-      signature:     signature,
-      timestamp:     timestamp,
-      api_key:       api_key,
-      upload_preset: preset,
-      folder:        folder,
-      cloud_name:    Photo::CLOUD_NAME
+      signature:       signature,
+      timestamp:       timestamp,
+      api_key:         api_key,
+      upload_preset:   preset,
+      folder:          folder,
+      allowed_formats: ALLOWED_FORMATS,
+      cloud_name:      Photo::CLOUD_NAME
     }
   end
 

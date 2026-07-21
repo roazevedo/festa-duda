@@ -30,7 +30,9 @@ export async function uploadToCloudinary(file, folder = 'festa-duda', resourceTy
   const sig = await getCloudinarySignature(folder)
 
   // Deve conter exatamente os parâmetros assinados pelo backend
-  // (folder, timestamp, upload_preset) além de file/api_key/signature.
+  // (allowed_formats, folder, timestamp, upload_preset) além de
+  // file/api_key/signature. allowed_formats faz o Cloudinary rejeitar
+  // no servidor qualquer arquivo que não seja imagem.
   const formData = new FormData()
   formData.append('file', file)
   formData.append('api_key', sig.api_key)
@@ -38,6 +40,7 @@ export async function uploadToCloudinary(file, folder = 'festa-duda', resourceTy
   formData.append('signature', sig.signature)
   formData.append('upload_preset', sig.upload_preset)
   formData.append('folder', sig.folder)
+  formData.append('allowed_formats', sig.allowed_formats)
 
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${sig.cloud_name}/${resourceType}/upload`,
