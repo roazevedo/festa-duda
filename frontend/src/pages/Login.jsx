@@ -4,10 +4,10 @@ import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../contexts/useAuth'
 import './Login.css'
 
-// O Google OAuth não aceita origens *.fly.dev (Public Suffix List).
-// Reative quando o site tiver domínio próprio cadastrado nas
-// Authorized JavaScript origins do Google Cloud Console.
-const GOOGLE_LOGIN_ENABLED = false
+// O Google OAuth não aceita origens *.fly.dev (Public Suffix List), por isso
+// o login Google só é habilitado com o domínio próprio: convidame.app está
+// cadastrado nas Authorized JavaScript origins do Google Cloud Console.
+const GOOGLE_LOGIN_ENABLED = true
 
 export default function Login() {
   const { user, login, signup, loginWithGoogle } = useAuth()
