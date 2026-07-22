@@ -9,7 +9,7 @@ class SecurityHeadersMiddleware
       "img-src 'self' res.cloudinary.com data: https://*.googleusercontent.com https://*.cartocdn.com https://*.openstreetmap.org; " \
       "script-src 'self' https://accounts.google.com; " \
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " \
-      "font-src 'self' fonts.gstatic.com; " \
+      "font-src 'self' fonts.gstatic.com data:; " \
       "frame-src https://accounts.google.com https://www.youtube.com; " \
       "connect-src 'self' https://accounts.google.com https://*.cartocdn.com https://api.cloudinary.com;"
   }.freeze
