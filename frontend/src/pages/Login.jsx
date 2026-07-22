@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../contexts/useAuth'
@@ -26,6 +26,24 @@ export default function Login() {
   const [passwordConf, setPasswordConf]   = useState('')
   const [error, setError]                 = useState('')
   const [loading, setLoading]             = useState(false)
+
+  // O botão do Google (GIS) só aceita largura em PIXELS (máx. 400), não %.
+  // Medimos a largura real do container e repassamos, pra ele acompanhar
+  // o botão "Entrar".
+  const googleWrapRef = useRef(null)
+  const [googleBtnWidth, setGoogleBtnWidth] = useState(0)
+
+  useEffect(() => {
+    if (!GOOGLE_LOGIN_ENABLED) return
+    const el = googleWrapRef.current
+    if (!el) return
+    const measure = () =>
+      setGoogleBtnWidth(Math.min(400, Math.round(el.getBoundingClientRect().width)))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const isSignup = mode === 'signup'
 
@@ -153,15 +171,17 @@ export default function Login() {
             </div>
 
             {/* ── Botão Google ── */}
-            <div className="login-google-wrapper">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => setError('Erro ao autenticar com o Google.')}
-                text={isSignup ? 'signup_with' : 'signin_with'}
-                shape="rectangular"
-                theme="filled_black"
-                width="100%"
-              />
+            <div className="login-google-wrapper" ref={googleWrapRef}>
+              {googleBtnWidth > 0 && (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError('Erro ao autenticar com o Google.')}
+                  text={isSignup ? 'signup_with' : 'signin_with'}
+                  shape="rectangular"
+                  theme="filled_black"
+                  width={String(googleBtnWidth)}
+                />
+              )}
             </div>
           </>
         )}
