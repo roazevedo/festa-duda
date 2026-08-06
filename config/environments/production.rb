@@ -48,6 +48,24 @@ Rails.application.configure do
   # (o health check do Fly chega por HTTP puro direto na máquina)
   config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
+  # Com a Cloudflare na frente (proxy/nuvem laranja), a cadeia é
+  # visitante → Cloudflare → Fly → Rails. Sem marcar os IPs da Cloudflare
+  # como proxies confiáveis, `request.remote_ip` (e portanto o Rack::Attack)
+  # passaria a enxergar o IP da Cloudflare como se fosse o do visitante,
+  # colocando todo mundo no mesmo balde de rate-limit. Estes ranges são
+  # somados aos privados que o Rails já confia por padrão; se alguém acessar
+  # o IP do Fly direto (sem passar pela CF), o remote_ip continua sendo o
+  # IP real dele. Lista oficial: https://www.cloudflare.com/ips/
+  cloudflare_proxies = %w[
+    173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22
+    141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20
+    197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13
+    104.24.0.0/14 172.64.0.0/13 131.0.72.0/22
+    2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32
+    2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+  ].map { |range| IPAddr.new(range) }
+  config.action_dispatch.trusted_proxies = cloudflare_proxies
+
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
     .tap  { |logger| logger.formatter = ::Logger::Formatter.new }

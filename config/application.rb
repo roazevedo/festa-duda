@@ -34,7 +34,8 @@ module FestaDuda
     # Serve arquivos estáticos do build do React
     config.public_file_server.enabled = true
 
-    config.middleware.use Rack::Attack
+    # O rack-attack 6 já insere seu middleware automaticamente via railtie;
+    # não inserimos manualmente para não processar os throttles em dobro.
     config.middleware.unshift SecurityHeadersMiddleware
 
     # Redireciona hosts não-canônicos (ex.: convida-me.fly.dev) para o

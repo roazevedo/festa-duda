@@ -8,15 +8,23 @@ class Rack::Attack
       ActiveSupport::Cache::MemoryStore.new
     end
 
+  # IP real do visitante. Usa o remote_ip do ActionDispatch, que respeita os
+  # trusted_proxies configurados (Cloudflare + ranges privados) — assim o
+  # rate-limit continua por visitante mesmo com a Cloudflare na frente. O
+  # req.ip cru do Rack devolveria o IP da Cloudflare.
+  def self.client_ip(req)
+    ActionDispatch::Request.new(req.env).remote_ip
+  end
+
   ### Throttle geral — protege contra DDoS ###
   throttle("requests by ip", limit: 300, period: 5.minutes) do |req|
-    req.ip
+    client_ip(req)
   end
 
   ### Throttle no login — protege contra brute-force ###
   throttle("login attempts by ip", limit: 5, period: 20.seconds) do |req|
     if req.path == "/api/v1/login" && req.post?
-      req.ip
+      client_ip(req)
     end
   end
 
@@ -33,21 +41,21 @@ class Rack::Attack
   ### Throttle no cadastro — evita criação massiva de contas ###
   throttle("signup attempts by ip", limit: 5, period: 1.hour) do |req|
     if req.path == "/api/v1/signup" && req.post?
-      req.ip
+      client_ip(req)
     end
   end
 
   ### Throttle em criação de RSVP/mensagens — evita spam ###
   throttle("rsvp/message creation by ip", limit: 10, period: 1.minute) do |req|
     if req.post? && req.path.match?(%r{/(rsvps|messages)\z})
-      req.ip
+      client_ip(req)
     end
   end
 
   ### Throttle em checkout de presentes — evita flood de preferências MP ###
   throttle("gift checkout by ip", limit: 10, period: 1.minute) do |req|
     if req.post? && req.path.match?(%r{/gifts/\d+/checkout\z})
-      req.ip
+      client_ip(req)
     end
   end
 
@@ -55,7 +63,7 @@ class Rack::Attack
   ### pode pedir assinaturas; limita o abuso de custo/armazenamento ###
   throttle("cloudinary signature by ip", limit: 30, period: 1.minute) do |req|
     if req.post? && req.path == "/api/v1/cloudinary/signature"
-      req.ip
+      client_ip(req)
     end
   end
 
@@ -63,7 +71,7 @@ class Rack::Attack
   ### nossa à API do MP; limita o potencial de amplificação ###
   throttle("mp webhook by ip", limit: 60, period: 1.minute) do |req|
     if req.post? && req.path == "/api/v1/webhooks/mercado_pago"
-      req.ip
+      client_ip(req)
     end
   end
 
