@@ -31,7 +31,8 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
+  # Não envia e-mail de verdade em dev — só guarda em ActionMailer::Base.deliveries.
+  config.action_mailer.delivery_method = :test
   config.action_mailer.raise_delivery_errors = false
 
   # Disable caching for Action Mailer templates even if Action Controller
@@ -39,6 +40,13 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
 
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  # Em dev, o assunto do e-mail traz o código de verificação — logamos no
+  # console para dar pra testar o fluxo sem provedor de e-mail configurado.
+  ActiveSupport::Notifications.subscribe("deliver.action_mailer") do |*args|
+    event = ActiveSupport::Notifications::Event.new(*args)
+    Rails.logger.info("📧 [dev mailer] to=#{event.payload[:to]} subject=#{event.payload[:subject]}")
+  end
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

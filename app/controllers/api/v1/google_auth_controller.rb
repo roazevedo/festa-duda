@@ -33,6 +33,9 @@ class Api::V1::GoogleAuthController < ApplicationController
 
   private
 
+  # `prime_session_activity!` vem do ApplicationController (compartilhado com
+  # o fluxo de cadastro e verificação de e-mail).
+
   def verify_google_token(credential)
     uri  = URI("#{GOOGLE_TOKEN_INFO_URL}?#{URI.encode_www_form(id_token: credential)}")
     http = Net::HTTP.new(uri.host, uri.port)
@@ -52,17 +55,5 @@ class Api::V1::GoogleAuthController < ApplicationController
     payload
   rescue StandardError
     nil
-  end
-
-  # Mesmo padrão do SessionsController e RegistrationsController:
-  # priming manual porque response.headers ainda não tem o token neste ponto.
-  def prime_session_activity!
-    token = request.env["warden-jwt_auth.token"]
-    return unless token
-
-    jti = JWT.decode(token, nil, false).first["jti"]
-    SessionActivity.store.write(
-      "jwt_last_seen:#{jti}", Time.current, expires_in: SessionActivity::INACTIVITY_TIMEOUT
-    )
   end
 end

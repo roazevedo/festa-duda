@@ -319,9 +319,11 @@ Devise.setup do |config|
     # de antes); em test/CI usa o fallback do Rails, que funciona sem o
     # master.key — credentials.secret_key_base seria nil e quebraria o JWT.
     jwt.secret = Rails.application.secret_key_base
+    # O cadastro (/signup) NÃO emite mais JWT: o token só é emitido depois
+    # que o e-mail é confirmado pelo código (/email_verifications/verify).
     jwt.dispatch_requests = [
       [ "POST", %r{^/api/v1/login$} ],
-      [ "POST", %r{^/api/v1/signup$} ],
+      [ "POST", %r{^/api/v1/email_verifications/verify$} ],
       [ "POST", %r{^/api/v1/auth/google$} ]
     ]
     # jwt.revocation_requests = [ [ 'DELETE', %r{^/api/v1/logout$} ] ]

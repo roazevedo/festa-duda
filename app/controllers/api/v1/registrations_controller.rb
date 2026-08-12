@@ -1,16 +1,28 @@
 class Api::V1::RegistrationsController < ApplicationController
+  # Cadastro manual. Diferente do fluxo antigo, NÃO emite JWT aqui: o e-mail
+  # precisa ser confirmado por um código antes de a conta poder ser usada.
   def create
+    email = sign_up_params[:email].to_s.strip.downcase
+    existing = User.find_by(email: email)
+
+    # Reaproveita um cadastro anterior que nunca foi confirmado: atualiza a
+    # senha e reenvia o código, evitando que um e-mail não-verificado fique
+    # "preso" e bloqueie novas tentativas do próprio dono.
+    if existing&.email_verified? == false
+      if existing.update(sign_up_params.merge(admin: false))
+        send_verification(existing)
+        return render_pending(existing)
+      else
+        return render json: { errors: existing.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
     user = User.new(sign_up_params)
     user.admin = false # nunca permite que o cadastro público se torne admin
 
     if user.save
-      warden.set_user(user, scope: :user)
-      prime_session_activity!
-
-      render json: {
-        message: "Cadastro realizado com sucesso.",
-        user: { id: user.id, email: user.email, admin: user.admin? }
-      }, status: :created
+      send_verification(user)
+      render_pending(user)
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
@@ -22,16 +34,16 @@ class Api::V1::RegistrationsController < ApplicationController
     params.require(:user).permit(:email, :password, :password_confirmation)
   end
 
-  # O JWT recém-gerado pelo devise-jwt fica em request.env neste ponto —
-  # o header Authorization da resposta só é escrito depois, por um
-  # middleware do próprio devise-jwt (mesmo padrão usado no login).
-  def prime_session_activity!
-    token = request.env["warden-jwt_auth.token"]
-    return unless token
+  def send_verification(user)
+    code = user.generate_verification_code!
+    UserMailer.verification_code(user, code).deliver_now
+  end
 
-    jti = JWT.decode(token, nil, false).first["jti"]
-    SessionActivity.store.write(
-      "jwt_last_seen:#{jti}", Time.current, expires_in: SessionActivity::INACTIVITY_TIMEOUT
-    )
+  def render_pending(user)
+    render json: {
+      message: "Enviamos um código de verificação para #{user.email}.",
+      email:   user.email,
+      verification_required: true
+    }, status: :created
   end
 end

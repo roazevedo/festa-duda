@@ -10,7 +10,7 @@ import './Login.css'
 const GOOGLE_LOGIN_ENABLED = true
 
 export default function Login() {
-  const { user, login, signup, loginWithGoogle } = useAuth()
+  const { user, login, signup, verifyEmail, resendCode, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -24,7 +24,9 @@ export default function Login() {
   const [email, setEmail]                 = useState('')
   const [password, setPassword]           = useState('')
   const [passwordConf, setPasswordConf]   = useState('')
+  const [code, setCode]                   = useState('')
   const [error, setError]                 = useState('')
+  const [info, setInfo]                   = useState('')
   const [loading, setLoading]             = useState(false)
 
   // O botão do Google (GIS) só aceita largura em PIXELS (máx. 400), não %.
@@ -46,15 +48,28 @@ export default function Login() {
   }, [])
 
   const isSignup = mode === 'signup'
+  const isVerify = mode === 'verify'
 
   // Quem já está logado não precisa ver o login de novo
   useEffect(() => {
     if (user) navigate(dest, { replace: true })
   }, [user, dest, navigate])
 
+  // Leva ao passo de verificação de e-mail, guardando o e-mail em jogo.
+  const goToVerify = (targetEmail) => {
+    if (targetEmail) setEmail(targetEmail)
+    setPassword('')
+    setPasswordConf('')
+    setCode('')
+    setError('')
+    setInfo(`Enviamos um código de 6 dígitos para ${targetEmail || email}.`)
+    setMode('verify')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setInfo('')
 
     if (isSignup && password !== passwordConf) {
       setError('As senhas não coincidem.')
@@ -64,16 +79,52 @@ export default function Login() {
     setLoading(true)
     try {
       if (isSignup) {
-        await signup(email, password, passwordConf)
+        const res = await signup(email, password, passwordConf)
+        goToVerify(res?.email || email)
       } else {
         await login(email, password)
+        navigate(dest)
       }
-      navigate(dest)
     } catch (err) {
+      // Login de conta ainda não confirmada → manda para a verificação
+      if (!isSignup && err?.response?.data?.unverified) {
+        goToVerify(err.response.data.email || email)
+        return
+      }
       const msg = err?.response?.data?.errors?.[0]
         || err?.response?.data?.error
         || (isSignup ? 'Erro ao criar conta.' : 'Email ou senha inválidos.')
       setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerify = async (e) => {
+    e.preventDefault()
+    setError('')
+    setInfo('')
+    setLoading(true)
+    try {
+      await verifyEmail(email, code.trim())
+      navigate(dest)
+    } catch (err) {
+      const msg = err?.response?.data?.error || 'Código inválido ou expirado.'
+      setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setError('')
+    setInfo('')
+    setLoading(true)
+    try {
+      await resendCode(email)
+      setInfo('Enviamos um novo código para o seu e-mail.')
+    } catch {
+      setError('Não foi possível reenviar agora. Tente novamente em instantes.')
     } finally {
       setLoading(false)
     }
@@ -95,9 +146,11 @@ export default function Login() {
   const switchMode = () => {
     setMode(prev => prev === 'login' ? 'signup' : 'login')
     setError('')
+    setInfo('')
     setEmail('')
     setPassword('')
     setPasswordConf('')
+    setCode('')
   }
 
   return (
@@ -110,12 +163,58 @@ export default function Login() {
           Convida<span>.me</span>
         </button>
 
-        <p className="login-eyebrow">{isSignup ? 'nova conta' : 'área restrita'}</p>
-        <h1 className="login-title">{isSignup ? 'Cadastro' : 'Acesso'}</h1>
+        <p className="login-eyebrow">
+          {isVerify ? 'confirmação' : isSignup ? 'nova conta' : 'área restrita'}
+        </p>
+        <h1 className="login-title">
+          {isVerify ? 'Verifique seu e-mail' : isSignup ? 'Cadastro' : 'Acesso'}
+        </h1>
         <p className="login-sub">
-          {isSignup ? 'crie sua conta gratuitamente' : 'administração do evento'}
+          {isVerify
+            ? 'digite o código que enviamos'
+            : isSignup ? 'crie sua conta gratuitamente' : 'administração do evento'}
         </p>
 
+        {/* ── Passo de verificação por código ── */}
+        {isVerify ? (
+          <>
+            <form onSubmit={handleVerify} className="login-form">
+              <div className="login-field">
+                <label className="login-label">Código de verificação</label>
+                <input
+                  className="login-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={code}
+                  onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+                  required
+                  autoFocus
+                />
+              </div>
+
+              {info && <p className="login-info">{info}</p>}
+              {error && <p className="login-error">{error}</p>}
+
+              <button className="login-btn" type="submit" disabled={loading || code.length < 6}>
+                {loading ? 'Confirmando...' : 'Confirmar'}
+              </button>
+            </form>
+
+            <div className="login-switch">
+              <span className="login-switch-text">Não recebeu?</span>
+              <button className="login-switch-btn" onClick={handleResend} disabled={loading}>
+                Reenviar código
+              </button>
+            </div>
+
+            <button className="login-back" onClick={() => { setMode('login'); setError(''); setInfo('') }}>
+              ← usar outro e-mail
+            </button>
+          </>
+        ) : (
+        <>
         {/* ── Formulário manual ── */}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="login-field">
@@ -195,6 +294,8 @@ export default function Login() {
             {isSignup ? 'Entrar' : 'Criar conta'}
           </button>
         </div>
+        </>
+        )}
 
         <button className="login-back" onClick={() => navigate('/')}>
           ← voltar ao início

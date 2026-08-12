@@ -19,4 +19,20 @@ class ApplicationController < ActionController::API
               type: "text/html",
               disposition: "inline"
   end
+
+  private
+
+  # O JWT recém-gerado pelo devise-jwt fica em request.env neste ponto — o
+  # header Authorization da resposta só é escrito depois, por um middleware do
+  # próprio devise-jwt. Registramos o "último acesso" do token para o controle
+  # de inatividade (SessionActivity) já valer a partir da emissão.
+  def prime_session_activity!
+    token = request.env["warden-jwt_auth.token"]
+    return unless token
+
+    jti = JWT.decode(token, nil, false).first["jti"]
+    SessionActivity.store.write(
+      "jwt_last_seen:#{jti}", Time.current, expires_in: SessionActivity::INACTIVITY_TIMEOUT
+    )
+  end
 end

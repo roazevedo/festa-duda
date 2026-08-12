@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   post   "/api/v1/login",        to: "api/v1/sessions#create"
   delete "/api/v1/logout",       to: "api/v1/sessions#jwt_logout"
   post   "/api/v1/signup",       to: "api/v1/registrations#create"
+  post   "/api/v1/email_verifications/verify", to: "api/v1/email_verifications#verify"
+  post   "/api/v1/email_verifications/resend", to: "api/v1/email_verifications#resend"
   post   "/api/v1/auth/google",  to: "api/v1/google_auth#create"
 
   devise_for :users,

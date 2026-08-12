@@ -3,6 +3,14 @@ class Api::V1::SessionsController < ApplicationController
     user = User.find_by(email: params.dig(:user, :email))
 
     if user&.valid_password?(params.dig(:user, :password))
+      unless user.email_verified?
+        return render json: {
+          error:      "Confirme seu e-mail para acessar. Enviamos um código para #{user.email}.",
+          unverified: true,
+          email:      user.email
+        }, status: :forbidden
+      end
+
       warden.set_user(user, scope: :user)
 
       # O token JWT recém-gerado fica em request.env neste ponto —

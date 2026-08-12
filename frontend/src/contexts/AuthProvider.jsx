@@ -66,16 +66,37 @@ export function AuthProvider({ children }) {
   }
 
   // ── Cadastro manual ──
+  // Não loga na hora: o backend envia um código por e-mail que precisa ser
+  // confirmado em verifyEmail(). Retorna { verificationRequired, email }.
   const signup = async (email, password, passwordConfirmation) => {
     const response = await axios.post(
       `${API}/signup`,
       { user: { email, password, password_confirmation: passwordConfirmation } },
       { withCredentials: false }
     )
+    return { verificationRequired: true, email: response.data.email }
+  }
+
+  // ── Confirmação do e-mail por código — emite o JWT e loga ──
+  const verifyEmail = async (email, code) => {
+    const response = await axios.post(
+      `${API}/email_verifications/verify`,
+      { email, code },
+      { withCredentials: false }
+    )
     const jwt = response.headers['authorization']?.replace('Bearer ', '')
     if (!jwt) throw new Error('Token não recebido')
     storeToken(jwt, response.data.user)
     return response.data.user
+  }
+
+  // ── Reenvia o código de verificação ──
+  const resendCode = async (email) => {
+    await axios.post(
+      `${API}/email_verifications/resend`,
+      { email },
+      { withCredentials: false }
+    )
   }
 
   // ── Login / cadastro com Google ──
@@ -93,7 +114,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, loginWithGoogle, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, signup, verifyEmail, resendCode, loginWithGoogle, logout, loading }}>
       {children}
     </AuthContext.Provider>
   )

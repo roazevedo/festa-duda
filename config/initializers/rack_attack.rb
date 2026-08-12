@@ -45,6 +45,38 @@ class Rack::Attack
     end
   end
 
+  ### Throttle na verificação do código — evita brute-force dos 6 dígitos ###
+  throttle("email verify by ip", limit: 10, period: 1.minute) do |req|
+    if req.path == "/api/v1/email_verifications/verify" && req.post?
+      client_ip(req)
+    end
+  end
+
+  throttle("email verify by email", limit: 5, period: 1.minute) do |req|
+    if req.path == "/api/v1/email_verifications/verify" && req.post?
+      body = req.body.read
+      req.body.rewind
+      json = JSON.parse(body) rescue {}
+      json["email"]&.downcase&.strip
+    end
+  end
+
+  ### Throttle no reenvio de código — evita "email bombing" ###
+  throttle("email resend by ip", limit: 3, period: 10.minutes) do |req|
+    if req.path == "/api/v1/email_verifications/resend" && req.post?
+      client_ip(req)
+    end
+  end
+
+  throttle("email resend by email", limit: 3, period: 10.minutes) do |req|
+    if req.path == "/api/v1/email_verifications/resend" && req.post?
+      body = req.body.read
+      req.body.rewind
+      json = JSON.parse(body) rescue {}
+      json["email"]&.downcase&.strip
+    end
+  end
+
   ### Throttle em criação de RSVP/mensagens — evita spam ###
   throttle("rsvp/message creation by ip", limit: 10, period: 1.minute) do |req|
     if req.post? && req.path.match?(%r{/(rsvps|messages)\z})
