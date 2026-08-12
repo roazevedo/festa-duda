@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import SectionHeading from './SectionHeading'
 import GiftCatalogModal from './GiftCatalogModal'
 import { useEventAdmin } from '../contexts/useEventAdmin'
@@ -6,12 +6,13 @@ import { useEvent } from '../contexts/useEvent'
 import { useConfirm } from './useConfirm'
 import {
   getGifts, createGift, updateGift, deleteGift, createGiftCheckout,
-  getGiftPayments,
+  getGiftPayments, updateEvent,
 } from '../services/api'
+import { uploadToCloudinary } from '../services/cloudinary'
 import { planLimit } from '../plans'
 import './Presentes.css'
 
-const EMPTY_FORM = { name: '', description: '', price: '' }
+const EMPTY_FORM = { name: '', description: '', price: '', image_url: '' }
 
 const STATUS_LABELS = {
   approved:     'aprovado',
@@ -34,8 +35,19 @@ const FEEDBACK = {
 const formatPrice = (value) =>
   Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 
+const EMPTY_EXT = { label: '', url: '' }
+
+// Aceita a URL como o usuário digitou; garante o esquema https://
+// para virar um link externo válido (sem ele o navegador trata como
+// caminho relativo dentro do próprio site).
+const normalizeUrl = (raw) => {
+  const v = raw.trim()
+  if (!v) return ''
+  return /^https?:\/\//i.test(v) ? v : `https://${v}`
+}
+
 export default function Presentes() {
-  const { event, slug, token } = useEvent()
+  const { event, slug, token, setEvent } = useEvent()
   const isAdmin                = useEventAdmin()
 
   const [gifts, setGifts]         = useState([])
@@ -47,6 +59,12 @@ export default function Presentes() {
   const [feedback, setFeedback]   = useState(null)
   const [payments, setPayments]   = useState(null)
   const [catalogOpen, setCatalogOpen] = useState(false)
+  const [uploadingImg, setUploadingImg] = useState(false)
+  const imgInputRef = useRef(null)
+  const [extForm, setExtForm]     = useState(EMPTY_EXT)
+  const [savingExt, setSavingExt] = useState(false)
+
+  const externalLists = event?.settings?.external_gift_lists || []
 
   useEffect(() => {
     const load = async () => {
@@ -105,8 +123,28 @@ export default function Presentes() {
       name:        gift.name,
       description: gift.description || '',
       price:       String(gift.price),
+      image_url:   gift.image_url || '',
     })
   }
+
+  const handleImagePick = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingImg(true)
+    try {
+      const { url } = await uploadToCloudinary(file, 'festa-duda/presentes')
+      setForm((f) => ({ ...f, image_url: url }))
+    } catch (err) {
+      console.error('Erro ao enviar imagem do presente:', err)
+      alert(err.message || 'Erro ao enviar a imagem. Tente novamente.')
+    } finally {
+      setUploadingImg(false)
+      // Limpa o input para permitir reenviar o mesmo arquivo
+      if (imgInputRef.current) imgInputRef.current.value = ''
+    }
+  }
+
+  const removeImage = () => setForm((f) => ({ ...f, image_url: '' }))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -117,6 +155,7 @@ export default function Presentes() {
         name:        form.name.trim(),
         description: form.description.trim(),
         price:       Number(form.price),
+        image_url:   form.image_url,
       }
       if (editingId) {
         const updated = await updateGift(slug, token, editingId, data)
@@ -170,6 +209,161 @@ export default function Presentes() {
     }
   }
 
+  // Persiste a lista de links externos dentro de settings — o PATCH
+  // substitui o jsonb inteiro, então mandamos as settings mescladas.
+  const persistExternalLists = async (nextLists) => {
+    const nextSettings = { ...(event.settings || {}), external_gift_lists: nextLists }
+    setSavingExt(true)
+    try {
+      const updated = await updateEvent(slug, token, { settings: nextSettings })
+      setEvent(updated)
+    } catch (err) {
+      console.error('Erro ao salvar lista externa:', err)
+      alert(err.message || 'Erro ao salvar a lista. Tente novamente.')
+    } finally {
+      setSavingExt(false)
+    }
+  }
+
+  const handleAddExternal = async (e) => {
+    e.preventDefault()
+    const url   = normalizeUrl(extForm.url)
+    const label = extForm.label.trim()
+    if (!url) return
+    await persistExternalLists([...externalLists, { label, url }])
+    setExtForm(EMPTY_EXT)
+  }
+
+  const handleRemoveExternal = async (index) => {
+    if (!(await confirm('Remover este link de lista externa?'))) return
+    await persistExternalLists(externalLists.filter((_, i) => i !== index))
+  }
+
+  // Formulário de presente — reaproveitado no topo (cadastrar) e dentro do
+  // card em edição (o mesmo estado `form`/`editingId` alterna o modo)
+  const giftForm = (
+    <form className="gifts-admin-form" onSubmit={handleSubmit}>
+      <p className="gifts-admin-title">
+        {editingId ? 'editar presente' : 'cadastrar presente'}
+      </p>
+      <div className="gifts-admin-fields">
+        <div className="form-group">
+          <label className="form-label">nome</label>
+          <input
+            className="form-input"
+            type="text"
+            value={form.name}
+            onChange={handleChange('name')}
+            placeholder="Ex.: Coroa de princesa"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">descrição</label>
+          <input
+            className="form-input"
+            type="text"
+            value={form.description}
+            onChange={handleChange('description')}
+            placeholder="Ex.: A peça central do ritual dos quinze"
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">valor (R$)</label>
+          <input
+            className="form-input"
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={form.price}
+            onChange={handleChange('price')}
+            placeholder="Ex.: 400.00"
+            required
+          />
+        </div>
+        <div className="form-group gifts-admin-image">
+          <label className="form-label">imagem (opcional)</label>
+          <input
+            ref={imgInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImagePick}
+            style={{ display: 'none' }}
+          />
+          {form.image_url ? (
+            <div className="gift-image-preview">
+              <img src={form.image_url} alt="Prévia do presente" />
+              <div className="gift-image-preview-actions">
+                <button
+                  type="button"
+                  className="gift-image-btn"
+                  onClick={() => imgInputRef.current?.click()}
+                  disabled={uploadingImg}
+                >
+                  trocar
+                </button>
+                <button
+                  type="button"
+                  className="gift-image-btn gift-image-btn-remove"
+                  onClick={removeImage}
+                  disabled={uploadingImg}
+                >
+                  remover
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="gift-image-upload"
+              onClick={() => imgInputRef.current?.click()}
+              disabled={uploadingImg}
+            >
+              {uploadingImg ? 'enviando...' : '+ enviar imagem'}
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="gifts-admin-actions">
+        <button
+          className="gifts-admin-submit"
+          type="submit"
+          disabled={saving || (!editingId && atLimit)}
+          title={!editingId && atLimit
+            ? 'Limite de presentes do plano Grátis atingido'
+            : undefined}
+        >
+          {saving ? 'salvando...' : editingId ? 'salvar alterações' : 'adicionar'}
+        </button>
+        {editingId && (
+          <button className="gifts-admin-cancel" type="button" onClick={cancelEdit}>
+            cancelar
+          </button>
+        )}
+        {!editingId && (
+          <button
+            className="gifts-admin-cancel"
+            type="button"
+            onClick={() => setCatalogOpen(true)}
+            disabled={atLimit}
+            title={atLimit
+              ? 'Limite de presentes do plano Grátis atingido'
+              : undefined}
+          >
+            escolher do catálogo
+          </button>
+        )}
+      </div>
+      {giftLimit != null && !editingId && (
+        <p className="gifts-plan-hint">
+          {gifts.length} de {giftLimit} presentes do plano Grátis
+          {atLimit &&
+            ' · limite atingido — o plano Completo libera a lista ilimitada'}
+        </p>
+      )}
+    </form>
+  )
+
   return (
     <section className="section">
       <SectionHeading
@@ -192,44 +386,53 @@ export default function Presentes() {
         </div>
       )}
 
+      {isAdmin && !editingId && giftForm}
+
       {isAdmin && (
-        <form className="gifts-admin-form" onSubmit={handleSubmit}>
-          <p className="gifts-admin-title">
-            {editingId ? 'editar presente' : 'cadastrar presente'}
+        <form className="gifts-admin-form gifts-ext-admin" onSubmit={handleAddExternal}>
+          <p className="gifts-admin-title">lista em outra loja</p>
+          <p className="gifts-ext-help">
+            Tem uma lista pronta na Amazon, Mercado Livre ou outra loja?
+            Adicione o link e os convidados poderão abri-la direto do convite.
           </p>
+          {externalLists.length > 0 && (
+            <ul className="gifts-ext-list">
+              {externalLists.map((item, i) => (
+                <li key={i} className="gifts-ext-item">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    {item.label || item.url}
+                  </a>
+                  <button
+                    type="button"
+                    className="gift-admin-btn gift-admin-btn-remove"
+                    onClick={() => handleRemoveExternal(i)}
+                    disabled={savingExt}
+                  >
+                    remover
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="gifts-admin-fields">
             <div className="form-group">
-              <label className="form-label">nome</label>
+              <label className="form-label">loja</label>
               <input
                 className="form-input"
                 type="text"
-                value={form.name}
-                onChange={handleChange('name')}
-                placeholder="Ex.: Coroa de princesa"
-                required
+                value={extForm.label}
+                onChange={(e) => setExtForm({ ...extForm, label: e.target.value })}
+                placeholder="Ex.: Amazon"
               />
             </div>
             <div className="form-group">
-              <label className="form-label">descrição</label>
+              <label className="form-label">link da lista</label>
               <input
                 className="form-input"
                 type="text"
-                value={form.description}
-                onChange={handleChange('description')}
-                placeholder="Ex.: A peça central do ritual dos quinze"
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">valor (R$)</label>
-              <input
-                className="form-input"
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={form.price}
-                onChange={handleChange('price')}
-                placeholder="Ex.: 400.00"
-                required
+                value={extForm.url}
+                onChange={(e) => setExtForm({ ...extForm, url: e.target.value })}
+                placeholder="Ex.: amazon.com.br/hz/wishlist/..."
               />
             </div>
           </div>
@@ -237,39 +440,11 @@ export default function Presentes() {
             <button
               className="gifts-admin-submit"
               type="submit"
-              disabled={saving || (!editingId && atLimit)}
-              title={!editingId && atLimit
-                ? 'Limite de presentes do plano Grátis atingido'
-                : undefined}
+              disabled={savingExt || !extForm.url.trim()}
             >
-              {saving ? 'salvando...' : editingId ? 'salvar alterações' : 'adicionar'}
+              {savingExt ? 'salvando...' : 'adicionar link'}
             </button>
-            {editingId && (
-              <button className="gifts-admin-cancel" type="button" onClick={cancelEdit}>
-                cancelar
-              </button>
-            )}
-            {!editingId && (
-              <button
-                className="gifts-admin-cancel"
-                type="button"
-                onClick={() => setCatalogOpen(true)}
-                disabled={atLimit}
-                title={atLimit
-                  ? 'Limite de presentes do plano Grátis atingido'
-                  : undefined}
-              >
-                escolher do catálogo
-              </button>
-            )}
           </div>
-          {giftLimit != null && (
-            <p className="gifts-plan-hint">
-              {gifts.length} de {giftLimit} presentes do plano Grátis
-              {atLimit &&
-                ' · limite atingido — o plano Completo libera a lista ilimitada'}
-            </p>
-          )}
         </form>
       )}
 
@@ -277,15 +452,14 @@ export default function Presentes() {
         {gifts.length > 0 ? (
           <div className="gifts-table">
             {gifts.map((gift, i) => (
-              <div key={gift.id} className={'gift-row' + (i % 2 === 0 ? '' : ' gift-row-right')}>
-                {gift.image_url && (
-                  <img
-                    className="gift-thumb"
-                    src={gift.image_url}
-                    alt={gift.name}
-                    loading="lazy"
-                  />
-                )}
+              <div key={gift.id} className="gift-row">
+                <div className="gift-media">
+                  {gift.image_url ? (
+                    <img src={gift.image_url} alt={gift.name} loading="lazy" />
+                  ) : (
+                    <span className="gift-media-fallback">🎁</span>
+                  )}
+                </div>
                 <div className="gift-info">
                   <div className="gift-top">
                     <span className="gift-num">{String(i + 1).padStart(2, '0')}</span>
@@ -295,7 +469,7 @@ export default function Presentes() {
                   <p className="gift-value">R$ {formatPrice(gift.price)}</p>
                 </div>
                 {isAdmin ? (
-                  <div className="gift-admin-btns">
+                  <div className="gift-card-actions">
                     <button
                       className="gift-admin-btn"
                       onClick={() => startEdit(gift)}
@@ -313,7 +487,7 @@ export default function Presentes() {
                   </div>
                 ) : (
                   <button
-                    className="gift-btn"
+                    className="gift-card-btn"
                     onClick={() => handlePay(gift)}
                     disabled={payingId !== null}
                   >
@@ -331,6 +505,25 @@ export default function Presentes() {
           </p>
         )}
       </div>
+
+      {!isAdmin && externalLists.length > 0 && (
+        <div className="gifts-ext-public">
+          <p className="gifts-ext-public-title">Listas em outras lojas</p>
+          <div className="gifts-ext-public-links">
+            {externalLists.map((item, i) => (
+              <a
+                key={i}
+                className="gift-btn gifts-ext-link"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.label ? `Ver lista · ${item.label}` : 'Ver lista'}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isAdmin && payments && payments.payments.length > 0 && (
         <div className="gifts-payments">
@@ -354,6 +547,17 @@ export default function Presentes() {
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {editingId && (
+        <div className="gift-form-overlay" onClick={cancelEdit}>
+          <div className="gift-form-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="gift-form-close" onClick={cancelEdit} title="Fechar">
+              ✕
+            </button>
+            {giftForm}
           </div>
         </div>
       )}

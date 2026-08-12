@@ -1,56 +1,92 @@
+/* Grade de cards verticais (imagem no topo, texto no meio, ação embaixo) */
 .gifts-table {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--border);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 .gift-row {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--bg-section);
+}
+
+/* Modal de edição de presente (reaproveita o formulário de cadastro) */
+.gift-form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
   align-items: center;
-  gap: 16px;
-  padding: clamp(16px, 2.5vw, 24px) clamp(16px, 2.5vw, 28px);
+  justify-content: center;
+  z-index: 350; /* mesmo nível do catálogo */
+  padding: 16px;
+}
+
+.gift-form-modal {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.gift-form-modal .gifts-admin-form {
+  margin-bottom: 0;
+  border-top: 3px solid var(--gold);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.gift-form-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.gift-form-close:hover {
+  color: var(--cream);
+  border-color: var(--gold-dim);
+}
+
+/* Imagem do presente: topo do card, proporção fixa */
+.gift-media {
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  border-right: 1px solid var(--border);
+  overflow: hidden;
 }
 
-/* Linhas da coluna direita não têm border-right */
-.gift-row-right {
-  border-right: none;
+.gift-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-/* Remove border-bottom das últimas 2 linhas */
-.gift-row:nth-last-child(-n+2) {
-  border-bottom: none;
-}
-
-/* Total ímpar: a última linha ocupa a largura toda,
-   sem deixar célula vazia ao lado */
-.gift-row:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-  border-right: none;
-}
-
-/* Com total ímpar, a penúltima linha (coluna direita) ainda tem
-   uma linha abaixo — mantém a divisória */
-.gift-row-right:nth-last-child(2) {
-  border-bottom: 1px solid var(--border);
+.gift-media-fallback {
+  font-size: 34px;
+  opacity: 0.5;
 }
 
 .gift-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
-}
-
-/* Miniatura do presente (itens vindos do catálogo ou com foto) */
-.gift-thumb {
-  width: clamp(56px, 8vw, 72px);
-  height: clamp(56px, 8vw, 72px);
-  object-fit: cover;
-  border: 1px solid var(--gold-dim);
-  flex-shrink: 0;
+  padding: clamp(14px, 2vw, 18px) clamp(16px, 2vw, 20px);
 }
 
 .gift-top {
@@ -87,7 +123,51 @@
   font-size: clamp(18px, 2.5vw, 25px);
   color: var(--gold);
   font-weight: 700;
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+/* ── Ação do card (rodapé, largura total) ── */
+.gift-card-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border);
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.gift-card-btn:hover:not(:disabled) {
+  background: var(--btn-red);
+  color: var(--btn-text);
+}
+
+.gift-card-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Ações do admin: editar | remover lado a lado no rodapé */
+.gift-card-actions {
+  display: flex;
+  border-top: 1px solid var(--border);
+}
+
+.gift-card-actions .gift-admin-btn {
+  flex: 1;
+  border: none;
+  padding: 11px;
+}
+
+.gift-card-actions .gift-admin-btn + .gift-admin-btn {
+  border-left: 1px solid var(--border);
 }
 
 /* ── Botão Presentear (checkout Mercado Pago) ── */
@@ -157,13 +237,6 @@
 .gifts-feedback-close:hover { color: var(--cream); }
 
 /* ── Botões admin (editar / remover) ── */
-.gift-admin-btns {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
 .gift-admin-btn {
   display: block;
   background: transparent;
@@ -214,6 +287,12 @@
   display: grid;
   grid-template-columns: 1.2fr 1.6fr 0.8fr;
   gap: 16px;
+}
+
+/* Rótulos em uma linha só: evita "VALOR (R$)" quebrar na coluna estreita
+   e desalinhar o input dos demais campos */
+.gifts-admin-fields .form-label {
+  white-space: nowrap;
 }
 
 .gifts-admin-actions {
@@ -350,17 +429,8 @@
 
 @media (max-width: 640px) {
   .gifts-table {
-    grid-template-columns: 1fr;
-  }
-  .gift-row,
-  .gift-row-right {
-    border-right: none;
-  }
-  .gift-row:nth-last-child(-n+2) {
-    border-bottom: 1px solid var(--border);
-  }
-  .gift-row:last-child {
-    border-bottom: none;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
   }
 }
 
@@ -375,4 +445,150 @@
   font-style: italic;
   color: var(--text-muted);
   margin-top: -8px;
+}
+
+/* ── Upload de imagem do presente ── */
+.gifts-admin-image {
+  grid-column: 1 / -1;
+}
+
+.gift-image-upload {
+  border: 1px dashed var(--gold-dim);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wide);
+  text-transform: uppercase;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gift-image-upload:hover {
+  border-color: var(--gold);
+  color: var(--cream);
+}
+
+.gift-image-upload:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.gift-image-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.gift-image-preview img {
+  width: clamp(64px, 10vw, 88px);
+  height: clamp(64px, 10vw, 88px);
+  object-fit: cover;
+  border: 1px solid var(--gold-dim);
+  flex-shrink: 0;
+}
+
+.gift-image-preview-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gift-image-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wide);
+  text-transform: uppercase;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gift-image-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--cream);
+}
+
+.gift-image-btn-remove:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* ── Lista de presentes em outra loja (Amazon, Mercado Livre…) ── */
+.gifts-ext-admin .gifts-admin-fields {
+  grid-template-columns: 0.8fr 2fr;
+}
+
+.gifts-ext-help {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: -8px;
+}
+
+.gifts-ext-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gifts-ext-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+}
+
+.gifts-ext-item a {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--cream);
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.gifts-ext-item a:hover { color: var(--gold); }
+
+/* Bloco visível aos convidados */
+.gifts-ext-public {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: clamp(20px, 3vw, 32px);
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+}
+
+.gifts-ext-public-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  letter-spacing: var(--letter-wider);
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.gifts-ext-public-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.gifts-ext-link {
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .gifts-ext-admin .gifts-admin-fields { grid-template-columns: 1fr; }
 }
