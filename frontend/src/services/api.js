@@ -11,8 +11,11 @@ async function apiFetch(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, { ...options, headers })
 
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: 'Erro desconhecido' }))
-    throw new Error(error.error || 'Erro na requisição')
+    const body = await res.json().catch(() => ({}))
+    const error = new Error(body.error || 'Erro na requisição')
+    error.status = res.status   // ex.: 403 (lista privada), 409 (já confirmou)
+    error.data = body           // corpo completo (code, rsvp, errors…)
+    throw error
   }
 
   return res.json()
@@ -24,6 +27,17 @@ export const getRsvps = (slug, token) =>
 
 export const createRsvp = (slug, token, data) =>
   apiFetch(`/events/${slug}/${token}/rsvps`, {
+    method: 'POST',
+    body: JSON.stringify({ rsvp: data }),
+  })
+
+// Busca a confirmação de um convidado pelo nome (fluxo de acompanhantes)
+export const lookupRsvp = (slug, token, name) =>
+  apiFetch(`/events/${slug}/${token}/rsvps/lookup?name=${encodeURIComponent(name)}`)
+
+// Acrescenta acompanhantes a uma confirmação já existente
+export const addCompanions = (slug, token, data) =>
+  apiFetch(`/events/${slug}/${token}/rsvps/add_companions`, {
     method: 'POST',
     body: JSON.stringify({ rsvp: data }),
   })

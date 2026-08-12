@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SectionHeading from './SectionHeading'
+import AddCompanionsModal from './AddCompanionsModal'
 import { useEventAdmin } from '../contexts/useEventAdmin'
 import { useEvent } from '../contexts/useEvent'
 import { getRsvps, createRsvp } from '../services/api'
@@ -26,6 +27,9 @@ export default function RSVP() {
   const [list, setList]                     = useState([])
   const [loading, setLoading]               = useState(true)
   const [sending, setSending]               = useState(false)
+  const [duplicate, setDuplicate]           = useState(false)  // nome já confirmou
+  const [companionsOpen, setCompanionsOpen] = useState(false)  // modal de acompanhantes
+  const [companionsName, setCompanionsName] = useState('')     // nome pré-preenchido no modal
 
   // Guarda o que está sendo preenchido enquanto não foi enviado
   useEffect(() => {
@@ -45,7 +49,7 @@ export default function RSVP() {
         setList(data)
       } catch (err) {
         // 403 = lista privada, ignora silenciosamente
-        if (!err.message?.includes('403')) {
+        if (err.status !== 403) {
           console.error('Erro ao carregar RSVPs:', err)
         }
       } finally {
@@ -95,6 +99,7 @@ export default function RSVP() {
     e.preventDefault()
     if (!form.name.trim()) return
     setSending(true)
+    setDuplicate(false)
     try {
       // Filtra os dois arrays juntos para manter o alinhamento por índice
       const companions = companionNames
@@ -112,10 +117,31 @@ export default function RSVP() {
       setRestored(false)
       clearDraft(draftKey)
     } catch (err) {
-      console.error('Erro ao enviar RSVP:', err)
+      // 409 = este nome já confirmou: orienta a adicionar acompanhantes
+      // em vez de cadastrar de novo (mantém o rascunho para não perder nada)
+      if (err.status === 409) {
+        setDuplicate(true)
+      } else {
+        console.error('Erro ao enviar RSVP:', err)
+      }
     } finally {
       setSending(false)
     }
+  }
+
+  // Mescla no lugar o RSVP atualizado pelo modal de acompanhantes
+  const handleCompanionsUpdated = (updated) => {
+    setList((prev) => {
+      const exists = prev.some((r) => r.id === updated.id)
+      return exists
+        ? prev.map((r) => (r.id === updated.id ? updated : r))
+        : [updated, ...prev]
+    })
+  }
+
+  const openCompanions = (prefill = '') => {
+    setCompanionsName(prefill)
+    setCompanionsOpen(true)
   }
 
   const resetForm = () => {
@@ -165,7 +191,7 @@ export default function RSVP() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  placeholder="como consta no convite"
+                  placeholder="nome completo"
                   required
                 />
               </div>
@@ -178,7 +204,7 @@ export default function RSVP() {
                   value={form.guests}
                   onChange={handleChange}
                 >
-                  {[0, 1, 2, 3, 4].map((n) => (
+                  {[0, 1, 2, 3, 4, 5, 6].map((n) => (
                     <option key={n} value={n}>{n}</option>
                   ))}
                 </select>
@@ -215,6 +241,22 @@ export default function RSVP() {
                 </div>
               )}
 
+              {duplicate && (
+                <div className="rsvp-duplicate">
+                  <span>
+                    Este nome já confirmou presença. Se quiser incluir mais
+                    acompanhantes, use a opção abaixo.
+                  </span>
+                  <button
+                    type="button"
+                    className="rsvp-duplicate-link"
+                    onClick={() => openCompanions(form.name)}
+                  >
+                    Adicionar acompanhantes
+                  </button>
+                </div>
+              )}
+
               <button
                 className="rsvp-btn"
                 type="submit"
@@ -223,6 +265,14 @@ export default function RSVP() {
                 {sending
                   ? 'Enviando...'
                   : (teatro ? 'Confirmar minha poltrona' : 'Confirmar presença')}
+              </button>
+
+              <button
+                type="button"
+                className="rsvp-companions-cta"
+                onClick={() => openCompanions('')}
+              >
+                Já confirmou presença e quer adicionar acompanhantes? Clique aqui
               </button>
             </form>
           ) : (
@@ -285,6 +335,16 @@ export default function RSVP() {
           )}
         </div>
       </div>
+
+      {companionsOpen && (
+        <AddCompanionsModal
+          slug={slug}
+          token={token}
+          initialName={companionsName}
+          onClose={() => setCompanionsOpen(false)}
+          onUpdated={handleCompanionsUpdated}
+        />
+      )}
 
     </section>
   )

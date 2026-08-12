@@ -3,6 +3,17 @@ class Rsvp < ApplicationRecord
 
   MAX_COMPANIONS = 20
 
+  # Teto de acompanhantes por confirmação exposto ao convidado (inclui os
+  # adicionados depois via "adicionar acompanhantes"). MAX_COMPANIONS segue
+  # como rede de segurança do banco.
+  COMPANION_LIMIT = 6
+
+  # Normaliza o nome para comparar confirmações: ignora acentos, caixa e
+  # espaços repetidos, evitando cadastrar a mesma pessoa duas vezes.
+  def self.normalize_name(value)
+    I18n.transliterate(value.to_s).downcase.strip.gsub(/\s+/, " ")
+  end
+
   # before_validation para validar presença/tamanho já sobre o texto
   # limpo (um nome só de tags viraria vazio depois do strip_tags).
   before_validation :sanitize_fields
